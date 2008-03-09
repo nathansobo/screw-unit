@@ -22,7 +22,7 @@
         before_invoked = true;
       });
       
-      it("invokes the before prior to the it", function() {
+      it("invokes the before prior to an it", function() {
         before_invoked.should(equal, true);
         before_invoked = false;
       });
@@ -45,6 +45,43 @@
       it("invokes the befores in lexical order prior to each it", function() {
         invocations.should(equal, ['before 1', 'before 2']);
       });
+    });
+    
+    describe("A describe with a nested describe", function() {
+      var invocations = [];
+      before(function() {
+        invocations = [];
+        invocations.push("outermost before");
+      });
+
+      it("after a nested describe, does not invoke any of its befores", function() {
+        invocations.should(equal, ["outermost before"]);
+      });
+            
+      describe("a nested describe", function() {
+        before(function() {
+          invocations.push("inner before");
+        });
+        
+        describe("a doubly nested describe", function() {
+          before(function() {
+            invocations.push('innermost before');
+          })
+          
+          it("runs befores in all ancestors prior to an it", function() {
+            invocations.should(equal, ["outermost before", "inner before", "innermost before"]);
+          });
+          
+          it("runs befores in all ancestors prior to each it", function() {
+            invocations.should(equal, ["outermost before", "inner before", "innermost before"]);
+          });
+        });
+        
+        it("runs a before in the parent describe before each it", function() {
+          invocations.should(equal, ["outermost before", "inner before"]);
+        });
+      });
+
     });
   </script>
 </head>
