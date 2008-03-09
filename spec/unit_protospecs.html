@@ -5,10 +5,14 @@
   <script src="../lib/matchers.js"></script>
   
   <script type="text/javascript">
-    describe("All objects", function() {
+    describe("Matchers", function() {
       it("invoke the provided matcher on a call to should", function() {
         true.should(equal, true);
         true.should_not(equal, false);
+      });
+      
+      it("equal matches Arrays with the same elements", function() {
+        [1, 2, 3].should(equal, [1, 2, 3]);
       });
     });
     
@@ -26,7 +30,21 @@
       it("invokes the before prior to each it", function() {
         before_invoked.should(equal, true);
       });
+    });
+    
+    describe("A describe with two before blocks", function() {
+      var invocations = [];
+      before(function() {
+        invocations.push('before 1')
+      });
       
+      before(function() {
+        invocations.push('before 2')
+      });
+      
+      it("invokes the befores in lexical order prior to each it", function() {
+        invocations.should(equal, ['before 1', 'before 2']);
+      });
     });
   </script>
 </head>
