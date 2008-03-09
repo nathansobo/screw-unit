@@ -13,6 +13,7 @@
       
       it("equal matches Arrays with the same elements", function() {
         [1, 2, 3].should(equal, [1, 2, 3]);
+        [1, 2, 3].should_not(equal, [3, 2, 1]);
       });
     });
     
