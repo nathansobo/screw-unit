@@ -1,0 +1,38 @@
+html {
+  padding: 10px;
+  font-family: Helvetica;
+  background: teal;
+}
+
+  .describes {
+    border: 1px dashed cyan;
+  }
+
+    .describes .description {
+      border-bottom: 1px solid brown;
+      font-weight: bold;
+    }
+
+    .describes .describe {
+      margin-left: 10px;
+    }
+  
+      .describes .describe .its {}
+
+      .describes .describe .its > dt {
+        display: none;
+      }
+
+        .describes .describe .its .it {}
+
+        .describes .describe .its .it.passed {
+          background-color: green;
+        }
+
+        .describes .describe .its .it.failed {
+          background-color: red;
+        }
+    
+      .describes .describe .describes {}
+    
+        .describes .describe .describes .describe {}
