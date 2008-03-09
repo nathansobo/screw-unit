@@ -1,0 +1,33 @@
+<html>
+<head>
+  <script src="../lib/jquery-1.2.3.js"></script>
+  <script src="../lib/screwunit.js"></script>
+  <script src="../lib/matchers.js"></script>
+  
+  <script type="text/javascript">
+    describe("All objects", function() {
+      it("invoke the provided matcher on a call to should", function() {
+        true.should(equal, true);
+        true.should_not(equal, false);
+      });
+    });
+    
+    describe("A describe with a before block", function() {
+      var before_invoked = false;
+      before(function() {
+        before_invoked = true;
+      });
+      
+      it("invokes the before prior to the it", function() {
+        before_invoked.should(equal, true);
+        before_invoked = false;
+      });
+      
+      it("invokes the before prior to each it", function() {
+        before_invoked.should(equal, true);
+      });
+      
+    });
+  </script>
+</head>
+</html>
