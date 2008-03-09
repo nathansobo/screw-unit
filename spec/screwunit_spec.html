@@ -6,84 +6,85 @@
 	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.5.0/build/reset/reset-min.css"> 
 	<link rel="stylesheet" href="../lib/screwunit.css">
   <script type="text/javascript">
-    describe("Matchers", function() {
-      it("invoke the provided matcher on a call to should", function() {
-        true.should(equal, true);
-        true.should_not(equal, false);
-      });
+    Screw.Unit(function() {
+      describe("Matchers", function() {
+        it("invokes the provided matcher on a call to should", function() {
+          true.should(equal, true);
+          true.should_not(equal, false);
+        });
       
-      it("equal matches Arrays with the same elements", function() {
-        [1, 2, 3].should(equal, [1, 2, 3]);
-        [1, 2, 3].should_not(equal, [3, 2, 1]);
-      });
-    });
-    
-    describe("A describe with a before block", function() {
-      var before_invoked = false;
-      before(function() {
-        before_invoked = true;
-      });
-      
-      it("invokes the before prior to an it", function() {
-        before_invoked.should(equal, true);
-        before_invoked = false;
-      });
-      
-      it("invokes the before prior to each it", function() {
-        before_invoked.should(equal, true);
-      });
-    });
-    
-    describe("A describe with two before blocks", function() {
-      var invocations = [];
-      before(function() {
-        invocations.push('before 1')
-      });
-      
-      before(function() {
-        invocations.push('before 2')
-      });
-      
-      it("invokes the befores in lexical order prior to each it", function() {
-        invocations.should(equal, ['before 1', 'before 2']);
-      });
-    });
-    
-    describe("A describe with a nested describe", function() {
-      var invocations = [];
-      before(function() {
-        invocations = [];
-        invocations.push("outermost before");
+        it("equal matches Arrays with the same elements", function() {
+          [1, 2, 3].should(equal, [1, 2, 3]);
+          [1, 2, 3].should_not(equal, [3, 2, 1]);
+        });
       });
 
-      it("after a nested describe, does not invoke any of its befores", function() {
-        invocations.should(equal, ["outermost before"]);
-      });
-            
-      describe("a nested describe", function() {
+      describe("A describe with a before block", function() {
+        var before_invoked = false;
         before(function() {
-          invocations.push("inner before");
+          before_invoked = true;
         });
-        
-        describe("a doubly nested describe", function() {
-          before(function() {
-            invocations.push('innermost before');
-          })
-          
-          it("runs befores in all ancestors prior to an it", function() {
-            invocations.should(equal, ["outermost before", "inner before", "innermost before"]);
-          });
-          
-          it("runs befores in all ancestors prior to each it", function() {
-            invocations.should(equal, ["outermost before", "inner before", "innermost before"]);
-          });
+      
+        it("invokes the before prior to an it", function() {
+          before_invoked.should(equal, true);
+          before_invoked = false;
         });
-        
-        it("runs a before in the parent describe before each it", function() {
-          invocations.should(equal, ["outermost before", "inner before"]);
+      
+        it("invokes the before prior to each it", function() {
+          before_invoked.should(equal, true);
         });
       });
 
+      describe("A describe with two before blocks", function() {
+        var invocations = [];
+        before(function() {
+          invocations.push('before 1')
+        });
+      
+        before(function() {
+          invocations.push('before 2')
+        });
+      
+        it("invokes the befores in lexical order prior to each it", function() {
+          invocations.should(equal, ['before 1', 'before 2']);
+        });
+      });
+    
+      describe("A describe with a nested describe", function() {
+        var invocations = [];
+        before(function() {
+          invocations = [];
+          invocations.push("outermost before");
+        });
+
+        it("after a nested describe, does not invoke any of its befores", function() {
+          invocations.should(equal, ["outermost before"]);
+        });
+            
+        describe("a nested describe", function() {
+          before(function() {
+            invocations.push("inner before");
+          });
+        
+          describe("a doubly nested describe", function() {
+            before(function() {
+              invocations.push('innermost before');
+            })
+          
+            it("runs befores in all ancestors prior to an it", function() {
+              invocations.should(equal, ["outermost before", "inner before", "innermost before"]);
+            });
+          
+            it("runs befores in all ancestors prior to each it", function() {
+              invocations.should(equal, ["outermost before", "inner before", "innermost before"]);
+            });
+          });
+        
+          it("runs a before in the parent describe before each it", function() {
+            invocations.should(equal, ["outermost before", "inner before"]);
+          });
+        });
+      });
     });
   </script>
 </head>
