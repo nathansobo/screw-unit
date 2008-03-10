@@ -8,7 +8,8 @@ html {
     border: 1px dashed cyan;
   }
 
-    .describes .description {
+    .describes h1 {
+      cursor: pointer;
       border-bottom: 1px solid brown;
       font-weight: bold;
     }
@@ -19,11 +20,10 @@ html {
   
       .describes .describe .its {}
 
-      .describes .describe .its > dt {
-        display: none;
-      }
-
-        .describes .describe .its .it {}
+        .describes .describe .its .it {
+          cursor: pointer;
+          background-color: brown;
+        }
 
         .describes .describe .its .it.passed {
           background-color: green;
