@@ -1,0 +1,5 @@
+Screw.Unit is a Behaviorist Testing Framework for Javascript. It features nested describes. Its goals are to provide:
+  - a dsl for elegant, readable, organized specs;
+  - an interactive runner which can execute focused specs and describes; 
+  - and brief, extensible source-code.
+  
