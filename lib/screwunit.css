@@ -1,45 +1,75 @@
 html {
   padding: 10px;
-  font-family: Helvetica;
-  background: teal;
+  font-family: Georgia, serif;
+  background: #EDEBD5;
 }
-
-  .describes {
-    border: 1px dashed cyan;
+  
+  li {
+    list-style-type: none;
   }
 
+  .describes {
+    border: 1px dashed grey;
+  }
+  
     .describes h1 {
-      cursor: pointer;
-      font-weight: bold;
-      border: 1px solid brown;
+      font-size: 1.1em;
+      color: #877C21;
+      line-height: 1.8em;
+      margin: 0pt 0pt 1em;
+      border-bottom: 1px solid transparent;
     }
     
       .describes h1:hover {
-        border: 1px solid yellow;
+        cursor: pointer;
+        color: #000;
+        background-color: #F4F2E4;
+        border-bottom: 1px solid #9A8E51;
       }
 
     .describes .describe {
       margin-left: 10px;
     }
   
-      .describes .describe .its {}
+      .describes .describe .its {
+        background-color: #F8F7EF;
+      }
 
         .describes .describe .its .it {
-          cursor: pointer;
-          border: 1px solid blue;
+          list-style-type: lower-roman;
+          list-style-position: outside;
         }
         
-          .describes .describe .its .it.running {
-            background-color: yellow;
+          .describes .describe .its .it.running h2 {
+            color: yellow;
           }
 
           .describes .describe .its .it.passed {
-            background-color: green;
+            border-left: 10px solid #5A753D;
+          }
+          
+          .describes .describe .its .it.passed h2 {
+            color: #5A753D;
           }
 
-          .describes .describe .its .it.failed {
-            background-color: red;
+          .describes .describe .its .it.failed h2 {
+            color: red;
           }
+          
+          .describes .describe .its .it h2 {
+            font-size: 1.0em;
+            color: #877C21;
+            line-height: 1.8em;
+            margin: 0pt 0pt 1em;
+            border-bottom: 1px solid transparent;
+          }
+          
+            .describes .describe .its .it h2:hover {
+              cursor: pointer;
+              color: #000;
+              background-color: #F4F2E4;
+              border-bottom: 1px solid #9A8E51;
+            }          
           
       .describes .describe .describes {}
     
