@@ -7,9 +7,21 @@ html {
   li {
     list-style-type: none;
   }
+  
+  .focused {
+    background-color: #F4F2E4;
+  }
+  
+    .focused * {
+      opacity: 1.0;
+    }
+  
+  h1, h2, p {
+    opacity: 0.5;
+  }
 
   .describes {
-    border: 1px dashed grey;
+    padding-left: 0;
   }
   
     .describes h1 {
@@ -29,32 +41,41 @@ html {
 
     .describes .describe {
       margin-left: 10px;
+      padding-left: 10px;
+      border: 1px dashed grey;
     }
-  
-      .describes .describe .its {
-        background-color: #F8F7EF;
-      }
+    
+      .describes .describe .its {}
 
         .describes .describe .its .it {
           list-style-type: lower-roman;
           list-style-position: outside;
         }
         
+          .describes .describe .its .it h2 {
+            font-weight: normal;
+            font-style: italic;
+            padding-left: 10px;
+          }
           .describes .describe .its .it.running h2 {
-            color: yellow;
+            background-color: #yellow;
+            color: white;
           }
 
-          .describes .describe .its .it.passed {
-            border-left: 10px solid #5A753D;
-          }
-          
           .describes .describe .its .it.passed h2 {
-            color: #5A753D;
+            background-color: #5A753D;
+            color: white;
           }
 
           .describes .describe .its .it.failed h2 {
-            color: red;
+            background-color: #993300;
+            color: white;
           }
+          
+            .describes .describe .its .it.failed p {
+              margin-left: 20px;
+              color: #993300;
+            }
           
           .describes .describe .its .it h2 {
             font-size: 1.0em;
@@ -67,7 +88,6 @@ html {
             .describes .describe .its .it h2:hover {
               cursor: pointer;
               color: #000;
-              background-color: #F4F2E4;
               border-bottom: 1px solid #9A8E51;
             }          
           

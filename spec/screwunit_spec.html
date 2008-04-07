@@ -5,6 +5,8 @@
   <script src="../lib/jquery.fn.js"></script>
   <script src="../lib/jquery.print.js"></script>
   <script src="../lib/screwunit.js"></script>
+  <script src="../lib/screwunit.events.js"></script>
+  <script src="../lib/screwunit.fn.js"></script>
 	<link rel="stylesheet" href="../lib/screwunit.css">
   <script type="text/javascript">
     Screw.Unit(function() {
@@ -16,7 +18,7 @@
           });
       
           it("equal matches Arrays with the same elements", function() {
-            expect([1, 2, 3]).to(equal, [1, 2, 3]);
+            expect([1, 2, 4]).to(equal, [1, 2, 3]);
             expect([1, 2, 3]).to_not(equal, [3, 2, 1]);
           });
         });
