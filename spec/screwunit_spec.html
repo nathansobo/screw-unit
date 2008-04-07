@@ -1,118 +1,116 @@
 <html>
-<head>
-  <script src="../lib/jquery-1.2.3.js"></script>
-  <script src="../lib/xmlbuilder.js"></script>
-  <script src="../lib/jquery.fn.js"></script>
-  <script src="../lib/jquery.print.js"></script>
-  <script src="../lib/screwunit.js"></script>
-  <script src="../lib/screwunit.events.js"></script>
-  <script src="../lib/screwunit.fn.js"></script>
-	<link rel="stylesheet" href="../lib/screwunit.css">
-  <script type="text/javascript">
-    Screw.Unit(function() {
-      describe('Screw.Unit', function() {
-        describe("Matchers", function() {
-          it("invokes the provided matcher on a call to expect", function() {
-            expect(true).to(equal, true);
-            expect(true).to_not(equal, false);
-          });
-      
-          it("equal matches Arrays with the same elements", function() {
-            expect([1, 2, 4]).to(equal, [1, 2, 3]);
-            expect([1, 2, 3]).to_not(equal, [3, 2, 1]);
-          });
-        });
-
-        describe('#run', function() {
-          describe("A describe with a before block", function() {
-            var before_invoked = false;
-            before(function() {
-              before_invoked = true;
-            });
-              
-            it("invokes the before prior to an it", function() {
-              expect(before_invoked).to(equal, true);
-              before_invoked = false;
-            });
-              
-            it("invokes the before prior to each it", function() {
-              expect(before_invoked).to(equal, true);
-            });
-          });
-      
-          describe("A describe with two before blocks", function() {
-            var invocations = [];
-            before(function() {
-              invocations.push('before 1');
+  <head>
+    <script src="../lib/jquery-1.2.3.js"></script>
+    <script src="../lib/jquery.fn.js"></script>
+    <script src="../lib/jquery.print.js"></script>
+    <script src="../lib/screw.builder.js"></script>
+    <script src="../lib/screw.events.js"></script>
+    <script src="../lib/screw.behaviors.js"></script>
+  	<link rel="stylesheet" href="../lib/screw.css">
+    <script type="text/javascript">
+      Screw.Unit(function() {
+        describe('Screw.Unit', function() {
+          describe("Matchers", function() {
+            it("invokes the provided matcher on a call to expect", function() {
+              expect(true).to(equal, true);
+              expect(true).to_not(equal, false);
             });
       
-            before(function() {
-              invocations.push('before 2');
-            });
-      
-            it("invokes the befores in lexical order prior to each it", function() {
-              expect(invocations).to(equal, ['before 1', 'before 2']);
+            it("equal matches Arrays with the same elements", function() {
+              expect([1, 2, 4]).to(equal, [1, 2, 3]);
+              expect([1, 2, 3]).to_not(equal, [3, 2, 1]);
             });
           });
 
-          describe("A describe with a nested describe", function() {
-            var invocations = [];
-            before(function() {
-              invocations = [];
-              invocations.push("outermost before");
-            });
-              
-            it("after a nested describe, does not invoke any of its befores", function() {
-              expect(invocations).to(equal, ["outermost before"]);
-            });
-            
-            describe("a nested describe", function() {
+          describe('#run', function() {
+            describe("A describe with a before block", function() {
+              var before_invoked = false;
               before(function() {
-                invocations.push("inner before");
+                before_invoked = true;
               });
-        
-              describe("a doubly nested describe", function() {
-                before(function() {
-                  invocations.push('innermost before');
-                })
-          
-                it("runs befores in all ancestors prior to an it", function() {
-                  expect(invocations).to(equal, ["outermost before", "inner before", "innermost before"]);
-                });
-          
-                it("runs befores in all ancestors prior to each it", function() {
-                  expect(invocations).to(equal, ["outermost before", "inner before", "innermost before"]);
-                });
+              
+              it("invokes the before prior to an it", function() {
+                expect(before_invoked).to(equal, true);
+                before_invoked = false;
               });
-        
-              it("runs a before in the parent describe before each it", function() {
-                expect(invocations).to(equal, ["outermost before", "inner before"]);
+              
+              it("invokes the before prior to each it", function() {
+                expect(before_invoked).to(equal, true);
               });
             });
-          });
-        });
       
-        describe("#selector", function() {
-          describe('a describe', function() {
-            it('returns a css selector that uniquely locates the describe', function() {
-              $('.describe').each(function() {
-                expect($($(this).fn('selector')).get(0)).to(equal, $(this).get(0))
+            describe("A describe with two before blocks", function() {
+              var invocations = [];
+              before(function() {
+                invocations.push('before 1');
+              });
+      
+              before(function() {
+                invocations.push('before 2');
+              });
+      
+              it("invokes the befores in lexical order prior to each it", function() {
+                expect(invocations).to(equal, ['before 1', 'before 2']);
+              });
+            });
+
+            describe("A describe with a nested describe", function() {
+              var invocations = [];
+              before(function() {
+                invocations = [];
+                invocations.push("outermost before");
+              });
+              
+              it("after a nested describe, does not invoke any of its befores", function() {
+                expect(invocations).to(equal, ["outermost before"]);
+              });
+            
+              describe("a nested describe", function() {
+                before(function() {
+                  invocations.push("inner before");
+                });
+        
+                describe("a doubly nested describe", function() {
+                  before(function() {
+                    invocations.push('innermost before');
+                  })
+          
+                  it("runs befores in all ancestors prior to an it", function() {
+                    expect(invocations).to(equal, ["outermost before", "inner before", "innermost before"]);
+                  });
+          
+                  it("runs befores in all ancestors prior to each it", function() {
+                    expect(invocations).to(equal, ["outermost before", "inner before", "innermost before"]);
+                  });
+                });
+        
+                it("runs a before in the parent describe before each it", function() {
+                  expect(invocations).to(equal, ["outermost before", "inner before"]);
+                });
               });
             });
           });
+      
+          describe("#selector", function() {
+            describe('a describe', function() {
+              it('returns a css selector that uniquely locates the describe', function() {
+                $('.describe').each(function() {
+                  expect($($(this).fn('selector')).get(0)).to(equal, $(this).get(0))
+                });
+              });
+            });
         
-          describe('an it', function() {
-            it('returns a css selector that uniquely locates the it', function() {
-              $('.it').each(function() {
-                expect($($(this).fn('selector')).get(0)).to(equal, $(this).get(0))
+            describe('an it', function() {
+              it('returns a css selector that uniquely locates the it', function() {
+                $('.it').each(function() {
+                  expect($($(this).fn('selector')).get(0)).to(equal, $(this).get(0))
+                });
               });
             });
           });
         });
       });
-    });
-  </script>
-</head>
-<body>
-</body>
+    </script>
+  </head>
+  <body></body>
 </html>

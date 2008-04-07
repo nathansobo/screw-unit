@@ -1,5 +1,5 @@
 html {
-  padding: 10px;
+  padding: 0.5em;
   font-family: Georgia, serif;
   background: #EDEBD5;
 }
@@ -17,7 +17,7 @@ html {
     }
   
   h1, h2, p {
-    opacity: 0.5;
+    opacity: 0.4;
   }
 
   .describes {
@@ -28,7 +28,7 @@ html {
       font-size: 1.1em;
       color: #877C21;
       line-height: 1.8em;
-      margin: 0pt 0pt 1em;
+      margin: 0pt 0pt 0.6em;
       border-bottom: 1px solid transparent;
     }
     
@@ -40,8 +40,8 @@ html {
       }
 
     .describes .describe {
-      margin-left: 10px;
-      padding-left: 10px;
+      margin-left: 0.6em;
+      padding-left: 0.6em;
       border: 1px dashed grey;
     }
     
@@ -55,10 +55,11 @@ html {
           .describes .describe .its .it h2 {
             font-weight: normal;
             font-style: italic;
-            padding-left: 10px;
+            padding-left: 0.5em;
           }
-          .describes .describe .its .it.running h2 {
-            background-color: #yellow;
+          
+          .describes .describe .its .it.enqueued h2 {
+            background-color: yellow;
             color: white;
           }
 
@@ -73,7 +74,7 @@ html {
           }
           
             .describes .describe .its .it.failed p {
-              margin-left: 20px;
+              margin-left: 1em;
               color: #993300;
             }
           
@@ -81,7 +82,7 @@ html {
             font-size: 1.0em;
             color: #877C21;
             line-height: 1.8em;
-            margin: 0pt 0pt 1em;
+            margin: 0 0 0.5em;
             border-bottom: 1px solid transparent;
           }
           
