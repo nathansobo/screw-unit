@@ -59,7 +59,7 @@ html {
           }
           
           .describes .describe .its .it.enqueued h2 {
-            background-color: yellow;
+            background-color: #CC6600;
             color: white;
           }
 
@@ -90,8 +90,4 @@ html {
               cursor: pointer;
               color: #000;
               border-bottom: 1px solid #9A8E51;
-            }          
-          
-      .describes .describe .describes {}
-    
-        .describes .describe .describes .describe {}
+            }
