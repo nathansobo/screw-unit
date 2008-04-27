@@ -7,7 +7,7 @@ Screw.Unit(function() {
       });
 
       it("equal matches Arrays with the same elements", function() {
-        z
+        expect([1, 2, 4]).to(equal, [1, 2, 3]);
         expect([1, 2, 3]).to_not(equal, [3, 2, 1]);
       });
     });
