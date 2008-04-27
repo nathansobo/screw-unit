@@ -79,6 +79,16 @@ Screw.Unit(function() {
           });
         });
       });
+
+      var before_triggered = false;
+      $(Screw).bind('before', function() {
+        before_triggered = true;
+      });
+      describe("$(Screw).bind('before')", function() {
+        it('invokes before bindings before the specs run', function() {
+          expect(before_triggered).to(equal, true);
+        });
+      });
     });
 
     describe("#selector", function() {
