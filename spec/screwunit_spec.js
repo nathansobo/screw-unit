@@ -10,6 +10,13 @@ Screw.Unit(function() {
         expect([1, 2, 4]).to(equal, [1, 2, 3]);
         expect([1, 2, 3]).to_not(equal, [3, 2, 1]);
       });
+
+      describe("#be_empty", function() {
+        it("matches on Array#lenth == 0", function() {
+          expect([]).to(be_empty);
+          expect([1]).to_not(be_empty);
+        })
+      });
     });
 
     describe('#run', function() {
