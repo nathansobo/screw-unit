@@ -20,19 +20,36 @@ Screw.Unit(function() {
     });
 
     describe('#run', function() {
-      describe("A describe with a before block", function() {
+      describe("A describe with a before and after block", function() {
         var before_invoked = false;
+        var after_invoked = false;
         before(function() {
-          before_invoked = true;
+          try {
+            expect(before_invoked).to(equal, false);
+          } finally {
+            before_invoked = true;
+            after_invoked = false;
+          }
+        });
+        after(function() {
+          try {
+            expect(after_invoked).to(equal, false);
+          } finally {
+            before_invoked = false;
+            after_invoked = true;
+          }
         });
 
         it("invokes the before prior to an it", function() {
           expect(before_invoked).to(equal, true);
-          before_invoked = false;
         });
 
         it("invokes the before prior to each it", function() {
           expect(before_invoked).to(equal, true);
+        });
+
+        it("invokes the after post an it", function() {
+          expect(after_invoked).to(equal, false);
         });
       });
 
