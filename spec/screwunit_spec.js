@@ -1,4 +1,24 @@
 Screw.Unit(function() {
+  var global_before_invoked = false;
+  var global_after_invoked = false;
+  before(function() {
+    try {
+      expect(global_before_invoked).to(equal, false);
+    } finally {
+      global_before_invoked = true;
+      global_after_invoked = false;
+    }
+  });
+
+  after(function() {
+    try {
+      expect(global_after_invoked).to(equal, false);
+    } finally {
+      global_before_invoked = false;
+      global_after_invoked = true;
+    }
+  });
+
   describe('Screw.Unit', function() {
     describe("Matchers", function() {
       describe("#equal", function() {
@@ -130,16 +150,20 @@ Screw.Unit(function() {
           }
         });
 
+        it("invokes the global before prior to an it", function() {
+          expect(global_before_invoked).to(equal, true);
+        });
+
         it("invokes the before prior to an it", function() {
           expect(before_invoked).to(equal, true);
         });
 
-        it("invokes the before prior to each it", function() {
-          expect(before_invoked).to(equal, true);
+        it("invokes the after callback after an it", function() {
+          expect(after_invoked).to(equal, false);
         });
 
-        it("invokes the after post an it", function() {
-          expect(after_invoked).to(equal, false);
+        it("invokes the global after callback after an it", function() {
+          expect(global_after_invoked).to(equal, false);
         });
       });
 
