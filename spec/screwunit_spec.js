@@ -1,21 +1,111 @@
 Screw.Unit(function() {
   describe('Screw.Unit', function() {
     describe("Matchers", function() {
-      it("invokes the provided matcher on a call to expect", function() {
-        expect(true).to(equal, true);
-        expect(true).to_not(equal, false);
-      });
+      describe("#equal", function() {
+        describe("when actual is not an Array", function() {
+          describe(".matches", function() {
+            it("matches when expected == actual", function() {
+              expect(true).to(equal, true);
+              expect(true).to_not(equal, false);
+            });
+          });
 
-      it("equal matches Arrays with the same elements", function() {
-        expect([1, 2, 4]).to(equal, [1, 2, 3]);
-        expect([1, 2, 3]).to_not(equal, [3, 2, 1]);
+          describe(".failure_message", function() {
+            describe("on a positive failure", function() {
+              it("prints 'expected [actual] to equal [expected]", function() {
+                var message = null;
+                try {
+                  expect(true).to(equal, false);
+                } catch(e) {
+                  message = e;
+                }
+                expect(message).to(equal, "expected [true] to equal [false]");
+              });
+            });
+
+            describe("on a negative failure", function() {
+              it("prints 'expected [actual] to not equal [expected]", function() {
+                var message = null;
+                try {
+                  expect(true).to_not(equal, true);
+                } catch(e) {
+                  message = e;
+                }
+                expect(message).to(equal, "expected [true] to not equal [true]");
+              });
+            });
+          });
+        });
+
+        describe("when actual is an Array", function() {
+          describe(".matches", function() {
+            it("matches when Arrays the expected and actual have the same contents", function() {
+              expect([1, 2, 3]).to(equal, [1, 2, 3]);
+              expect([1, 2, 3]).to_not(equal, [3, 2, 1]);
+            });
+          });
+
+          describe(".failure_message", function() {
+            describe("on a positive failure", function() {
+              it("prints 'expected [actual] to equal [expected]", function() {
+                var message = null;
+                try {
+                  expect([1, 2, 3]).to(equal, [1, 2, 4]);
+                } catch(e) {
+                  message = e;
+                }
+                expect(message).to(equal, "expected [1,2,3] to equal [1,2,4]");
+              });
+            });
+
+            describe("on a negative failure", function() {
+              it("prints 'expected [actual] to not equal [expected]", function() {
+                var message = null;
+                try {
+                  expect([1, 2, 3]).to_not(equal, [1, 2, 3]);
+                } catch(e) {
+                  message = e;
+                }
+                expect(message).to(equal, "expected [1,2,3] to not equal [1,2,3]");
+              });
+            });
+          });
+        });
       });
 
       describe("#be_empty", function() {
-        it("matches on Array#lenth == 0", function() {
-          expect([]).to(be_empty);
-          expect([1]).to_not(be_empty);
-        })
+        describe(".matches", function() {
+          it("matches when Array#length == 0", function() {
+            expect([]).to(be_empty);
+            expect([1]).to_not(be_empty);
+          });
+        });
+
+        describe(".failure_message", function() {
+          describe("on a positive failure", function() {
+            it("prints 'expected ... to be empty'", function() {
+              var message = null;
+              try {
+                expect([1]).to(be_empty);
+              } catch(e) {
+                message = e;
+              }
+              expect(message).to(equal, "expected [1] to be empty");
+            });
+          });
+
+          describe("on a negative failure", function() {
+            it("prints 'expected ... to not be empty'", function() {
+              var message = null;
+              try {
+                expect([]).to_not(be_empty);
+              } catch(e) {
+                message = e;
+              }
+              expect(message).to(equal, "expected [] to not be empty");
+            });
+          });
+        });
       });
     });
 
