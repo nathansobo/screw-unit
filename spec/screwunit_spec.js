@@ -93,6 +93,78 @@ Screw.Unit(function() {
         });
       });
 
+      describe("#match", function() {
+        describe("when passed a Regex", function() {
+          describe(".matches", function() {
+            it("matches when expected =~ actual", function() {
+              expect("The wheels of the bus").to(match, /bus/);
+              expect("The wheels of the bus").to_not(match, /boat/);
+            });
+          });
+
+          describe(".failure_message", function() {
+            describe("on a positive failure", function() {
+              it("prints 'expected [actual] to match [expected]", function() {
+                var message = null;
+                try {
+                  expect("Hello").to(match, /Goodbye/);
+                } catch(e) {
+                  message = e;
+                }
+                expect(message).to(equal, "expected [Hello] to match [/Goodbye/]");
+              });
+            });
+
+            describe("on a negative failure", function() {
+              it("prints 'expected [actual] to not match [expected]", function() {
+                var message = null;
+                try {
+                  expect("Hello").to_not(match, /ello/);
+                } catch(e) {
+                  message = e;
+                }
+                expect(message).to(equal, "expected [Hello] to not match [/ello/]");
+              });
+            });
+          });
+        });
+
+        describe("when passed a String", function() {
+          describe(".matches", function() {
+            it("matches when expected is included in actual", function() {
+              expect("The wheels of the bus").to(match, "wheels");
+              expect("The wheels of the bus").to_not(match, "oars");
+            });
+          });
+
+          describe(".failure_message", function() {
+            describe("on a positive failure", function() {
+              it("prints 'expected [actual] to match [expected]", function() {
+                var message = null;
+                try {
+                  expect("Hello").to(match, "goodbye");
+                } catch(e) {
+                  message = e;
+                }
+                expect(message).to(equal, "expected [Hello] to match [goodbye]");
+              });
+            });
+
+            describe("on a negative failure", function() {
+              it("prints 'expected [actual] to not match [expected]", function() {
+                var message = null;
+                try {
+                  expect("Hello").to_not(match, "ello");
+                } catch(e) {
+                  message = e;
+                }
+                expect(message).to(equal, "expected [Hello] to not match [ello]");
+              });
+            });
+          });
+        });
+      });
+
       describe("#be_empty", function() {
         describe(".matches", function() {
           it("matches when Array#length == 0", function() {
