@@ -22,7 +22,7 @@ Screw.Unit(function() {
   describe('Screw.Unit', function() {
     describe("Matchers", function() {
       describe("#equal", function() {
-        describe("when actual is not an Array", function() {
+        describe("when actual is a primitive", function() {
           describe(".matches", function() {
             it("matches when expected == actual", function() {
               expect(true).to(equal, true);
@@ -58,10 +58,82 @@ Screw.Unit(function() {
         });
 
         describe("when actual is an Array", function() {
+          describe("and contents are primitives", function() {
+            describe(".matches", function() {
+              it("matches when Arrays the expected and actual have the same contents", function() {
+                expect([1, 2, 3]).to(equal, [1, 2, 3]);
+                expect([1, 2, 3]).to_not(equal, [3, 2, 1]);
+              });
+            });
+
+            describe(".failure_message", function() {
+              describe("on a positive failure", function() {
+                it("prints 'expected [actual] to equal [expected]", function() {
+                  var message = null;
+                  try {
+                    expect([1, 2, 3]).to(equal, [1, 2, 4]);
+                  } catch(e) {
+                    message = e;
+                  }
+                  expect(message).to(equal, "expected [1,2,3] to equal [1,2,4]");
+                });
+              });
+
+              describe("on a negative failure", function() {
+                it("prints 'expected [actual] to not equal [expected]", function() {
+                  var message = null;
+                  try {
+                    expect([1, 2, 3]).to_not(equal, [1, 2, 3]);
+                  } catch(e) {
+                    message = e;
+                  }
+                  expect(message).to(equal, "expected [1,2,3] to not equal [1,2,3]");
+                });
+              });
+            });
+          });
+
+          describe("and contents are Objects", function() {
+            describe(".matches", function() {
+              it("matches when all the items' expected's keys match all of actual's keys", function() {
+                expect([{foo: 1, bar: 2}, {foo: 3, bar: 4}]).to(equal, [{foo: 1, bar: 2}, {foo: 3, bar: 4}]);
+                expect([{foo: 1, bar: 2}, {foo: 3, bar: 4}]).to_not(equal, [{foo: 1, bar: 2}, {foo: 3, bar: 5}]);
+              });
+            });
+
+            describe(".failure_message", function() {
+              describe("on a positive failure", function() {
+                it("prints 'expected [actual] to equal [expected]", function() {
+                  var message = null;
+                  try {
+                    expect([{foo: 1, bar: 2}, {foo: 3, bar: 4}]).to(equal, [{foo: 1, bar: 2}, {foo: 3, bar: 5}]);
+                  } catch(e) {
+                    message = e;
+                  }
+                  expect(message).to(equal, "expected [[object Object],[object Object]] to equal [[object Object],[object Object]]");
+                });
+              });
+
+              describe("on a negative failure", function() {
+                it("prints 'expected [actual] to not equal [expected]", function() {
+                  var message = null;
+                  try {
+                    expect([{foo: 1, bar: 2}, {foo: 3, bar: 4}]).to_not(equal, [{foo: 1, bar: 2}, {foo: 3, bar: 4}]);
+                  } catch(e) {
+                    message = e;
+                  }
+                  expect(message).to(equal, "expected [[object Object],[object Object]] to not equal [[object Object],[object Object]]");
+                });
+              });
+            });
+          });
+        });
+
+        describe("when actual is an Object", function() {
           describe(".matches", function() {
-            it("matches when Arrays the expected and actual have the same contents", function() {
-              expect([1, 2, 3]).to(equal, [1, 2, 3]);
-              expect([1, 2, 3]).to_not(equal, [3, 2, 1]);
+            it("matches when all expected's keys match all of actual's keys", function() {
+              expect({foo: 1, bar: 2}).to(equal, {foo: 1, bar: 2});
+              expect({foo: 1, bar: 2}).to_not(equal, {foo: 1, bar: 3});
             });
           });
 
@@ -70,11 +142,11 @@ Screw.Unit(function() {
               it("prints 'expected [actual] to equal [expected]", function() {
                 var message = null;
                 try {
-                  expect([1, 2, 3]).to(equal, [1, 2, 4]);
+                  expect({foo: 1, bar: 2}).to(equal, {foo: 1, bar: 3});
                 } catch(e) {
                   message = e;
                 }
-                expect(message).to(equal, "expected [1,2,3] to equal [1,2,4]");
+                expect(message).to(equal, "expected [[object Object]] to equal [[object Object]]");
               });
             });
 
@@ -82,11 +154,11 @@ Screw.Unit(function() {
               it("prints 'expected [actual] to not equal [expected]", function() {
                 var message = null;
                 try {
-                  expect([1, 2, 3]).to_not(equal, [1, 2, 3]);
+                  expect({foo: 1, bar: 2}).to_not(equal, {foo: 1, bar: 2});
                 } catch(e) {
                   message = e;
                 }
-                expect(message).to(equal, "expected [1,2,3] to not equal [1,2,3]");
+                expect(message).to(equal, "expected [[object Object]] to not equal [[object Object]]");
               });
             });
           });
