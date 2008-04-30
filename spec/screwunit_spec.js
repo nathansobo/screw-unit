@@ -1,12 +1,12 @@
 Screw.Unit(function() {
-  var global_before_invoked = false;
-  var global_after_invoked = false;
+  var global_before_invoked = 0;
+  var global_after_invoked = 0;
   before(function() {
     try {
-      expect(global_before_invoked).to(equal, false);
+      expect(global_before_invoked).to(equal, 0);
     } finally {
-      global_before_invoked = true;
-      global_after_invoked = false;
+      global_before_invoked++;
+      global_after_invoked = 0;
     }
   });
 
@@ -14,8 +14,8 @@ Screw.Unit(function() {
     try {
       expect(global_after_invoked).to(equal, false);
     } finally {
-      global_before_invoked = false;
-      global_after_invoked = true;
+      global_before_invoked = 0;
+      global_after_invoked = 1;
     }
   });
 
@@ -203,39 +203,39 @@ Screw.Unit(function() {
 
     describe('#run', function() {
       describe("A describe with a before and after block", function() {
-        var before_invoked = false;
-        var after_invoked = false;
+        var before_invoked = 0;
+        var after_invoked = 0;
         before(function() {
           try {
-            expect(before_invoked).to(equal, false);
+            expect(before_invoked).to(equal, 0);
           } finally {
-            before_invoked = true;
-            after_invoked = false;
+            before_invoked++;
+            after_invoked = 0;
           }
         });
         after(function() {
           try {
-            expect(after_invoked).to(equal, false);
+            expect(after_invoked).to(equal, 0);
           } finally {
-            before_invoked = false;
-            after_invoked = true;
+            before_invoked = 0;
+            after_invoked++;
           }
         });
 
         it("invokes the global before prior to an it", function() {
-          expect(global_before_invoked).to(equal, true);
+          expect(global_before_invoked).to(equal, 1);
         });
 
         it("invokes the before prior to an it", function() {
-          expect(before_invoked).to(equal, true);
+          expect(before_invoked).to(equal, 1);
         });
 
         it("invokes the after callback after an it", function() {
-          expect(after_invoked).to(equal, false);
+          expect(after_invoked).to(equal, 0);
         });
 
         it("invokes the global after callback after an it", function() {
-          expect(global_after_invoked).to(equal, false);
+          expect(global_after_invoked).to(equal, 0);
         });
       });
 
