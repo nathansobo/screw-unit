@@ -31,13 +31,13 @@ Screw.Unit(function() {
       });
       
       describe(".failure_message", function() {
-        it("prints 'expected [expected] to (not) be equal [actual]'", function() {
+        it('prints "expected "expected" to (not) be equal "actual""', function() {
           var message = null;
           try { expect(1).to(equal, 2) } catch(e) { message = e }
-          expect(message).to(equal, "expected [1] to equal [2]");
+          expect(message).to(equal, 'expected "1" to equal "2"');
           
           try { expect(1).to_not(equal, 1) } catch(e) { message = e }
-          expect(message).to(equal, "expected [1] to not equal [1]");
+          expect(message).to(equal, 'expected "1" to not equal "1"');
         });
       });
     });
@@ -58,13 +58,13 @@ Screw.Unit(function() {
       });
       
       describe(".failure_message", function() {
-        it("prints 'expected [actual] to (not) match [expected]", function() {
+        it('prints "expected "actual" to (not) match "expected"', function() {
           var message = null;
           try { expect("hello").to(match, "schmello") } catch(e) { message = e }
-          expect(message).to(equal, "expected [hello] to match [schmello]");
+          expect(message).to(equal, 'expected "hello" to match "schmello"');
           
           try { expect("hello").to_not(match, "ello") } catch(e) { message = e }
-          expect(message).to(equal, "expected [hello] to not match [ello]");
+          expect(message).to(equal, 'expected "hello" to not match "ello"');
         });
       });
     });
@@ -79,10 +79,10 @@ Screw.Unit(function() {
         it("prints 'expected [actual] to (not) be empty", function() {
           var message = null;
           try { expect([1]).to(be_empty) } catch(e) { message = e }
-          expect(message).to(equal, "expected [1] to be empty");
+          expect(message).to(equal, 'expected "[1]" to be empty');
           
           try { expect([]).to_not(be_empty) } catch(e) { message = e }
-          expect(message).to(equal, "expected [] to not be empty");
+          expect(message).to(equal, 'expected "[]" to not be empty');
         });
       });
     });

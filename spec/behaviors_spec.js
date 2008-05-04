@@ -1,7 +1,27 @@
 Screw.Unit(function() {
-  describe('behaviors', function() {
+  var global_before_invoked = false, global_after_invoked = false;
+  before(function() { global_before_invoked = true });
+  after(function() { global_after_invoked = true });
+  
+  describe('Behaviors', function() {
     describe('#run', function() {
-      describe("A describe with a before and after block", function() {
+      describe("a simple [describe]", function() {
+        it("invokes the global [before] before an [it]", function() {
+          expect(global_before_invoked).to(equal, true);
+          global_before_invoked = false;
+        });
+
+        it("invokes the global [before] before each [it]", function() {
+          expect(global_before_invoked).to(equal, true);
+          global_after_invoked = false;
+        });
+
+        it("invokes the global [after] after an [it]", function() {
+          expect(global_after_invoked).to(equal, true);
+        });
+      });
+      
+      describe("a [describe] with a [before] and [after] block", function() {
         var before_invoked = false, after_invoked = false;
         before(function() { before_invoked = true });
         after(function() { after_invoked = true });
