@@ -12,10 +12,6 @@ Screw.Unit(function() {
           expect({a: 'b', c: 'd', e: 'f'}).to_not(equal, {a: 'b', c: 'd', e: 'G'});
         });
         
-        it("recursively applies equality to complex elements", function() {
-          expect({a: {b: 'c'}}).to(equal, {a: {b: 'c'}});
-          expect({a: {b: 'c'}}).to_not(equal, {a: {b: 'D'}});
-        });
       });
       
       describe('when given an array', function() {
