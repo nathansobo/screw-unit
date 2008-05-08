@@ -52,6 +52,13 @@ Screw.Unit(function() {
           expect("The wheels of the bus").to_not(match, "oars");
         });
       });
+
+      describe('when given an integer', function() {
+        it("matches [expected]s containing [actual]s", function() {
+          expect("1 time").to(match, 1);
+          expect("2 times").to_not(match, 3);
+        });
+      });
       
       describe(".failure_message", function() {
         it('prints "expected "actual" to (not) match "expected"', function() {
