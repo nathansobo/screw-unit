@@ -16,13 +16,32 @@
     </script>
     
     <script type="text/javascript">
-      //Here be your specs/behaviors.  Would likely be in an external file.  
+      //Here be your custom matchers.  Would likely be in an external file? 
+      //This is a sketchy example it actually chokes, but the browser returns
+      //its own error message. This means the to_not case doesn't work.
+      Screw.Matchers["be_defined"] = {
+        match: function(expected, actual) {
+          return typeof actual != "undefined"
+        },
+        failure_message: function(expected, actual, not) {
+          return ''//No point in getting fancy, browser returns own message.
+        }
+      }
+      //Here be your specs/behaviors.  Would likely be in an external file? 
       //See the full self-speccing suite.html for detailed example, including
       //using custom matchers.
       Screw.Unit(function() {
         describe("foo", function() {
+          it("is defined", function() {
+            expect(foo).to(be_defined);
+          });
           it("returns bar", function() {
             expect(foo()).to(equal, "bar");
+          });
+        });
+        describe("baz", function() {
+          it("is not defined", function() {
+            expect(baz).to(be_defined);
           });
         });
       });
