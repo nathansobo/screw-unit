@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <script src="lib/jquery-1.2.3.js"></script>
+    <script src="lib/jquery.fn.js"></script>
+    <script src="lib/jquery.print.js"></script>
+    <script src="lib/screw.builder.js"></script>
+    <script src="lib/screw.matchers.js"></script>
+    <script src="lib/screw.events.js"></script>
+    <script src="lib/screw.behaviors.js"></script>
+    <link rel="stylesheet" href="lib/screw.css">
+    <script type="text/javascript">
+      //Here be your code.  Would likely be an external .js file.
+      function foo(){
+        return "bar";
+      }
+    </script>
+    
+    <script type="text/javascript">
+      //Here be your specs/behaviors.  Would likely be in an external file.  
+      //See the full self-speccing suite.html for detailed example, including
+      //using custom matchers.
+      Screw.Unit(function() {
+        describe("foo", function() {
+          it("returns bar", function() {
+            expect(foo()).to(equal, "bar");
+          });
+        });
+      });
+  	</script>
+  </head>
+  <body></body>
+</html>
