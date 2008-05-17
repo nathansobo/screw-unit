@@ -90,6 +90,25 @@ Screw.Unit(function() {
       });
     });
 
+    describe('#have_length', function() {
+      it("matches Arrays of the expected length", function() {
+        expect([]).to(have_length, 0);
+        expect([1]).to(have_length, 1);
+        expect([1, 2, 3]).to_not(have_length, 4);
+      });
+
+      describe(".failure_message", function() {
+        it("prints 'expected [actual] to (not) have length [expected]", function() {
+          var message = null;
+          try { expect([1, 2]).to(have_length, 4) } catch(e) { message = e }
+          expect(message).to(equal, 'expected [ 1, 2 ] to have length 4');
+          
+          try { expect([1]).to_not(have_length, 1) } catch(e) { message = e }
+          expect(message).to(equal, 'expected [ 1 ] to not have length 1');
+        });
+      });
+    });
+
     describe('#be_null', function() {
       it("matches null", function() {
         expect(null).to(be_null);
