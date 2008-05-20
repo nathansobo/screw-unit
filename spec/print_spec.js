@@ -108,12 +108,26 @@ Screw.Unit(function() {
       });
     });
 
+    describe('when given arguments', function() {
+      it("returns the printed array of elements ", function() {
+        var args = null;
+        (function(){ args = arguments })(1,2,3);
+        expect($.print(args)).to(equal, '[ 1, 2, 3 ]');
+      });
+    });
+
     describe('when given a jQuery', function() {
       it("returns the printed array of elements engirthed in '$()'", function() {
         expect($.print($('<div>'))).to(equal, '$([ <div> ])');
       });
     });
     
+    describe('when given a NodeList', function() {
+      it("returns the printed array of elements in the list", function() {
+        expect($.print(document.getElementsByTagName('body'))).to(equal, '[ <body> ]');
+      });
+    });
+
     describe('when given an object', function() {
       it("returns the keys and values of the object, enraptured with curly braces", function() {
         expect($.print({})).to(equal, '{}');
