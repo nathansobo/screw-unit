@@ -54,10 +54,29 @@ Screw.Unit(function() {
       });        
     });
 
+    describe('when given a RegExp', function() {
+      it('should print the regexp', function() {
+        expect($.print(/abc/i)).to(equal, '/abc/i');
+      });
+    });
+
+    describe('when given NaN', function() {
+      it('should print the string "NaN"', function() {
+        expect($.print(NaN)).to(equal, 'NaN');
+      });
+    });
+
     describe('when given an element', function() {
       it("returns the string representation of the element", function() {
         expect($.print($('<div>').get(0))).to(equal, '<div>');
         expect($.print($('<div foo="bar">').get(0))).to(equal, '<div>');
+        expect($.print($('<div class="foo" id="bar">').get(0))).to(equal, '<div class="foo" id="bar">');
+      });
+
+      describe('when the element is an img', function() {
+        it('prints out the img src attribute', function() {
+          expect($.print($('<img src="test.png">'))).to(match, /<img src=".+?test.png">/);
+        })
       });
     });
 
@@ -89,12 +108,26 @@ Screw.Unit(function() {
       });
     });
 
+    describe('when given arguments', function() {
+      it("returns the printed array of elements ", function() {
+        var args = null;
+        (function(){ args = arguments })(1,2,3);
+        expect($.print(args)).to(equal, '[ 1, 2, 3 ]');
+      });
+    });
+
     describe('when given a jQuery', function() {
-      it("returns the printed array of elements engirthed in '$()' ", function() {
+      it("returns the printed array of elements engirthed in '$()'", function() {
         expect($.print($('<div>'))).to(equal, '$([ <div> ])');
       });
     });
     
+    describe('when given a NodeList', function() {
+      it("returns the printed array of elements in the list", function() {
+        expect($.print(document.getElementsByTagName('body'))).to(equal, '[ <body> ]');
+      });
+    });
+
     describe('when given an object', function() {
       it("returns the keys and values of the object, enraptured with curly braces", function() {
         expect($.print({})).to(equal, '{}');
@@ -110,7 +143,7 @@ Screw.Unit(function() {
           it("returns elipses for circularities", function() {
             var circular = {};
             circular[0] = circular;
-            expect($.print(circular)).to(equal, '{ 0: { 0: ... } }');
+            expect($.print(circular)).to(equal, '{ 0: ... }');
           });
         });
       });
