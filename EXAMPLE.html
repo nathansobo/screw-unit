@@ -2,7 +2,7 @@
   <!--
     This file is a fully-functioning example test case. Try opening this file in Firefox, Safari,
     or Internet Explorer to see what a running test looks like.
-    This file demonstrates the the components involved in writing a simple test, such as:
+    This file demonstrates the components involved in writing a simple test, such as:
       * The necessary HTML to run a test (with the required <script> and <link rel="stylesheet"> tags),
       * A "custom matcher" (i.e., a custom assertion) to make your tests more readable,
       * And, a simple test with the necessary boiler-plate code to get you up and running.
@@ -54,9 +54,9 @@
           });
         });
         
-        describe("an undefined variable", function() {
+        describe("numbers", function() {
           // Here is a use of the custom matcher defined above.
-          it("is not defined", function() {
+          it("either is or is not even", function() {
             expect(2).to(be_even);
             expect(3).to_not(be_even);
           });
