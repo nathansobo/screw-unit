@@ -25,7 +25,21 @@ Screw.Unit(function() {
           expect([{a: 'b'}, {c: 'd'}]).to_not(equal, [{a: 'b'}, {c: 'E'}]);
         });
       });
-      
+
+      describe("when given a hash", function() {
+        it("matches hashes with the same key-value pairs", function() {
+          expect({"a":"b", "c":"d"}).to(equal, {"a":"b", "c":"d"});
+          expect({"a":"b", "c":"e"}).to_not(equal, {"a":"b", "c":"d"});
+          expect({"a":"b", "d":"d"}).to_not(equal, {"a":"b", "c":"d"});
+        });
+
+        it("recursively applies equality to complex hashes", function() {
+          expect({"a":"b", "c": {"e":"f", "g":"h"}}).to(equal, {"a":"b", "c": {"e":"f", "g":"h"}});
+          expect({"a":"b", "c": {"e":"f", "g":"i"}}).to_not(equal, {"a":"b", "c": {"e":"f", "g":"h"}});
+          expect({"a":"b", "c": {"e":"f", "h":"h"}}).to_not(equal, {"a":"b", "c": {"e":"f", "g":"h"}});
+        });
+      });
+
       describe(".failure_message", function() {
         it('prints "expected [expected] to (not) be equal [actual]"', function() {
           var message = null;
