@@ -1,1 +1,2 @@
+- Added elapsed time information in test suite run.
 - Equal matchers works with complex hash structures
