@@ -66,6 +66,12 @@ Screw.Unit(function() {
       });
     });
 
+    describe('when given 0', function() {
+      it('should print the string "0"', function() {
+        expect($.print(0)).to(equal, '0');
+      });
+    });
+    
     describe('when given an element', function() {
       it("returns the string representation of the element", function() {
         expect($.print($('<div>').get(0))).to(equal, '<div>');
