@@ -247,5 +247,100 @@ Screw.Unit(function() {
       });
     });
 
+    describe('#be_gt', function() {
+      it('matches integers greater than the expected value', function() {
+        expect(2).to(be_gt, 1);
+        expect(1).to(be_gt, 0);
+        expect(0).to(be_gt, -1);
+        expect(0).to_not(be_gt, 0);
+        expect(-1).to_not(be_gt, 0);
+        expect(0).to_not(be_gt, 1);
+        expect(1).to_not(be_gt, 5);
+      });
+
+      describe(".failure_message", function() {
+        it('prints "expected [expected] to (not) be greater than [actual]"', function() {
+          var message = null;
+          try { expect(1).to(be_gt, 2) } catch(e) { message = e }
+          expect(message).to(equal, 'expected 1 to be greater than 2');
+          
+          try { expect(2).to_not(be_gt, 1) } catch(e) { message = e }
+          expect(message).to(equal, 'expected 2 to not be greater than 1');
+        });
+      });
+    });
+
+    describe('#be_gte', function() {
+      it('matches integers greater than or equal to the expected value', function() {
+        expect(2).to(be_gte, 1);
+        expect(1).to(be_gte, 0);
+        expect(0).to(be_gte, -1);
+        expect(-1).to(be_gte, -1);
+        expect(0).to(be_gte, 0);
+        expect(1).to(be_gte, 1);
+        expect(-1).to_not(be_gte, 0);
+        expect(0).to_not(be_gte, 1);
+        expect(1).to_not(be_gte, 5);
+      });
+
+      describe(".failure_message", function() {
+        it('prints "expected [expected] to (not) be greater than or equal to [actual]"', function() {
+          var message = null;
+          try { expect(1).to(be_gte, 2) } catch(e) { message = e }
+          expect(message).to(equal, 'expected 1 to be greater than or equal to 2');
+          
+          try { expect(2).to_not(be_gte, 1) } catch(e) { message = e }
+          expect(message).to(equal, 'expected 2 to not be greater than or equal to 1');
+        });
+      });
+    });
+
+    describe('#be_lt', function() {
+      it('matches integers less than the expected value', function() {
+        expect(1).to(be_lt, 2);
+        expect(0).to(be_lt, 1);
+        expect(-1).to(be_lt, 0);
+        expect(0).to_not(be_lt, 0);
+        expect(0).to_not(be_lt, -1);
+        expect(1).to_not(be_lt, 0);
+        expect(5).to_not(be_lt, 1);
+      });
+
+      describe(".failure_message", function() {
+        it('prints "expected [expected] to (not) be less than [actual]"', function() {
+          var message = null;
+          try { expect(2).to(be_lt, 1) } catch(e) { message = e }
+          expect(message).to(equal, 'expected 2 to be less than 1');
+          
+          try { expect(1).to_not(be_lt, 2) } catch(e) { message = e }
+          expect(message).to(equal, 'expected 1 to not be less than 2');
+        });
+      });
+    });
+
+    describe('#be_lte', function() {
+      it('matches integers less than or equal to the expected value', function() {
+        expect(1).to(be_lte, 2);
+        expect(0).to(be_lte, 1);
+        expect(-1).to(be_lte, 0);
+        expect(-1).to(be_lte, -1);
+        expect(0).to(be_lte, 0);
+        expect(1).to(be_lte, 1);
+        expect(0).to_not(be_lte, -1);
+        expect(1).to_not(be_lte, 0);
+        expect(5).to_not(be_lte, 1);
+      });
+
+      describe(".failure_message", function() {
+        it('prints "expected [expected] to (not) be less than or equal to [actual]"', function() {
+          var message = null;
+          try { expect(2).to(be_lte, 1) } catch(e) { message = e }
+          expect(message).to(equal, 'expected 2 to be less than or equal to 1');
+          
+          try { expect(1).to_not(be_lte, 2) } catch(e) { message = e }
+          expect(message).to(equal, 'expected 1 to not be less than or equal to 2');
+        });
+      });
+    });
   });
 });
