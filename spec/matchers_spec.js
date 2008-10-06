@@ -6,15 +6,41 @@ Screw.Unit(function() {
         expect(true).to_not(equal, false);
       });
       
-      describe('when given an object', function() {
-        it("matches Objects with the same keys and values", function() {
-          expect({a: 'b', c: 'd'}).to(equal, {a: 'b', c: 'd'});
-          expect({a: 'b', c: 'd', e: 'f'}).to_not(equal, {a: 'b', c: 'd', e: 'G'});
+      describe('when actual is an object', function() {
+        describe("when expected has the same keys and values", function() {
+          it("matches successfully", function() {
+            expect({a: 'b', c: 'd'}).to(equal, {a: 'b', c: 'd'});
+          });
         });
         
+        describe("when expected has different keys and values", function() {
+          it("does not match", function() {
+            expect({a: 'b', c: 'd', e: 'f'}).to_not(equal, {a: 'b', c: 'd', e: 'G'});
+          });
+        });
+        
+        describe("when expected is undefined", function() {
+          it("does not match", function() {
+            expect({}).to_not(equal, undefined);
+          });
+        });
       });
       
-      describe('when given an array', function() {
+      describe("when actual is undefined", function() {
+        describe("when expected is undefined", function() {
+          it("matches successfully", function() {
+            expect(undefined).to(equal, undefined);
+          });
+        });
+        
+        describe("when expected is an empty object", function() {
+          it("does not match", function() {
+            expect(undefined).to_not(equal, {});
+          });
+        });
+      });
+      
+      describe('when actual is an array', function() {
         it("matches Arrays with the same elements", function() {
           expect([1, 2, 4]).to(equal, [1, 2, 4]);
           expect([1, 2, 3]).to_not(equal, [3, 2, 1]);
@@ -26,7 +52,7 @@ Screw.Unit(function() {
         });
       });
 
-      describe("when given a hash", function() {
+      describe("when actual is a hash", function() {
         it("matches hashes with the same key-value pairs", function() {
           expect({"a":"b", "c":"d"}).to(equal, {"a":"b", "c":"d"});
           expect({"a":"b", "c":"e"}).to_not(equal, {"a":"b", "c":"d"});
@@ -53,21 +79,21 @@ Screw.Unit(function() {
     });
     
     describe('#match', function() {
-      describe('when given a regular expression', function() {
+      describe('when actual is a regular expression', function() {
         it("matches Strings produced by the grammar", function() {
           expect("The wheels of the bus").to(match, /bus/);
           expect("The wheels of the bus").to_not(match, /boat/);
         });
       });
       
-      describe('when given a string', function() {
+      describe('when actual is a string', function() {
         it("matches [expected]s containing [actual]s", function() {
           expect("The wheels of the bus").to(match, "wheels");
           expect("The wheels of the bus").to_not(match, "oars");
         });
       });
 
-      describe('when given an integer', function() {
+      describe('when actual is an integer', function() {
         it("matches [expected]s containing [actual]s", function() {
           expect("1 time").to(match, 1);
           expect("2 times").to_not(match, 3);
