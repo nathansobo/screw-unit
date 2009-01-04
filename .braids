@@ -1,0 +1,8 @@
+--- 
+lib/disco: 
+  squashed: true
+  url: git@github.com:grockit/disco.git
+  type: git
+  revision: acf3c1077c4911c5d7ac10d456bbab61a194902f
+  branch: master
+  remote: braid/lib/disco
