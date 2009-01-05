@@ -1,3 +1,0 @@
-[submodule "vendor/screw-unit"]
-	path = vendor/screw-unit
-	url = git://github.com/nathansobo/screw-unit.git

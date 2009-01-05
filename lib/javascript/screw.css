@@ -1,0 +1,37 @@
+html {
+  padding: 0.1em;
+  font-family: sans-serif;
+}
+
+li {
+  list-style-type: none;
+}
+
+ul {
+  padding: .3em;
+}
+
+ul.descriptions {
+  background: #e2e1e1;
+  border: 1px solid #a4a4a4;
+}
+
+ul.child_descriptions {
+  margin-left: .6em;
+  background: #e2e1e1;
+  border: 1px solid #a4a4a4;
+}
+
+li.example {
+  margin: 0;
+  padding: .3em;
+  background: white;
+}
+
+li.example.passed {
+  background: #95ff95;
+}
+
+li.example.failed {
+  background: #ff9696;
+}

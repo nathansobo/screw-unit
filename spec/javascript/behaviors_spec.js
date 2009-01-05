@@ -1,4 +1,4 @@
-Screw.Unit(function() {
+Screw.Unit(function(c) { with(c) {
   var global_before_invoked = false, global_after_invoked = false;
   before(function() { global_before_invoked = true });
   after(function() { global_after_invoked = true });
@@ -81,19 +81,21 @@ Screw.Unit(function() {
       });
 
       describe("A describe with a nested describe", function() {
-        var before_invocations = [], after_invocations = [];
+        var before_invocations = [], after_invocations = [], clear_after_invocations;
         before(function() {
+          clear_after_invocations = true;
           before_invocations = [];
           before_invocations.push("outermost before");
         });
 
         after(function() {
-          after_invocations = [];
           after_invocations.push("outermost after");
+          if (clear_after_invocations) after_invocations = [];
         });
       
         it("outside a nested [describe], does not invoke any of the nested's [before]s", function() {
           expect(before_invocations).to(equal, ["outermost before"]);
+          clear_after_invocations = false;
         });
         
         it("outside a nested [describe], does not invoke any of the nested's [after]s", function() {
@@ -111,10 +113,11 @@ Screw.Unit(function() {
 
           it("runs [before]s in the parent [describe] before each [it]", function() {
             expect(before_invocations).to(equal, ["outermost before", "inner before"]);
+            clear_after_invocations = false;
           });
 
           it("runs [after]s in the parent [describe] after each [it]", function() {
-            expect(after_invocations).to(equal, ["outermost after", "inner after"]);
+            expect(after_invocations).to(equal, ["inner after", "outermost after"]);
           });
           
           describe("a doubly nested [describe]", function() {
@@ -123,6 +126,7 @@ Screw.Unit(function() {
             });
 
             after(function() {
+              after_invocations = [];
               after_invocations.push('innermost after');
             });
   
@@ -133,16 +137,13 @@ Screw.Unit(function() {
   
               it("runs [before]s in all ancestors before each [it]", function() {
                 expect(before_invocations).to(equal, ["outermost before", "inner before", "innermost before"]);
+                clear_after_invocations = false;
               });
             });
             
             describe('[after] blocks', function() {
-              it("runs [after]s in all ancestors after an [it]", function() {
-                expect(after_invocations).to(equal, ["outermost after", "inner after", "innermost after"]);
-              });
-  
               it("runs [after]s in all ancestors after each [it]", function() {
-                expect(after_invocations).to(equal, ["outermost after", "inner after", "innermost after"]);
+                expect(after_invocations).to(equal, ["innermost after", "inner after", "outermost after"]);
               });
             });
           });
@@ -185,4 +186,4 @@ Screw.Unit(function() {
       });
     });
   });
-});
+}});
