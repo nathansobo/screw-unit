@@ -5,16 +5,6 @@ Screw.Unit(function(c) { with(c) {
 
   describe('Behaviors', function() {
     describe('#run', function() {
-      describe("elapsed time", function() {
-        it("displays the elapsed time after the Suite finishes", function() {
-          var status = $(".status");
-          status.fn("display");
-          var time_elapsed_matches = /([0-9]+\.[0-9]+) seconds/.exec(status.html());
-          var time_elapsed = parseFloat(time_elapsed_matches[1]);
-          expect(time_elapsed > 0.0).to(be_true);
-        });
-      });
-
       describe("a simple [describe]", function() {
         it("invokes the global [before] before an [it]", function() {
           expect(global_before_invoked).to(equal, true);

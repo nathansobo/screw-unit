@@ -3,6 +3,17 @@ html {
   font-family: sans-serif;
 }
 
+div.progress_bar {
+  background: gray;
+  height: 1em;
+}
+
+div.progress_bar div.progress {
+  background: black;
+  width: 0%;
+  height: 1em;
+}
+
 li {
   list-style-type: none;
 }
