@@ -27,6 +27,10 @@ ul.descriptions {
   border: 1px solid #a4a4a4;
 }
 
+li.description span.name {
+  cursor: pointer;
+}
+
 ul.child_descriptions {
   margin-left: .6em;
   background: #e2e1e1;
@@ -38,6 +42,11 @@ li.example {
   padding: .3em;
   background: white;
 }
+
+li.example span.name {
+  cursor: pointer;
+}
+
 
 li.example.passed {
   background: #95ff95;
