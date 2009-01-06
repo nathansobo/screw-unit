@@ -24,6 +24,9 @@ ul {
 
 ul.descriptions {
   background: #e2e1e1;
+}
+
+li.description {
   border: 1px solid #a4a4a4;
 }
 
@@ -34,7 +37,6 @@ li.description span.name {
 ul.child_descriptions {
   margin-left: .6em;
   background: #e2e1e1;
-  border: 1px solid #a4a4a4;
 }
 
 li.example {
