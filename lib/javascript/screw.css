@@ -3,12 +3,19 @@ html {
   font-family: sans-serif;
 }
 
-div.progress_bar {
-  background: gray;
-  height: 1em;
+
+div#screw_unit_controls {
+  width: 200px;
+  height: 100px;
+  background: red;
 }
 
-div.progress_bar div.progress {
+div#screw_unit_progress_bar {
+  background: gray;
+  height: 25px;
+}
+
+div#screw_unit_progress_bar div#screw_unit_progress {
   background: black;
   width: 0%;
   height: 1em;
@@ -24,6 +31,8 @@ ul {
 
 ul.descriptions {
   background: #e2e1e1;
+  overflow: auto;
+  height: 500px;
 }
 
 li.description {
