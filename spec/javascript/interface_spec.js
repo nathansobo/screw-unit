@@ -1,7 +1,26 @@
 Screw.Unit(function(c) { with(c) {
 
-  describe("Screw.Interface.Description", function() {
+  describe("Screw.Interface.Runner", function() {
+    var root, child_description_1, child_description_2, view;
 
+    before(function() {
+      root = new Screw.Description("");
+      child_description_1 = new Screw.Description("child 1");
+      child_description_2 = new Screw.Description("child 2");
+      root.add_description(child_description_1);
+      root.add_description(child_description_2);
+      view = Disco.build(Screw.Interface.Runner, {root: root, runnable: root});
+    });
+
+    describe("#content", function() {
+      it("renders a ul.descriptions with the #child_descriptions of the given root", function() {
+        expect(view.html()).to(match, Disco.build(Screw.Interface.Description, {description: child_description_1}).html());
+        expect(view.html()).to(match, Disco.build(Screw.Interface.Description, {description: child_description_2}).html());
+      });
+    });
+  });
+
+  describe("Screw.Interface.Description", function() {
     var description, view;
     before(function() {
       description = new Screw.Description("description");
@@ -148,5 +167,29 @@ Screw.Unit(function(c) { with(c) {
       });
     });
 
+  });
+
+  describe("Screw.Interface.ProgressBar", function() {
+    var description, example_1, example_2, view;
+    before(function() {
+      description = new Screw.Description("description");
+      example_1 = new Screw.Example("example 1", function() {
+      });
+      example_2 = new Screw.Example("example 1", function() {
+      });
+      description.add_example(example_1);
+      description.add_example(example_2);
+      view = Disco.build(Screw.Interface.ProgressBar, {runnable: description})
+    });
+
+    describe("when an example within the associated runnable is completed", function() {
+      it("updates the width of the progress bar to the proportion of completed examples", function() {
+        expect(view.find('div.progress').css('width')).to(equal, '0%');
+        example_1.run();
+        expect(view.find('div.progress').css('width')).to(equal, '50%');
+        example_2.run();
+        expect(view.find('div.progress').css('width')).to(equal, '100%');
+      });
+    });
   });
 }});
