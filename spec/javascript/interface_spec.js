@@ -184,11 +184,11 @@ Screw.Unit(function(c) { with(c) {
 
     describe("when an example within the associated runnable is completed", function() {
       it("updates the width of the progress bar to the proportion of completed examples", function() {
-        expect(view.find('div.progress').css('width')).to(equal, '0%');
+        expect(view.find('div#screw_unit_progress').css('width')).to(equal, '0%');
         example_1.run();
-        expect(view.find('div.progress').css('width')).to(equal, '50%');
+        expect(view.find('div#screw_unit_progress').css('width')).to(equal, '50%');
         example_2.run();
-        expect(view.find('div.progress').css('width')).to(equal, '100%');
+        expect(view.find('div#screw_unit_progress').css('width')).to(equal, '100%');
       });
     });
   });
