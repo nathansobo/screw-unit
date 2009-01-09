@@ -14,13 +14,25 @@ td#screw_unit_controls {
 }
 
 div#screw_unit_progress_bar {
-  background: gray;
+  border: 1px solid #cccccc;
   width: 100%;
   height: 25px;
+  background: #252525;
+}
+
+div#screw_unit_progress_text {
+  position: relative;
+  top: -20px;
+  padding-left: 5px;
+  color: white;
+}
+
+div#screw_unit_progress_bar.failed div#screw_unit_progress {
+  background: red;
 }
 
 div#screw_unit_progress_bar div#screw_unit_progress {
-  background: black;
+  background: green;
   height: 25px;
 }
 

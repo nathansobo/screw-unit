@@ -1,5 +1,4 @@
 Screw.Unit(function(c) { with(c) {
-
   describe("Screw.Interface.Runner", function() {
     var root, child_description_1, child_description_2, view;
 
@@ -170,12 +169,15 @@ Screw.Unit(function(c) { with(c) {
   });
 
   describe("Screw.Interface.ProgressBar", function() {
-    var description, example_1, example_2, view;
+    var description, example_1, example_2, view, should_fail;
     before(function() {
+      should_fail = false;
       description = new Screw.Description("description");
       example_1 = new Screw.Example("example 1", function() {
+        if (should_fail) throw "flunk";
       });
       example_2 = new Screw.Example("example 1", function() {
+        if (should_fail) throw "flunk";
       });
       description.add_example(example_1);
       description.add_example(example_2);
@@ -183,12 +185,24 @@ Screw.Unit(function(c) { with(c) {
     });
 
     describe("when an example within the associated runnable is completed", function() {
-      it("updates the width of the progress bar to the proportion of completed examples", function() {
+      it("updates the width of the progress bar to the proportion of completed examples and updates the 'n of m completed' text", function() {
         expect(view.find('div#screw_unit_progress').css('width')).to(equal, '0%');
+        expect(view.html()).to(match, "0 of 2");
         example_1.run();
         expect(view.find('div#screw_unit_progress').css('width')).to(equal, '50%');
+        expect(view.html()).to(match, "1 of 2");
         example_2.run();
         expect(view.find('div#screw_unit_progress').css('width')).to(equal, '100%');
+        expect(view.html()).to(match, "2 of 2");
+      });
+    });
+
+    describe("when an example within the associated runnable fails", function() {
+      it("adds the 'failed' class to its content", function() {
+        should_fail = true;
+        expect(view.hasClass('failed')).to(be_false);
+        example_1.run();
+        expect(view.hasClass('failed')).to(be_true);
       });
     });
   });
