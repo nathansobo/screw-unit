@@ -1,22 +1,48 @@
 Screw.Unit(function(c) { with(c) {
   describe("Screw.Interface.Runner", function() {
-    var root, child_description_1, child_description_2, view;
-
-    before(function() {
-      root = new Screw.Description("");
-      child_description_1 = new Screw.Description("child 1");
-      child_description_2 = new Screw.Description("child 2");
-      root.add_description(child_description_1);
-      root.add_description(child_description_2);
-      view = Disco.build(Screw.Interface.Runner, {root: root, runnable: root});
-    });
+    function render_view(root, runnable) {
+      return Disco.build(Screw.Interface.Runner, {root: root, runnable: runnable});
+    }
 
     describe("#content", function() {
+      var root, child_description_1, child_description_2, view;
+
+      before(function() {
+        root = new Screw.Description("");
+        child_description_1 = new Screw.Description("child 1");
+        child_description_2 = new Screw.Description("child 2");
+        root.add_description(child_description_1);
+        root.add_description(child_description_2);
+        view = render_view(root, root);
+      });
+
       it("renders a ul.descriptions with the #child_descriptions of the given root", function() {
         expect(view.html()).to(match, Disco.build(Screw.Interface.Description, {description: child_description_1}).html());
         expect(view.html()).to(match, Disco.build(Screw.Interface.Description, {description: child_description_2}).html());
       });
     });
+
+
+    describe("when the 'Show Failed' button is clicked", function() {
+      var root, description;
+
+      it("hides descriptions that have no failing examples", function() {
+        root = new Screw.Description("");
+        description = new Screw.Description("description with passing examples");
+        description.add_example = new Screw.Example("passing example", function() {});
+        root.add_description(description);
+
+        var view = render_view(root, root);
+
+        console.debug(view.html());
+        
+
+        expect(view.html()).to(match, "description with passing examples");
+        view.find("button#show_failed").click();
+        expect(view.html()).to_not(match, "description with passing examples");
+      });
+    });
+
   });
 
   describe("Screw.Interface.Description", function() {
@@ -196,13 +222,24 @@ Screw.Unit(function(c) { with(c) {
         expect(view.html()).to(match, "2 of 2");
       });
     });
-
+    
     describe("when an example within the associated runnable fails", function() {
-      it("adds the 'failed' class to its content", function() {
+      before(function() {
         should_fail = true;
+      });
+      
+      it("adds the 'failed' class to its content", function() {
         expect(view.hasClass('failed')).to(be_false);
         example_1.run();
         expect(view.hasClass('failed')).to(be_true);
+      });
+
+      it("updates the 'n failed' text to the number of failing examples", function() {
+        expect(view.html()).to(match, "0 failed");
+        example_1.run();
+        expect(view.html()).to(match, "1 failed");
+        example_2.run();
+        expect(view.html()).to(match, "2 failed");
       });
     });
   });
