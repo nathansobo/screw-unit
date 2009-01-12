@@ -40,7 +40,7 @@ Screw.Unit(function(c) { with(c) {
         });
       });
       
-      describe('when actual is an array', function() {
+      describe('when actual is an Array', function() {
         it("matches Arrays with the same elements", function() {
           expect([1, 2, 4]).to(equal, [1, 2, 4]);
           expect([1, 2, 3]).to_not(equal, [3, 2, 1]);
@@ -49,6 +49,12 @@ Screw.Unit(function(c) { with(c) {
         it("recursively applies equality to complex elements", function() {
           expect([{a: 'b'}, {c: 'd'}]).to(equal, [{a: 'b'}, {c: 'd'}]);
           expect([{a: 'b'}, {c: 'd'}]).to_not(equal, [{a: 'b'}, {c: 'E'}]);
+        });
+      });
+
+      describe("when actual is a String", function() {
+        it("does not match an Array with the same characters", function() {
+          expect("123").to_not(equal, ["1", "2", "3"]);
         });
       });
 

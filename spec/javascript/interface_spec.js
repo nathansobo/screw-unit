@@ -1,47 +1,114 @@
 Screw.Unit(function(c) { with(c) {
-  describe("Screw.Interface.Runner", function() {
-    function render_view(root, runnable) {
-      return Disco.build(Screw.Interface.Runner, {root: root, runnable: runnable});
-    }
+  before(function() {
+    original_options = Screw.Interface.options;
+    Screw.Interface.options = {}
+  });
 
-    describe("#content", function() {
-      var root, child_description_1, child_description_2, view;
+  after(function() {
+    Screw.Interface.options = original_options;
+  });
 
-      before(function() {
-        root = new Screw.Description("");
-        child_description_1 = new Screw.Description("child 1");
-        child_description_2 = new Screw.Description("child 2");
-        root.add_description(child_description_1);
-        root.add_description(child_description_2);
-        view = render_view(root, root);
+
+  
+  describe("Screw.Interface", function() {
+    describe(".refresh", function() {
+      var original_options;
+
+      it("calls Screw.Interface.set_location with the current location plus the serialized Screw.Interface.options", function() {
+        Screw.Interface.options = {
+          foo: "bar",
+          baz: "bop"
+        };
+
+        mock(Screw.Interface, 'set_location');
+        var expected_base_location = window.location.href.split('?')[0];
+
+        Screw.Interface.refresh();
+
+        var actual_location = Screw.Interface.set_location.most_recent_args[0];
+
+        expect(actual_location).to(match, expected_base_location);
+
+        // testing "foo=bar&baz=bop" in presence of nondeterministic ordering
+        expect(actual_location).to(match, "foo=bar");
+        expect(actual_location).to(match, "baz=bop");
+        expect(actual_location).to(match, "&");
+      });
+    });
+
+    describe(".parse_options", function() {
+      it("extracts serialized options from the location and assigns them to the Screw.Interface.options object", function() {
+        mock(Screw.Interface, 'get_location', function() {
+          return "http://test.example.org?foo=bar&baz=bop";
+        })
+
+        expect(Screw.Interface.options).to(equal, {});
+        Screw.Interface.parse_options();
+        expect(Screw.Interface.options).to(equal, {
+          foo: 'bar',
+          baz: 'bop'
+        });
+      });
+    });
+
+    describe(".focused_runnable", function() {
+      context("when Screw.Interface.options is undefined", function() {
+        it("returns the root passed in initial_attributes", function() {
+          expect(Screw.Interface.focused_runnable()).to(equal, Screw.global_description());
+        });
       });
 
+      context("when Screw.Interface.options is a comma-delimited focus path", function() {
+        it("returns the result of root.runnable_at_path for the focus path converted into an array", function() {
+          Screw.Interface.options.focus_path = "1,2,3";
+          var focused = {}; 
+          mock(Screw.global_description(), 'runnable_at_path', function(path) {
+            expect(path).to(equal, [1, 2, 3]);
+            return focused;
+          })
+          expect(Screw.Interface.focused_runnable()).to(equal, focused);
+        });
+      });
+    });
+  });
+
+  
+  describe("Screw.Interface.Runner", function() {
+    var root, child_description_1, child_description_2, view;
+
+    before(function() {
+      root = new Screw.Description("");
+      child_description_1 = new Screw.Description("child 1");
+      child_description_2 = new Screw.Description("child 2");
+      root.add_description(child_description_1);
+      root.add_description(child_description_2);
+      view = Disco.build(Screw.Interface.Runner, {root: root, runnable: root});
+    });
+    
+    describe("#content", function() {
       it("renders a ul.descriptions with the #child_descriptions of the given root", function() {
         expect(view.html()).to(match, Disco.build(Screw.Interface.Description, {description: child_description_1}).html());
         expect(view.html()).to(match, Disco.build(Screw.Interface.Description, {description: child_description_2}).html());
       });
     });
 
-
     describe("when the 'Show Failed' button is clicked", function() {
       var root, description;
 
-      it("hides descriptions that have no failing examples", function() {
-        root = new Screw.Description("");
-        description = new Screw.Description("description with passing examples");
-        description.add_example = new Screw.Example("passing example", function() {});
-        root.add_description(description);
-
-        var view = render_view(root, root);
-
-        console.debug(view.html());
-        
-
-        expect(view.html()).to(match, "description with passing examples");
-        view.find("button#show_failed").click();
-        expect(view.html()).to_not(match, "description with passing examples");
-      });
+//      it("hides descriptions that have no failing examples", function() {
+//        root = new Screw.Description("");
+//        description = new Screw.Description("description with passing examples");
+//        description.add_example = new Screw.Example("passing example", function() {});
+//        root.add_description(description);
+//
+//        var view = render_view(root, root);
+//
+//        expect(view.html()).to(match, "description with passing examples");
+//        view.find("button#show_failed").click();
+//        expect(view.html()).to_not(match, "description with passing examples");
+//      });
     });
+
 
   });
 
@@ -116,27 +183,39 @@ Screw.Unit(function(c) { with(c) {
       });
     });
 
-    describe("when span.name clicked", function() {
+    describe("when span.name is clicked", function() {
       before(function() {
         view = Disco.build(Screw.Interface.Description, {description: description});
       });
       
-      it("calls #focus on the associated Description", function() {
-        mock(description, 'focus');
+      it("calls #focus on the view", function() {
+        mock(view, 'focus');
         view.find("span.name").click();
-        expect(description.focus).to(have_been_called);
+        expect(view.focus).to(have_been_called);
       });
     });
+
+    describe("#focus", function() {
+      it("sets Screw.Interface.options.focus_path to the serialized #path of the associated Description and calls Screw.Interface.refresh", function() {
+        mock(Screw.Interface, 'refresh');
+        view.focus();
+        expect(Screw.Interface.options.focus_path).to(equal, description.path().join(","));
+        expect(Screw.Interface.refresh).to(have_been_called);
+      });
+    });
+    
   });
   
   describe("Screw.Interface.Example", function() {
-    var example, view, failure_message, should_fail;
+    var example, description, view, failure_message, should_fail;
     before(function() {
       failure_message = "sharon ly says die!";
       example = new Screw.Example("passes or fails", function() {
         if (should_fail) throw(new Error(failure_message));
       });
-      example.parent_description = new Screw.Description();
+
+      description = new Screw.Description("parent description");
+      description.add_example(example);
       view = Disco.build(Screw.Interface.Example, {example: example});
     });
 
@@ -146,11 +225,11 @@ Screw.Unit(function(c) { with(c) {
       });
     });
     
-    describe("when clicked", function() {
-      it("calls #focus on the example", function() {
-        mock(example, 'focus');
-        view.find('span').click();
-        expect(example.focus).to(have_been_called);
+    describe("when span.name is clicked", function() {
+      it("calls #focus on the view", function() {
+        mock(view, 'focus');
+        view.find('span.name').click();
+        expect(view.focus).to(have_been_called);
       });
     });
 
@@ -192,6 +271,24 @@ Screw.Unit(function(c) { with(c) {
       });
     });
 
+    describe("#focus", function() {
+      var original_screw_options;
+      before(function() {
+        original_screw_options =  Screw.Interface.options;
+        Screw.Interface.options = {};
+      });
+      
+      after(function() {
+        Screw.Interface.options = original_screw_options;
+      });
+      
+      it("sets Screw.Interface.options.focus_path to the #path of the associated Example and calls Screw.Interface.refresh", function() {
+        mock(Screw.Interface, 'refresh');
+        view.focus();
+        expect(Screw.Interface.options.focus_path).to(equal, example.path().join(","));
+        expect(Screw.Interface.refresh).to(have_been_called);
+      });
+    });
   });
 
   describe("Screw.Interface.ProgressBar", function() {

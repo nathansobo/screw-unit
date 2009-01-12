@@ -78,31 +78,44 @@ Screw.Unit(function(c) { with(c) {
         });
       });
     });
-    
-    describe("#focus_path", function() {
-      context("when there is no #parent_description", function() {
-        it("returns an empty Array", function() {
-          expect(description.focus_path()).to(be_empty);
+
+
+    describe("methods dealing with paths", function() {
+      var root_description, child_description_0, child_description_1, grandchild_description_1_0;
+      before(function() {
+        root_description = new Screw.Description("root description");
+        child_description_0 = new Screw.Description("child description 0");
+        child_description_1 = new Screw.Description("child description 1");
+        grandchild_description_1_0 = new Screw.Description("grandchild description 1 0");
+        root_description.add_description(child_description_0)
+        root_description.add_description(child_description_1);
+        child_description_1.add_description(grandchild_description_1_0);
+      });
+      
+      describe("#path", function() {
+        context("when there is no #parent_description", function() {
+          it("returns an empty Array", function() {
+            expect(description.path()).to(be_empty);
+          });
+        });
+
+        context("when there is a #parent_description", function() {
+          it("returns #index concatenated to the #path of the #parent_description", function() {
+            expect(child_description_0.path()).to(equal, [0]);
+            expect(grandchild_description_1_0.path()).to(equal, [1, 0]);
+          });
         });
       });
 
-      context("when there is a #parent_description", function() {
-        it("returns #index concatenated to the #focus_path of the #parent_description", function() {
-          root_description = new Screw.Description("root description");
-          child_description_0 = new Screw.Description("child description 0");
-          child_description_1 = new Screw.Description("child description 1");
-          grandchild_description_1_0 = new Screw.Description("grandchild description 1 0");
-
-          root_description.add_description(child_description_0)
-          root_description.add_description(child_description_1);
-          child_description_1.add_description(grandchild_description_1_0);
-
-          expect(child_description_0.focus_path()).to(equal, [0]);
-          expect(grandchild_description_1_0.focus_path()).to(equal, [1, 0]);
+      describe("#runnable_at_path", function() {
+        it("returns the runnable object (Example or Description) found by traversing the tree along the given path", function() {
+          expect(root_description.runnable_at_path([1, 0])).to(equal, grandchild_description_1_0);
         });
       });
     });
-
+    
+    
+    
     describe("#run_befores", function() {
       it("calls #run_befores on the #parent_description if there is one, then runs all the befores in the order they were added", function() {
         var events = [];      
@@ -161,20 +174,14 @@ Screw.Unit(function(c) { with(c) {
         if (should_fail) throw(new Error("sad times"));
       };
       example = new Screw.Example(name, fn);
-
-      parent_description = {
-        run_befores: function() {
-          events.push("run_befores called");
-        },
-
-        run_afters: function() {
-          events.push("run_afters called");
-        },
-
-        focus_path: function() {
-          [1];
-        }
+      parent_description = new Screw.Description("parent description")
+      parent_description.run_befores = function() {
+        events.push("run_befores called");
       }
+      parent_description.run_afters = function() {
+        events.push("run_afters called");
+      }
+
       example.parent_description = parent_description;
 
       original_reset_mocks = Screw.reset_mocks;
@@ -260,9 +267,9 @@ Screw.Unit(function(c) { with(c) {
       });
     });
 
-    describe("#focus_path", function() {
-      it("returns #index concatenated to the #focus_path of the #parent_description", function() {
-        expect(example.focus_path()).to(equal, parent_description.focus_path() + [example.index]);
+    describe("#path", function() {
+      it("returns #index concatenated to the #path of the #parent_description", function() {
+        expect(example.path()).to(equal, parent_description.path() + [example.index]);
       });
     });
   });
