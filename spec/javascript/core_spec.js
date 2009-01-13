@@ -114,8 +114,6 @@ Screw.Unit(function(c) { with(c) {
       });
     });
     
-    
-    
     describe("#run_befores", function() {
       it("calls #run_befores on the #parent_description if there is one, then runs all the befores in the order they were added", function() {
         var events = [];

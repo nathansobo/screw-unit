@@ -78,8 +78,8 @@ Screw.Unit(function(c) { with(c) {
 
     before(function() {
       root = new Screw.Description("");
-      child_description_1 = new Screw.Description("child 1");
-      child_description_2 = new Screw.Description("child 2");
+      child_description_1 = new Screw.Description("child description 1");
+      child_description_2 = new Screw.Description("child description 2");
       root.add_description(child_description_1);
       root.add_description(child_description_2);
       view = Disco.build(Screw.Interface.Runner, {root: root, runnable: root});
@@ -93,23 +93,34 @@ Screw.Unit(function(c) { with(c) {
     });
 
     describe("when the 'Show Failed' button is clicked", function() {
-      var root, description;
+      var passing_example, failing_example, example_1;
+      before(function() {
+        passing_example = new Screw.Example("passing example 1", function() {});
+        failing_example = new Screw.Example("failing example 1", function() { throw new Error(); });
+        child_description_1.add_example(passing_example);
+        child_description_1.add_example(failing_example);
+      });
 
-//      it("hides descriptions that have no failing examples", function() {
-//        root = new Screw.Description("");
-//        description = new Screw.Description("description with passing examples");
-//        description.add_example = new Screw.Example("passing example", function() {});
-//        root.add_description(description);
-//
-//        var view = render_view(root, root);
-//
-//        expect(view.html()).to(match, "description with passing examples");
-//        view.find("button#show_failed").click();
-//        expect(view.html()).to_not(match, "description with passing examples");
-//      });
+      it("hides descriptions that have no failing examples", function() {
+        passing_example.run();
+
+        expect(view.find("li:contains('child description 1'):visible")).to_not(be_empty);
+        expect(view.find("li:contains('child description 2'):visible")).to_not(be_empty);
+        view.find("button#show_failed").click();
+        expect(view.find("li:contains('child description 1'):visible")).to(be_empty);
+        expect(view.find("li:contains('child description 2'):visible")).to(be_empty);
+      });
+
+      it("shows descriptions that have failing examples", function() {
+        failing_example.run();
+        
+        expect(view.find("li:contains('child description 1'):visible")).to_not(be_empty);
+        expect(view.find("li:contains('child description 2'):visible")).to_not(be_empty);
+        view.find("button#show_failed").click();
+        expect(view.find("li:contains('child description 1'):visible")).to_not(be_empty);
+        expect(view.find("li:contains('child description 2'):visible")).to(be_empty);
+      });
     });
-
-
   });
 
   describe("Screw.Interface.Description", function() {
