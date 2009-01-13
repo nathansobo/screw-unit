@@ -195,6 +195,49 @@ Screw.Unit(function(c) { with(c) {
       });
     });
 
+    describe("when an Example nested within the associated Description is completed", function() {
+      var grandchild_example, should_fail;
+      before(function() {
+        view = Disco.build(Screw.Interface.Description, {description: description});
+        var child_description = new Screw.Description("child description");
+        grandchild_example = new Screw.Example("grandchild example", function() {
+          if (should_fail) throw(new Error("fails intentionally"));
+        })
+        child_description.add_example(grandchild_example);
+        description.add_description(child_description);
+      });
+
+      context("when the Example passes", function() {
+        before(function() {
+          should_fail = false;
+        });
+
+        it("applies the 'passed' class to its content", function() {
+          expect(view.hasClass('failed')).to(be_false);
+          expect(view.hasClass('passed')).to(be_false);
+
+          grandchild_example.run();
+
+          expect(view.hasClass('failed')).to(be_false);
+          expect(view.hasClass('passed')).to(be_true);
+        });
+      });
+
+      context("when the Example fails", function() {
+        before(function() {
+          should_fail = true;
+        });
+
+        it("applies the 'failed' class to its content", function() {
+          expect(view.hasClass('failed')).to(be_false);
+          expect(view.hasClass('passed')).to(be_false);
+          grandchild_example.run();
+          expect(view.hasClass('failed')).to(be_true);
+          expect(view.hasClass('passed')).to(be_false);
+        });
+      });
+    });
+
     describe("#focus", function() {
       it("sets Screw.Interface.options.focus_path to the serialized #path of the associated Description and calls Screw.Interface.refresh", function() {
         mock(Screw.Interface, 'refresh');
@@ -203,7 +246,6 @@ Screw.Unit(function(c) { with(c) {
         expect(Screw.Interface.refresh).to(have_been_called);
       });
     });
-    
   });
   
   describe("Screw.Interface.Example", function() {

@@ -118,68 +118,86 @@ Screw.Unit(function(c) { with(c) {
     
     describe("#run_befores", function() {
       it("calls #run_befores on the #parent_description if there is one, then runs all the befores in the order they were added", function() {
-        var events = [];      
+        var events = [];
+        var example_contexts = [];
         description.add_before(function() {
           events.push("parent before called")
+          example_contexts.push(this);
         });
         var child_description = new Screw.Description("child description");
         child_description.add_before(function() {
           events.push("child before 1 called");
-        })
+          example_contexts.push(this);
+        });
 
         child_description.add_before(function() {
           events.push("child before 2 called");
-        })
+          example_contexts.push(this);
+        });
         description.add_description(child_description);
         
         child_description.run_befores();
 
         expect(events).to(equal, ["parent before called", "child before 1 called", "child before 2 called"]);
+        expect(example_contexts.length).to(equal, 3);
+        expect(example_contexts[0]).to(equal, example_contexts[1]);
+        expect(example_contexts[0]).to(equal, example_contexts[2]);
       });
     });
 
     describe("#run_afters", function() {
-      it("runs all the afters in the order they were added, run calls #run_afters on the #parent_description if there is one", function() {
+      it("runs all the afters in the order they were added, with the given example context, then calls #run_afters on the #parent_description if there is one", function() {
         var events = [];
+        var example_contexts = [];
         description.add_after(function() {
           events.push("parent after called")
+          example_contexts.push(this);
         });
         var child_description = new Screw.Description("child description");
         child_description.add_after(function() {
           events.push("child after 1 called");
+          example_contexts.push(this);
         })
 
         child_description.add_after(function() {
           events.push("child after 2 called");
+          example_contexts.push(this);
         })
         description.add_description(child_description);
 
         child_description.run_afters();
 
         expect(events).to(equal, ["child after 1 called", "child after 2 called", "parent after called"]);
+        expect(example_contexts.length).to(equal, 3);
+        expect(example_contexts[0]).to(equal, example_contexts[1]);
+        expect(example_contexts[0]).to(equal, example_contexts[2]);
       });
     });
   });
   
   describe("Screw.Example", function() {
-    var example, name, fn, should_fail, parent_description, events, original_reset_mocks;
+    var example, name, fn, should_fail, parent_description, events, original_reset_mocks, example_contexts;
 
     before(function() {
       events = [];
+      example_contexts = [];
 
       name = "example"
       should_fail = false;
       fn = function() {
         events.push("example function called");
+        example_contexts.push(this);
         if (should_fail) throw(new Error("sad times"));
       };
       example = new Screw.Example(name, fn);
       parent_description = new Screw.Description("parent description")
-      parent_description.run_befores = function() {
+      parent_description.run_befores = function(example_context) {
         events.push("run_befores called");
+        example_contexts.push(example_context);
       }
-      parent_description.run_afters = function() {
+      parent_description.run_afters = function(example_context) {
         events.push("run_afters called");
+        example_contexts.push(example_context);
       }
 
       example.parent_description = parent_description;
@@ -207,12 +225,13 @@ Screw.Unit(function(c) { with(c) {
     });
     
     describe("#run", function() {
-      it("calls parent_description.run_befores, invokes the example function, calls parent_description.run_afters, then calls Screw.reset_mocks", function() {
-        expect(events).to(be_empty);
+      it("with the same example context, calls parent_description.run_befores, invokes the example function, calls parent_description.run_afters, then calls Screw.reset_mocks", function() {
         example.run();
         expect(events).to(equal, ["run_befores called", "example function called", "run_afters called", "reset_mocks called"]);
+        expect(example_contexts.length).to(equal, 3);
+        expect(example_contexts[0]).to(equal, example_contexts[1]);
+        expect(example_contexts[0]).to(equal, example_contexts[2]);
       });
-
 
       context("if the example fails", function() {
         before(function() {

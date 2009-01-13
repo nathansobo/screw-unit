@@ -69,16 +69,24 @@ Screw.Unit(function(c) { with(c) {
   });
 
   describe("A describe with a nested describe", function() {
-    var before_invocations = [], after_invocations = [], clear_after_invocations;
+    var before_invocations = [], after_invocations = [], clear_after_invocations, expected_this_invocations;
     before(function() {
       clear_after_invocations = true;
       before_invocations = [];
       before_invocations.push("outermost before");
+
+      expected_this_invocations = undefined;
+      this.invocations = [];
+      this.invocations.push("outermost before");
     });
 
     after(function() {
       after_invocations.push("outermost after");
+      this.invocations.push("outermost after");
       if (clear_after_invocations) after_invocations = [];
+      if (expected_this_invocations) {
+        expect(this.invocations).to(equal, expected_this_invocations);
+      }
     });
 
     it("outside a nested [describe], does not invoke any of the nested's [before]s", function() {
@@ -93,10 +101,12 @@ Screw.Unit(function(c) { with(c) {
     describe("a nested [describe]", function() {
       before(function() {
         before_invocations.push("inner before");
+        this.invocations.push("inner before");
       });
 
       after(function() {
         after_invocations.push("inner after");
+        this.invocations.push("inner after");
       });
 
       it("runs [before]s in the parent [describe] before each [it]", function() {
@@ -111,11 +121,18 @@ Screw.Unit(function(c) { with(c) {
       describe("a doubly nested [describe]", function() {
         before(function() {
           before_invocations.push('innermost before');
+          this.invocations.push('innermost before');
         });
 
         after(function() {
           after_invocations = [];
           after_invocations.push('innermost after');
+          this.invocations.push('innermost after');
+        });
+
+        it("runs all befores and afters in the context of the same object", function() {
+          this.invocations.push("example");
+          expected_this_invocations = ["outermost before", "inner before", "innermost before", "example", "innermost after", "inner after", "outermost after"];
         });
 
         describe('[before] blocks', function() {
