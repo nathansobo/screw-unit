@@ -8,8 +8,6 @@ Screw.Unit(function(c) { with(c) {
     Screw.Interface.options = original_options;
   });
 
-
-  
   describe("Screw.Interface", function() {
     describe(".refresh", function() {
       var original_options;
@@ -77,7 +75,7 @@ Screw.Unit(function(c) { with(c) {
     var root, child_description_1, child_description_2, view;
 
     before(function() {
-      root = new Screw.Description("");
+      root = new Screw.Description("all specs");
       child_description_1 = new Screw.Description("child description 1");
       child_description_2 = new Screw.Description("child description 2");
       root.add_description(child_description_1);
@@ -85,13 +83,6 @@ Screw.Unit(function(c) { with(c) {
       view = Disco.build(Screw.Interface.Runner, {root: root, runnable: root});
     });
     
-    describe("#content", function() {
-      it("renders a ul.descriptions with the #child_descriptions of the given root", function() {
-        expect(view.html()).to(match, Disco.build(Screw.Interface.Description, {description: child_description_1}).html());
-        expect(view.html()).to(match, Disco.build(Screw.Interface.Description, {description: child_description_2}).html());
-      });
-    });
-
     describe("show buttons", function() {
       var passing_example, failing_example, example_1;
       before(function() {
@@ -115,14 +106,17 @@ Screw.Unit(function(c) { with(c) {
           expect(view.find("li:contains('child description 2'):visible")).to(be_empty);
         });
 
-        it("shows descriptions that have failing examples", function() {
+        it("shows only descriptions that have failing examples", function() {
           failing_example.run();
 
-          expect(view.find("li:contains('child description 1'):visible")).to_not(be_empty);
-          expect(view.find("li:contains('child description 2'):visible")).to_not(be_empty);
+          console.debug(child_description_2);
+
+
+          expect(view.find("li ul li:contains('child description 1'):visible")).to_not(be_empty);
+          expect(view.find("li ul li:contains('child description 2'):visible")).to_not(be_empty);
           view.find("button#show_failed").click();
-          expect(view.find("li:contains('child description 1'):visible")).to_not(be_empty);
-          expect(view.find("li:contains('child description 2'):visible")).to(be_empty);
+          expect(view.find("li ul li:contains('child description 1'):visible")).to_not(be_empty);
+          expect(view.find("li ul li:contains('child description 2'):visible")).to(be_empty);
         });
       });
 
@@ -130,13 +124,13 @@ Screw.Unit(function(c) { with(c) {
         it("shows any hidden descriptions and examples", function() {
           failing_example.run();
 
-          expect(view.find("li:contains('child description 1'):visible")).to_not(be_empty);
-          expect(view.find("li:contains('child description 2'):visible")).to_not(be_empty);
+          expect(view.find("li ul li:contains('child description 1'):visible")).to_not(be_empty);
+          expect(view.find("li ul li:contains('child description 2'):visible")).to_not(be_empty);
 
           view.find("button#show_failed").click();
 
-          expect(view.find("li:contains('child description 1'):visible")).to_not(be_empty);
-          expect(view.find("li:contains('child description 2'):visible")).to(be_empty);
+          expect(view.find("li ul li:contains('child description 1'):visible")).to_not(be_empty);
+          expect(view.find("li ul li:contains('child description 2'):visible")).to(be_empty);
 
           view.find("button#show_all").click();
 
