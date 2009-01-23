@@ -84,8 +84,11 @@ Screw.Unit(function(c) { with(c) {
     });
     
     describe("show buttons", function() {
-      var passing_example, failing_example, example_1;
+      var previous_prefs_data, passing_example, failing_example, example_1;
       before(function() {
+        Prefs.load();
+        previous_prefs_data = Prefs.data;
+
         passing_example = new Screw.Example("passing example 1", function() {
         });
         failing_example = new Screw.Example("failing example 1", function() {
@@ -93,6 +96,11 @@ Screw.Unit(function(c) { with(c) {
         });
         child_description_1.add_example(passing_example);
         child_description_1.add_example(failing_example);
+      });
+      
+      after(function() {
+        Prefs.data = previous_prefs_data;
+        Prefs.save();
       });
 
       describe("when the 'Show Failed' button is clicked", function() {
@@ -118,6 +126,17 @@ Screw.Unit(function(c) { with(c) {
           expect(view.find("li ul li:contains('child description 1'):visible")).to_not(be_empty);
           expect(view.find("li ul li:contains('child description 2'):visible")).to(be_empty);
         });
+
+        it("sets 'show' to 'failed' in the preferences", function() {
+          var previous_prefs_data = Prefs.data;
+          Prefs.data = { show: null };
+          Prefs.save();
+
+          view.find("button#show_failed").click();
+
+          Prefs.load();
+          expect(Prefs.data.show).to(equal, "failed");
+        });
       });
 
       describe("when the 'Show All' button is clicked", function() {
@@ -137,12 +156,19 @@ Screw.Unit(function(c) { with(c) {
           expect(view.find("li:contains('child description 1'):visible")).to_not(be_empty);
           expect(view.find("li:contains('child description 2'):visible")).to_not(be_empty);
         });
+
+        it("sets 'show' to 'all' in the preferences", function() {
+          var previous_prefs_data = Prefs.data;
+          Prefs.data = { show: null };
+          Prefs.save();
+
+          view.find("button#show_all").click();
+
+          Prefs.load();
+          expect(Prefs.data.show).to(equal, "all");
+        });
       });
-
     });
-
-
-
   });
 
   describe("Screw.Interface.Description", function() {
