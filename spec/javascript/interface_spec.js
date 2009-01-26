@@ -111,6 +111,30 @@ Screw.Unit(function(c) { with(c) {
       view = Disco.build(Screw.Interface.Runner, {root: root, runnable: root});
     });
 
+    context("when Prefs.show == 'all'", function() {
+      before(function() {
+        Prefs.data.show = "all";
+      });
+
+      it("renders itself with the 'show_all' class and not the 'show_failed' class", function() {
+        view = Disco.build(Screw.Interface.Runner, {root: root, runnable: root});
+        expect(view.hasClass("show_all")).to(be_true);
+        expect(view.hasClass("show_failed")).to(be_false);
+      });
+    });
+
+    context("when Prefs.show == 'failed'", function() {
+      before(function() {
+        Prefs.data.show = "failed";
+      });
+
+      it("renders itself with the 'show_failed' class and not the 'show_all' class", function() {
+        view = Disco.build(Screw.Interface.Runner, {root: root, runnable: root});
+        expect(view.hasClass("show_failed")).to(be_true);
+        expect(view.hasClass("show_all")).to(be_false);
+      });
+    });
+
     describe("show buttons", function() {
       var passing_example, failing_example, example_1;
       before(function() {
@@ -124,6 +148,18 @@ Screw.Unit(function(c) { with(c) {
       });
       
       describe("when the 'Show Failed' button is clicked", function() {
+        it("applies the 'show_failed' class to the root element of the view", function() {
+          expect(view.hasClass('show_failed')).to(be_false);
+          view.find("button#show_failed").click();
+          expect(view.hasClass('show_failed')).to(be_true);
+        });
+
+        it("removes the 'show_all' class from the root element of the view", function() {
+          view.addClass("show_all");
+          view.find("button#show_failed").click();
+          expect(view.hasClass('show_all')).to(be_false);
+        });
+
         it("hides descriptions that have no failing examples", function() {
           passing_example.run();
 
@@ -156,6 +192,19 @@ Screw.Unit(function(c) { with(c) {
       });
 
       describe("when the 'Show All' button is clicked", function() {
+        it("applies the 'show_all' class to the root element of the view", function() {
+          view.removeClass("show_all");
+          expect(view.hasClass('show_all')).to(be_false);
+          view.find("button#show_all").click();
+          expect(view.hasClass('show_all')).to(be_true);
+        });
+
+        it("removes the 'show_all' class from the root element of the view", function() {
+          view.addClass("show_failed");
+          view.find("button#show_all").click();
+          expect(view.hasClass('show_failed')).to(be_false);
+        });
+
         it("shows any hidden descriptions and examples", function() {
           failing_example.run();
 
@@ -191,31 +240,8 @@ Screw.Unit(function(c) { with(c) {
     before(function() {
       description = new Screw.Description("description");
     });
-    
+
     describe("#content", function() {
-      context("when Prefs.data.show is 'all'", function() {
-        before(function() {
-          expect(Prefs.data.show).to(equal, "all");
-        });
-
-        it("initially renders itself in a visible state", function() {
-          view = Disco.build(Screw.Interface.Description, {description: description});
-          expect(view.css('display')).to_not(equal, "none");
-        });
-      });
-
-      context("when Prefs.data.show is 'failed'", function() {
-        before(function() {
-          Prefs.data.show = "failed";
-        });
-
-        it("initially renders itself in an invisible state", function() {
-          view = Disco.build(Screw.Interface.Description, {description: description});
-          expect(view.css('display')).to(equal, "none");
-        });
-      });
-
-
       context("when the view's Description has #examples", function() {
         var example_1, example_2;
         before(function() {

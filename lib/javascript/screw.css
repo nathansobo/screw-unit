@@ -3,6 +3,19 @@ html {
   font-family: sans-serif;
 }
 
+.description, .example {
+  display: none;
+}
+
+div#screw_unit_runner.show_all .description, div#screw_unit_runner.show_all .example {
+  display: block;
+}
+
+div#screw_unit_runner.show_failed .failed {
+  display: block;
+}
+
+
 table#screw_unit_header {
   width: 100%;
 }
