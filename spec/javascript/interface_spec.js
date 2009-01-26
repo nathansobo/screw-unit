@@ -363,6 +363,10 @@ Screw.Unit(function(c) { with(c) {
     });
 
     describe("#focus", function() {
+      before(function() {
+        view = Disco.build(Screw.Interface.Description, {description: description});
+      });
+
       it("sets Screw.Interface.options.focus_path to the serialized #path of the associated Description and calls Screw.Interface.refresh", function() {
         mock(Screw.Interface, 'refresh');
         view.focus();
