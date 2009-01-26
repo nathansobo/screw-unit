@@ -1,10 +1,15 @@
 Screw.Unit(function(c) { with(c) {
+  var original_prefs_data;
+
   before(function() {
+    original_prefs_data = Prefs.data;
     original_options = Screw.Interface.options;
     Screw.Interface.options = {}
   });
 
   after(function() {
+    Prefs.data = original_prefs_data;
+    Prefs.save();
     Screw.Interface.options = original_options;
   });
 
@@ -33,6 +38,28 @@ Screw.Unit(function(c) { with(c) {
         expect(actual_location).to(match, "&");
       });
     });
+
+    describe(".load_preferences", function() {
+      var original_prefs_data;
+
+      before(function() {
+        Prefs.data = { foo: "bar" }
+        Prefs.save();
+        Prefs.data = null;
+      });
+
+      it("loads the Prefs from the cookie", function() {
+        expect(Prefs.data).to(be_null);
+        Screw.Interface.load_preferences();
+        expect(Prefs.data.foo).to(equal, "bar");
+      });
+
+      it("defaults 'show' to all if it is not specified in the cookie", function() {
+        Screw.Interface.load_preferences();
+        expect(Prefs.data.show).to(equal, "all");
+      });
+    });
+
 
     describe(".parse_options", function() {
       it("extracts serialized options from the location and assigns them to the Screw.Interface.options object", function() {
@@ -82,13 +109,10 @@ Screw.Unit(function(c) { with(c) {
       root.add_description(child_description_2);
       view = Disco.build(Screw.Interface.Runner, {root: root, runnable: root});
     });
-    
-    describe("show buttons", function() {
-      var previous_prefs_data, passing_example, failing_example, example_1;
-      before(function() {
-        Prefs.load();
-        previous_prefs_data = Prefs.data;
 
+    describe("show buttons", function() {
+      var passing_example, failing_example, example_1;
+      before(function() {
         passing_example = new Screw.Example("passing example 1", function() {
         });
         failing_example = new Screw.Example("failing example 1", function() {
@@ -98,11 +122,6 @@ Screw.Unit(function(c) { with(c) {
         child_description_1.add_example(failing_example);
       });
       
-      after(function() {
-        Prefs.data = previous_prefs_data;
-        Prefs.save();
-      });
-
       describe("when the 'Show Failed' button is clicked", function() {
         it("hides descriptions that have no failing examples", function() {
           passing_example.run();
@@ -117,9 +136,6 @@ Screw.Unit(function(c) { with(c) {
         it("shows only descriptions that have failing examples", function() {
           failing_example.run();
 
-          console.debug(child_description_2);
-
-
           expect(view.find("li ul li:contains('child description 1'):visible")).to_not(be_empty);
           expect(view.find("li ul li:contains('child description 2'):visible")).to_not(be_empty);
           view.find("button#show_failed").click();
@@ -128,7 +144,6 @@ Screw.Unit(function(c) { with(c) {
         });
 
         it("sets 'show' to 'failed' in the preferences", function() {
-          var previous_prefs_data = Prefs.data;
           Prefs.data = { show: null };
           Prefs.save();
 
@@ -158,7 +173,6 @@ Screw.Unit(function(c) { with(c) {
         });
 
         it("sets 'show' to 'all' in the preferences", function() {
-          var previous_prefs_data = Prefs.data;
           Prefs.data = { show: null };
           Prefs.save();
 
@@ -192,13 +206,16 @@ Screw.Unit(function(c) { with(c) {
           view = Disco.build(Screw.Interface.Description, {description: description});
         });
 
-        it("renders all examples within a ul.examples", function() {
-          var examples = view.find('ul.examples');
-          expect(examples.length).to(equal, 1);
-          expect(examples.find('li').length).to(equal, 2);
-          expect(examples.html()).to(match, Disco.build(Screw.Interface.Example, {example: example_1}).html());
-          expect(examples.html()).to(match, Disco.build(Screw.Interface.Example, {example: example_2}).html());
+        context("when the 'show' preference is set to 'all'", function() {
+          it("renders all examples within a ul.examples", function() {
+            var examples = view.find('ul.examples');
+            expect(examples.length).to(equal, 1);
+            expect(examples.find('li').length).to(equal, 2);
+            expect(examples.html()).to(match, Disco.build(Screw.Interface.Example, {example: example_1}).html());
+            expect(examples.html()).to(match, Disco.build(Screw.Interface.Example, {example: example_2}).html());
+          });
         });
+
       });
 
       context("when the view's Description has no #examples", function() {
