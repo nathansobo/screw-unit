@@ -2,7 +2,8 @@ Screw.Unit(function(c) { with(c) {
   var original_prefs_data;
 
   before(function() {
-    original_prefs_data = Prefs.data;
+    original_prefs_data = jQuery.extend({}, Prefs.data);
+    Prefs.data.show = 'all';
     original_options = Screw.Interface.options;
     Screw.Interface.options = {}
   });
@@ -192,6 +193,29 @@ Screw.Unit(function(c) { with(c) {
     });
     
     describe("#content", function() {
+      context("when Prefs.data.show is 'all'", function() {
+        before(function() {
+          expect(Prefs.data.show).to(equal, "all");
+        });
+
+        it("initially renders itself in a visible state", function() {
+          view = Disco.build(Screw.Interface.Description, {description: description});
+          expect(view.css('display')).to_not(equal, "none");
+        });
+      });
+
+      context("when Prefs.data.show is 'failed'", function() {
+        before(function() {
+          Prefs.data.show = "failed";
+        });
+
+        it("initially renders itself in an invisible state", function() {
+          view = Disco.build(Screw.Interface.Description, {description: description});
+          expect(view.css('display')).to(equal, "none");
+        });
+      });
+
+
       context("when the view's Description has #examples", function() {
         var example_1, example_2;
         before(function() {
@@ -206,14 +230,12 @@ Screw.Unit(function(c) { with(c) {
           view = Disco.build(Screw.Interface.Description, {description: description});
         });
 
-        context("when the 'show' preference is set to 'all'", function() {
-          it("renders all examples within a ul.examples", function() {
-            var examples = view.find('ul.examples');
-            expect(examples.length).to(equal, 1);
-            expect(examples.find('li').length).to(equal, 2);
-            expect(examples.html()).to(match, Disco.build(Screw.Interface.Example, {example: example_1}).html());
-            expect(examples.html()).to(match, Disco.build(Screw.Interface.Example, {example: example_2}).html());
-          });
+        it("renders all examples within a ul.examples", function() {
+          var examples = view.find('ul.examples');
+          expect(examples.length).to(equal, 1);
+          expect(examples.find('li').length).to(equal, 2);
+          expect(examples.html()).to(match, Disco.build(Screw.Interface.Example, {example: example_1}).html());
+          expect(examples.html()).to(match, Disco.build(Screw.Interface.Example, {example: example_2}).html());
         });
 
       });
