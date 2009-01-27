@@ -18,25 +18,14 @@ Screw.Unit(function(c) { with(c) {
     describe(".refresh", function() {
       var original_options;
 
-      it("calls Screw.Interface.set_location with the current location plus the serialized Screw.Interface.options", function() {
-        Screw.Interface.options = {
-          foo: "bar",
-          baz: "bop"
-        };
-
+      it("calls Screw.Interface.set_location with the current location", function() {
         mock(Screw.Interface, 'set_location');
         var expected_base_location = window.location.href.split('?')[0];
 
         Screw.Interface.refresh();
 
         var actual_location = Screw.Interface.set_location.most_recent_args[0];
-
         expect(actual_location).to(match, expected_base_location);
-
-        // testing "foo=bar&baz=bop" in presence of nondeterministic ordering
-        expect(actual_location).to(match, "foo=bar");
-        expect(actual_location).to(match, "baz=bop");
-        expect(actual_location).to(match, "&");
       });
     });
 
@@ -61,26 +50,10 @@ Screw.Unit(function(c) { with(c) {
       });
     });
 
-
-    describe(".parse_options", function() {
-      it("extracts serialized options from the location and assigns them to the Screw.Interface.options object", function() {
-        mock(Screw.Interface, 'get_location', function() {
-          return "http://test.example.org?foo=bar&baz=bop";
-        })
-
-        expect(Screw.Interface.options).to(equal, {});
-        Screw.Interface.parse_options();
-        expect(Screw.Interface.options).to(equal, {
-          foo: 'bar',
-          baz: 'bop'
-        });
-      });
-    });
-
     describe(".focused_runnable", function() {
       context("when Prefs.data.run_paths is undefined", function() {
         before(function() {
-          expect(Prefs.data.run_paths).to(be_undefined);
+          Prefs.data.run_paths = undefined;
         });
 
         it("returns the root passed in initial_attributes", function() {
@@ -89,8 +62,7 @@ Screw.Unit(function(c) { with(c) {
       });
 
       context("when Prefs.data.run_paths contains a single path", function() {
-        it("returns the result of root.runnable_at_path for the focus path converted into an array", function() {
-
+        it("returns the result of root.runnable_at_path for that path", function() {
           Prefs.data.run_paths = [[1,2,3]];
           var focused = {};
           mock(Screw.global_description(), 'runnable_at_path', function(path) {
@@ -384,13 +356,6 @@ Screw.Unit(function(c) { with(c) {
         expect(Prefs.data.run_paths).to(equal, [description.path()]);
         expect(Screw.Interface.refresh).to(have_been_called);
       });
-
-      it("sets Screw.Interface.options.focus_path to the serialized #path of the associated Description and calls Screw.Interface.refresh", function() {
-        mock(Screw.Interface, 'refresh');
-        view.focus();
-        expect(Screw.Interface.options.focus_path).to(equal, description.path().join(","));
-        expect(Screw.Interface.refresh).to(have_been_called);
-      });
     });
   });
   
@@ -479,13 +444,6 @@ Screw.Unit(function(c) { with(c) {
 
         Prefs.load();
         expect(Prefs.data.run_paths).to(equal, [example.path()]);
-        expect(Screw.Interface.refresh).to(have_been_called);
-      });
-
-      it("sets Screw.Interface.options.focus_path to the #path of the associated Example and calls Screw.Interface.refresh", function() {
-        mock(Screw.Interface, 'refresh');
-        view.focus();
-        expect(Screw.Interface.options.focus_path).to(equal, example.path().join(","));
         expect(Screw.Interface.refresh).to(have_been_called);
       });
     });
