@@ -78,16 +78,21 @@ Screw.Unit(function(c) { with(c) {
     });
 
     describe(".focused_runnable", function() {
-      context("when Screw.Interface.options is undefined", function() {
+      context("when Prefs.data.run_paths is undefined", function() {
+        before(function() {
+          expect(Prefs.data.run_paths).to(be_undefined);
+        });
+
         it("returns the root passed in initial_attributes", function() {
           expect(Screw.Interface.focused_runnable()).to(equal, Screw.global_description());
         });
       });
 
-      context("when Screw.Interface.options is a comma-delimited focus path", function() {
+      context("when Prefs.data.run_paths contains a single path", function() {
         it("returns the result of root.runnable_at_path for the focus path converted into an array", function() {
-          Screw.Interface.options.focus_path = "1,2,3";
-          var focused = {}; 
+
+          Prefs.data.run_paths = [[1,2,3]];
+          var focused = {};
           mock(Screw.global_description(), 'runnable_at_path', function(path) {
             expect(path).to(equal, [1, 2, 3]);
             return focused;
@@ -238,7 +243,9 @@ Screw.Unit(function(c) { with(c) {
   describe("Screw.Interface.Description", function() {
     var description, view;
     before(function() {
+      var parent_description = new Screw.Description("parent description");
       description = new Screw.Description("description");
+      parent_description.add_description(description);
     });
 
     describe("#content", function() {
@@ -263,7 +270,6 @@ Screw.Unit(function(c) { with(c) {
           expect(examples.html()).to(match, Disco.build(Screw.Interface.Example, {example: example_1}).html());
           expect(examples.html()).to(match, Disco.build(Screw.Interface.Example, {example: example_2}).html());
         });
-
       });
 
       context("when the view's Description has no #examples", function() {
@@ -367,6 +373,18 @@ Screw.Unit(function(c) { with(c) {
         view = Disco.build(Screw.Interface.Description, {description: description});
       });
 
+      it("saves [description.path()] to Prefs.data.run_paths and calls Screw.Interface.refresh", function() {
+        mock(Screw.Interface, 'refresh');
+        Prefs.data.run_paths = null;
+        Prefs.save();
+
+        view.focus();
+
+        Prefs.load();
+        expect(Prefs.data.run_paths).to(equal, [description.path()]);
+        expect(Screw.Interface.refresh).to(have_been_called);
+      });
+
       it("sets Screw.Interface.options.focus_path to the serialized #path of the associated Description and calls Screw.Interface.refresh", function() {
         mock(Screw.Interface, 'refresh');
         view.focus();
@@ -451,7 +469,19 @@ Screw.Unit(function(c) { with(c) {
       after(function() {
         Screw.Interface.options = original_screw_options;
       });
-      
+
+      it("saves [example.path()] to Prefs.data.run_paths and calls Screw.Interface.refresh", function() {
+        mock(Screw.Interface, 'refresh');
+        Prefs.data.run_paths = null;
+        Prefs.save();
+
+        view.focus();
+
+        Prefs.load();
+        expect(Prefs.data.run_paths).to(equal, [example.path()]);
+        expect(Screw.Interface.refresh).to(have_been_called);
+      });
+
       it("sets Screw.Interface.options.focus_path to the #path of the associated Example and calls Screw.Interface.refresh", function() {
         mock(Screw.Interface, 'refresh');
         view.focus();
