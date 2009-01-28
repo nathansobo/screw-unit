@@ -241,6 +241,19 @@ Screw.Unit(function(c) { with(c) {
         });
       });
 
+      describe("when the 'Rerun All' button is clicked", function() {
+        it("saves Prefs.data.run_paths to null and calls Screw.Interface.refresh", function() {
+          Prefs.data.run_paths = "foo";
+          Prefs.save();
+
+          mock(Screw.Interface, 'refresh');
+          view.find("button#rerun_all").click();
+          
+          Prefs.load();
+          expect(Prefs.data.run_paths).to(be_null);
+          expect(Screw.Interface.refresh).to(have_been_called);
+        });
+      });
     });
   });
 
