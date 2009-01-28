@@ -56,26 +56,26 @@ Screw.Unit(function(c) { with(c) {
           Prefs.data.run_paths = undefined;
         });
 
-        it("returns the [Screw.global_description()]", function() {
-          expect(Screw.Interface.examples_to_run()).to(equal, [Screw.global_description()]);
+        it("returns the [Screw.root_description()]", function() {
+          expect(Screw.Interface.examples_to_run()).to(equal, [Screw.root_description()]);
         });
       });
 
       context("when Prefs.data.run_paths contains paths", function() {
         it("returns the result of root.runnable_at_path for that path", function() {
-          var global_description = Screw.global_description();
+          var root_description = Screw.root_description();
           Prefs.data.run_paths = [[1,2,3], [4, 5, 6]];
 
           var i = 0;
           var return_vals = ['x', 'y'];
 
-          mock(global_description, 'runnable_at_path', function() {
+          mock(root_description, 'runnable_at_path', function() {
             return return_vals[i++];
           });
 
           expect(Screw.Interface.examples_to_run()).to(equal, return_vals);
-          expect(Screw.global_description().runnable_at_path.call_args[0][0]).to(equal, [1,2,3]);
-          expect(Screw.global_description().runnable_at_path.call_args[1][0]).to(equal, [4,5,6]);
+          expect(Screw.root_description().runnable_at_path.call_args[0][0]).to(equal, [1,2,3]);
+          expect(Screw.root_description().runnable_at_path.call_args[1][0]).to(equal, [4,5,6]);
 
         });
       });
