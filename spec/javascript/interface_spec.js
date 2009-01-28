@@ -118,16 +118,21 @@ Screw.Unit(function(c) { with(c) {
       });
     });
 
-    describe("show buttons", function() {
-      var passing_example, failing_example, example_1;
+    describe("buttons", function() {
+      var passing_example, failing_example_1, failing_example_2, example_1;
       before(function() {
         passing_example = new Screw.Example("passing example 1", function() {
         });
-        failing_example = new Screw.Example("failing example 1", function() {
+        failing_example_1 = new Screw.Example("failing example 1", function() {
+          throw new Error();
+        });
+        failing_example_2 = new Screw.Example("failing example 1", function() {
           throw new Error();
         });
         child_description_1.add_example(passing_example);
-        child_description_1.add_example(failing_example);
+        child_description_1.add_example(failing_example_1);
+        child_description_1.add_example(failing_example_2);
+        view = Disco.build(Screw.Interface.Runner, {root: root, runnable: root});
       });
       
       describe("when the 'Show Failed' button is clicked", function() {
@@ -154,7 +159,7 @@ Screw.Unit(function(c) { with(c) {
         });
 
         it("shows only descriptions that have failing examples", function() {
-          failing_example.run();
+          failing_example_1.run();
 
           expect(view.find("li ul li:contains('child description 1'):visible")).to_not(be_empty);
           expect(view.find("li ul li:contains('child description 2'):visible")).to_not(be_empty);
@@ -163,7 +168,7 @@ Screw.Unit(function(c) { with(c) {
           expect(view.find("li ul li:contains('child description 2'):visible")).to(be_empty);
         });
 
-        it("sets 'show' to 'failed' in the preferences", function() {
+        it("sets Prefs.data.show to 'failed'", function() {
           Prefs.data = { show: null };
           Prefs.save();
 
@@ -189,7 +194,7 @@ Screw.Unit(function(c) { with(c) {
         });
 
         it("shows any hidden descriptions and examples", function() {
-          failing_example.run();
+          failing_example_1.run();
 
           expect(view.find("li ul li:contains('child description 1'):visible")).to_not(be_empty);
           expect(view.find("li ul li:contains('child description 2'):visible")).to_not(be_empty);
@@ -205,7 +210,7 @@ Screw.Unit(function(c) { with(c) {
           expect(view.find("li:contains('child description 2'):visible")).to_not(be_empty);
         });
 
-        it("sets 'show' to 'all' in the preferences", function() {
+        it("sets Prefs.data.show to 'all'", function() {
           Prefs.data = { show: null };
           Prefs.save();
 
@@ -215,6 +220,27 @@ Screw.Unit(function(c) { with(c) {
           expect(Prefs.data.show).to(equal, "all");
         });
       });
+
+      describe("when the 'Rerun Failed' button is clicked", function() {
+        before(function() {
+          failing_example_1.run();
+          failing_example_2.run();
+        });
+
+        it("saves Prefs.data.run_paths to an Array of the #paths of all failing Examples and calls Screw.Interface.refresh", function() {
+          Prefs.data.run_paths = null;
+          Prefs.save();
+
+          mock(Screw.Interface, 'refresh');
+
+          view.find("button#rerun_failed").click();
+
+          Prefs.load();
+          expect(Prefs.data.run_paths).to(equal, [failing_example_1.path(), failing_example_2.path()]);
+          expect(Screw.Interface.refresh).to(have_been_called);
+        });
+      });
+
     });
   });
 

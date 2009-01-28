@@ -49,6 +49,34 @@ Screw.Unit(function(c) { with(c) {
       });
     });
 
+    describe("#failed_examples", function() {
+      var root_description, child_description, passing_child_example, failing_child_example, passing_grandchild_example, failing_grandchild_example;
+      before(function() {
+        root_description = new Screw.Description("root description")
+        child_description = new Screw.Description("child description")
+        passing_child_example = new Screw.Example("passing child example", function() {});
+        passing_grandchild_example = new Screw.Example("passing grandchild example", function() {});
+        failing_child_example = new Screw.Example("failing child example", function() {
+          throw new Exception();
+        })
+        failing_grandchild_example = new Screw.Example("failing grandchild example", function() {
+          throw new Exception();
+        })
+
+        root_description.add_description(child_description);
+        root_description.add_example(passing_child_example);
+        root_description.add_example(failing_child_example);
+        child_description.add_example(passing_grandchild_example);
+        child_description.add_example(failing_grandchild_example);
+      });
+
+      it("returns all failed Examples descending from this describe", function() {
+        root_description.run();
+        console.debug(root_description.failed_examples());
+        expect(root_description.failed_examples()).to(equal, [failing_child_example, failing_grandchild_example]);
+      });
+    });
+
     describe("callbacks registered via #on_example_completed", function() {
       var on_example_completed_args;
 
