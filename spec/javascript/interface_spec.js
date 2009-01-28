@@ -50,26 +50,33 @@ Screw.Unit(function(c) { with(c) {
       });
     });
 
-    describe(".focused_runnable", function() {
+    describe(".examples_to_run", function() {
       context("when Prefs.data.run_paths is undefined", function() {
         before(function() {
           Prefs.data.run_paths = undefined;
         });
 
-        it("returns the root passed in initial_attributes", function() {
-          expect(Screw.Interface.focused_runnable()).to(equal, Screw.global_description());
+        it("returns the [Screw.global_description()]", function() {
+          expect(Screw.Interface.examples_to_run()).to(equal, [Screw.global_description()]);
         });
       });
 
-      context("when Prefs.data.run_paths contains a single path", function() {
+      context("when Prefs.data.run_paths contains paths", function() {
         it("returns the result of root.runnable_at_path for that path", function() {
-          Prefs.data.run_paths = [[1,2,3]];
-          var focused = {};
-          mock(Screw.global_description(), 'runnable_at_path', function(path) {
-            expect(path).to(equal, [1, 2, 3]);
-            return focused;
-          })
-          expect(Screw.Interface.focused_runnable()).to(equal, focused);
+          var global_description = Screw.global_description();
+          Prefs.data.run_paths = [[1,2,3], [4, 5, 6]];
+
+          var i = 0;
+          var return_vals = ['x', 'y'];
+
+          mock(global_description, 'runnable_at_path', function() {
+            return return_vals[i++];
+          });
+
+          expect(Screw.Interface.examples_to_run()).to(equal, return_vals);
+          expect(Screw.global_description().runnable_at_path.call_args[0][0]).to(equal, [1,2,3]);
+          expect(Screw.global_description().runnable_at_path.call_args[1][0]).to(equal, [4,5,6]);
+
         });
       });
     });
