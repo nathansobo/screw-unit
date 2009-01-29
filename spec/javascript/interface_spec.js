@@ -18,25 +18,14 @@ Screw.Unit(function(c) { with(c) {
     describe(".refresh", function() {
       var original_options;
 
-      it("calls Screw.Interface.set_location with the current location plus the serialized Screw.Interface.options", function() {
-        Screw.Interface.options = {
-          foo: "bar",
-          baz: "bop"
-        };
-
+      it("calls Screw.Interface.set_location with the current location", function() {
         mock(Screw.Interface, 'set_location');
         var expected_base_location = window.location.href.split('?')[0];
 
         Screw.Interface.refresh();
 
         var actual_location = Screw.Interface.set_location.most_recent_args[0];
-
         expect(actual_location).to(match, expected_base_location);
-
-        // testing "foo=bar&baz=bop" in presence of nondeterministic ordering
-        expect(actual_location).to(match, "foo=bar");
-        expect(actual_location).to(match, "baz=bop");
-        expect(actual_location).to(match, "&");
       });
     });
 
@@ -61,38 +50,32 @@ Screw.Unit(function(c) { with(c) {
       });
     });
 
-
-    describe(".parse_options", function() {
-      it("extracts serialized options from the location and assigns them to the Screw.Interface.options object", function() {
-        mock(Screw.Interface, 'get_location', function() {
-          return "http://test.example.org?foo=bar&baz=bop";
-        })
-
-        expect(Screw.Interface.options).to(equal, {});
-        Screw.Interface.parse_options();
-        expect(Screw.Interface.options).to(equal, {
-          foo: 'bar',
-          baz: 'bop'
+    describe(".examples_to_run", function() {
+      context("when Prefs.data.run_paths is undefined", function() {
+        before(function() {
+          Prefs.data.run_paths = undefined;
         });
-      });
-    });
 
-    describe(".focused_runnable", function() {
-      context("when Screw.Interface.options is undefined", function() {
-        it("returns the root passed in initial_attributes", function() {
-          expect(Screw.Interface.focused_runnable()).to(equal, Screw.global_description());
+        it("returns the [Screw.root_description()]", function() {
+          expect(Screw.Interface.examples_to_run()).to(equal, [Screw.root_description()]);
         });
       });
 
-      context("when Screw.Interface.options is a comma-delimited focus path", function() {
-        it("returns the result of root.runnable_at_path for the focus path converted into an array", function() {
-          Screw.Interface.options.focus_path = "1,2,3";
-          var focused = {}; 
-          mock(Screw.global_description(), 'runnable_at_path', function(path) {
-            expect(path).to(equal, [1, 2, 3]);
-            return focused;
-          })
-          expect(Screw.Interface.focused_runnable()).to(equal, focused);
+      context("when Prefs.data.run_paths contains paths", function() {
+        it("returns the result of root.runnable_at_path for that path", function() {
+          var root_description = Screw.root_description();
+          Prefs.data.run_paths = [[1,2,3], [4, 5, 6]];
+
+          var i = 0;
+          var return_vals = ['x', 'y'];
+
+          mock(root_description, 'runnable_at_path', function() {
+            return return_vals[i++];
+          });
+
+          expect(Screw.Interface.examples_to_run()).to(equal, return_vals);
+          expect(Screw.root_description().runnable_at_path.call_args[0][0]).to(equal, [1,2,3]);
+          expect(Screw.root_description().runnable_at_path.call_args[1][0]).to(equal, [4,5,6]);
         });
       });
     });
@@ -135,16 +118,21 @@ Screw.Unit(function(c) { with(c) {
       });
     });
 
-    describe("show buttons", function() {
-      var passing_example, failing_example, example_1;
+    describe("buttons", function() {
+      var passing_example, failing_example_1, failing_example_2, example_1;
       before(function() {
         passing_example = new Screw.Example("passing example 1", function() {
         });
-        failing_example = new Screw.Example("failing example 1", function() {
+        failing_example_1 = new Screw.Example("failing example 1", function() {
+          throw new Error();
+        });
+        failing_example_2 = new Screw.Example("failing example 1", function() {
           throw new Error();
         });
         child_description_1.add_example(passing_example);
-        child_description_1.add_example(failing_example);
+        child_description_1.add_example(failing_example_1);
+        child_description_1.add_example(failing_example_2);
+        view = Disco.build(Screw.Interface.Runner, {root: root, runnable: root});
       });
       
       describe("when the 'Show Failed' button is clicked", function() {
@@ -171,7 +159,7 @@ Screw.Unit(function(c) { with(c) {
         });
 
         it("shows only descriptions that have failing examples", function() {
-          failing_example.run();
+          failing_example_1.run();
 
           expect(view.find("li ul li:contains('child description 1'):visible")).to_not(be_empty);
           expect(view.find("li ul li:contains('child description 2'):visible")).to_not(be_empty);
@@ -180,7 +168,7 @@ Screw.Unit(function(c) { with(c) {
           expect(view.find("li ul li:contains('child description 2'):visible")).to(be_empty);
         });
 
-        it("sets 'show' to 'failed' in the preferences", function() {
+        it("sets Prefs.data.show to 'failed'", function() {
           Prefs.data = { show: null };
           Prefs.save();
 
@@ -206,7 +194,7 @@ Screw.Unit(function(c) { with(c) {
         });
 
         it("shows any hidden descriptions and examples", function() {
-          failing_example.run();
+          failing_example_1.run();
 
           expect(view.find("li ul li:contains('child description 1'):visible")).to_not(be_empty);
           expect(view.find("li ul li:contains('child description 2'):visible")).to_not(be_empty);
@@ -222,7 +210,7 @@ Screw.Unit(function(c) { with(c) {
           expect(view.find("li:contains('child description 2'):visible")).to_not(be_empty);
         });
 
-        it("sets 'show' to 'all' in the preferences", function() {
+        it("sets Prefs.data.show to 'all'", function() {
           Prefs.data = { show: null };
           Prefs.save();
 
@@ -232,13 +220,110 @@ Screw.Unit(function(c) { with(c) {
           expect(Prefs.data.show).to(equal, "all");
         });
       });
+
+      describe("when the 'Rerun Failed' button is clicked", function() {
+        before(function() {
+          failing_example_1.run();
+          failing_example_2.run();
+        });
+
+        it("saves Prefs.data.run_paths to an Array of the #paths of all failing Examples and calls Screw.Interface.refresh", function() {
+          Prefs.data.run_paths = null;
+          Prefs.save();
+
+          mock(Screw.Interface, 'refresh');
+
+          view.find("button#rerun_failed").click();
+
+          Prefs.load();
+          expect(Prefs.data.run_paths).to(equal, [failing_example_1.path(), failing_example_2.path()]);
+          expect(Screw.Interface.refresh).to(have_been_called);
+        });
+      });
+
+      describe("when the 'Rerun All' button is clicked", function() {
+        it("saves Prefs.data.run_paths to null and calls Screw.Interface.refresh", function() {
+          Prefs.data.run_paths = "foo";
+          Prefs.save();
+
+          mock(Screw.Interface, 'refresh');
+          view.find("button#rerun_all").click();
+          
+          Prefs.load();
+          expect(Prefs.data.run_paths).to(be_null);
+          expect(Screw.Interface.refresh).to(have_been_called);
+        });
+      });
+    });
+  });
+
+  describe("Screw.Interface.ProgressBar", function() {
+    var description_1, description_2, example_1, example_2, example_3, example_4, view, should_fail;
+    before(function() {
+      should_fail = false;
+      description_1 = new Screw.Description("description");
+      example_1 = new Screw.Example("example 1", function() {
+        if (should_fail) throw "flunk";
+      });
+      example_2 = new Screw.Example("example 1", function() {
+        if (should_fail) throw "flunk";
+      });
+      description_1.add_example(example_1);
+      description_1.add_example(example_2);
+
+      description_2 = new Screw.Description("description");
+      example_3 = new Screw.Example("example 3", function() {
+        if (should_fail) throw "flunk";
+      });
+      example_4 = new Screw.Example("example 4", function() {
+        if (should_fail) throw "flunk";
+      });
+      description_2.add_example(example_3);
+      description_2.add_example(example_4);
+
+      view = Disco.build(Screw.Interface.ProgressBar, {examples_to_run: [description_1, description_2]})
+    });
+
+    describe("when an example within one of the associated examples to run is completed", function() {
+      it("updates the width of the progress bar to the proportion of completed examples and updates the 'n of m completed' text", function() {
+        expect(view.find('div#screw_unit_progress').css('width')).to(equal, '0%');
+        expect(view.html()).to(match, "0 of 4");
+        example_1.run();
+        expect(view.find('div#screw_unit_progress').css('width')).to(equal, '25%');
+        expect(view.html()).to(match, "1 of 4");
+        example_2.run();
+        expect(view.find('div#screw_unit_progress').css('width')).to(equal, '50%');
+        expect(view.html()).to(match, "2 of 4");
+      });
+    });
+
+    describe("when an example within the associated runnable fails", function() {
+      before(function() {
+        should_fail = true;
+      });
+
+      it("adds the 'failed' class to its content", function() {
+        expect(view.hasClass('failed')).to(be_false);
+        example_1.run();
+        expect(view.hasClass('failed')).to(be_true);
+      });
+
+      it("updates the 'n failed' text to the number of failing examples", function() {
+        expect(view.html()).to(match, "0 failed");
+        example_1.run();
+        expect(view.html()).to(match, "1 failed");
+        example_2.run();
+        expect(view.html()).to(match, "2 failed");
+      });
     });
   });
 
   describe("Screw.Interface.Description", function() {
     var description, view;
     before(function() {
+      var parent_description = new Screw.Description("parent description");
       description = new Screw.Description("description");
+      parent_description.add_description(description);
     });
 
     describe("#content", function() {
@@ -263,7 +348,6 @@ Screw.Unit(function(c) { with(c) {
           expect(examples.html()).to(match, Disco.build(Screw.Interface.Example, {example: example_1}).html());
           expect(examples.html()).to(match, Disco.build(Screw.Interface.Example, {example: example_2}).html());
         });
-
       });
 
       context("when the view's Description has no #examples", function() {
@@ -367,10 +451,15 @@ Screw.Unit(function(c) { with(c) {
         view = Disco.build(Screw.Interface.Description, {description: description});
       });
 
-      it("sets Screw.Interface.options.focus_path to the serialized #path of the associated Description and calls Screw.Interface.refresh", function() {
+      it("saves [description.path()] to Prefs.data.run_paths and calls Screw.Interface.refresh", function() {
         mock(Screw.Interface, 'refresh');
+        Prefs.data.run_paths = null;
+        Prefs.save();
+
         view.focus();
-        expect(Screw.Interface.options.focus_path).to(equal, description.path().join(","));
+
+        Prefs.load();
+        expect(Prefs.data.run_paths).to(equal, [description.path()]);
         expect(Screw.Interface.refresh).to(have_been_called);
       });
     });
@@ -451,62 +540,17 @@ Screw.Unit(function(c) { with(c) {
       after(function() {
         Screw.Interface.options = original_screw_options;
       });
-      
-      it("sets Screw.Interface.options.focus_path to the #path of the associated Example and calls Screw.Interface.refresh", function() {
+
+      it("saves [example.path()] to Prefs.data.run_paths and calls Screw.Interface.refresh", function() {
         mock(Screw.Interface, 'refresh');
+        Prefs.data.run_paths = null;
+        Prefs.save();
+
         view.focus();
-        expect(Screw.Interface.options.focus_path).to(equal, example.path().join(","));
+
+        Prefs.load();
+        expect(Prefs.data.run_paths).to(equal, [example.path()]);
         expect(Screw.Interface.refresh).to(have_been_called);
-      });
-    });
-  });
-
-  describe("Screw.Interface.ProgressBar", function() {
-    var description, example_1, example_2, view, should_fail;
-    before(function() {
-      should_fail = false;
-      description = new Screw.Description("description");
-      example_1 = new Screw.Example("example 1", function() {
-        if (should_fail) throw "flunk";
-      });
-      example_2 = new Screw.Example("example 1", function() {
-        if (should_fail) throw "flunk";
-      });
-      description.add_example(example_1);
-      description.add_example(example_2);
-      view = Disco.build(Screw.Interface.ProgressBar, {runnable: description})
-    });
-
-    describe("when an example within the associated runnable is completed", function() {
-      it("updates the width of the progress bar to the proportion of completed examples and updates the 'n of m completed' text", function() {
-        expect(view.find('div#screw_unit_progress').css('width')).to(equal, '0%');
-        expect(view.html()).to(match, "0 of 2");
-        example_1.run();
-        expect(view.find('div#screw_unit_progress').css('width')).to(equal, '50%');
-        expect(view.html()).to(match, "1 of 2");
-        example_2.run();
-        expect(view.find('div#screw_unit_progress').css('width')).to(equal, '100%');
-        expect(view.html()).to(match, "2 of 2");
-      });
-    });
-    
-    describe("when an example within the associated runnable fails", function() {
-      before(function() {
-        should_fail = true;
-      });
-      
-      it("adds the 'failed' class to its content", function() {
-        expect(view.hasClass('failed')).to(be_false);
-        example_1.run();
-        expect(view.hasClass('failed')).to(be_true);
-      });
-
-      it("updates the 'n failed' text to the number of failing examples", function() {
-        expect(view.html()).to(match, "0 failed");
-        example_1.run();
-        expect(view.html()).to(match, "1 failed");
-        example_2.run();
-        expect(view.html()).to(match, "2 failed");
       });
     });
   });
