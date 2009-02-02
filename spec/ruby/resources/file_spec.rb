@@ -35,6 +35,46 @@ module ScrewUnit
               headers['Content-Type'].should == "text/javascript"
             end
           end
+
+          context "when the file has a .css extension" do
+            def absolute_path
+              "#{dir}/file_system_fixtures/foo.css"
+            end
+
+            it "has a Content-Type header of 'text/javascript'" do
+              headers['Content-Type'].should == "text/css"
+            end
+          end
+
+          context "when the file has a .css extension" do
+            def absolute_path
+              "#{dir}/file_system_fixtures/foo.png"
+            end
+
+            it "has a Content-Type header of 'text/javascript'" do
+              headers['Content-Type'].should == "image/png"
+            end
+          end
+
+          context "when the file has a .jpg extension" do
+            def absolute_path
+              "#{dir}/file_system_fixtures/foo.png"
+            end
+
+            it "has a Content-Type header of 'text/javascript'" do
+              headers['Content-Type'].should == "image/jpeg"
+            end
+          end
+
+          context "when the file has a .jpg extension" do
+            def absolute_path
+              "#{dir}/file_system_fixtures/foo.png"
+            end
+
+            it "has a Content-Type header of 'text/javascript'" do
+              headers['Content-Type'].should == "image/jpeg"
+            end
+          end
         end
 
         context "when no file exists at #absolute_path" do
