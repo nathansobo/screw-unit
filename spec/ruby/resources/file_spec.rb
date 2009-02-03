@@ -26,7 +26,11 @@ module ScrewUnit
             response_code.should == 200
           end
 
-          it "returns the contents of the file as the respons body" do
+          it "returs the file's mtime as the 'Last-Modified' header" do
+            headers['Last-Modified'].should == ::File.mtime(absolute_path).rfc822
+          end
+
+          it "returns the contents of the file as the response body" do
             body.should == ::File.read(absolute_path)
           end
 
@@ -41,37 +45,37 @@ module ScrewUnit
               "#{dir}/file_system_fixtures/foo.css"
             end
 
-            it "has a Content-Type header of 'text/javascript'" do
+            it "has a Content-Type header of 'text/css'" do
               headers['Content-Type'].should == "text/css"
             end
           end
 
-          context "when the file has a .css extension" do
+          context "when the file has a .png extension" do
             def absolute_path
               "#{dir}/file_system_fixtures/foo.png"
             end
 
-            it "has a Content-Type header of 'text/javascript'" do
+            it "has a Content-Type header of 'text/png'" do
               headers['Content-Type'].should == "image/png"
             end
           end
 
           context "when the file has a .jpg extension" do
             def absolute_path
-              "#{dir}/file_system_fixtures/foo.png"
+              "#{dir}/file_system_fixtures/foo.jpg"
             end
 
-            it "has a Content-Type header of 'text/javascript'" do
+            it "has a Content-Type header of 'image/jpeg'" do
               headers['Content-Type'].should == "image/jpeg"
             end
           end
 
-          context "when the file has a .jpg extension" do
+          context "when the file has a .jpeg extension" do
             def absolute_path
-              "#{dir}/file_system_fixtures/foo.png"
+              "#{dir}/file_system_fixtures/foo.jpeg"
             end
 
-            it "has a Content-Type header of 'text/javascript'" do
+            it "has a Content-Type header of 'image/jpeg'" do
               headers['Content-Type'].should == "image/jpeg"
             end
           end
