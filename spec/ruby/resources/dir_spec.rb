@@ -27,6 +27,14 @@ module ScrewUnit
             subdir.absolute_path.should == "#{dir.absolute_path}/subdir"
           end
         end
+
+        context "when the string names a file that doesn't exist" do
+          it "returns a FileNotFound resource with the relative path" do
+            not_found = dir.locate("bogus")
+            not_found.class.should == FileNotFound
+            not_found.relative_path.should == "#{dir.relative_path}/bogus"
+          end
+        end
       end
     end
   end
