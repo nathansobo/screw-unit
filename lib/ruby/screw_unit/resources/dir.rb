@@ -15,6 +15,14 @@ module ScrewUnit
           FileNotFound.new(relative_child_path)
         end
       end
+
+      def glob(glob_pattern)
+        ::Dir.glob(absolute_path + glob_pattern).map do |absolute_child_path|
+          relative_child_path = absolute_child_path.gsub(absolute_path, relative_path)
+          File.new(relative_child_path, absolute_child_path)
+        end
+      end
+
     end
   end
 end

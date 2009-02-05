@@ -21,10 +21,10 @@ module ScrewUnit
 
         context "when the string names a subdirectory in the directory" do
           it "returns a Dir resource with the appropriate absolute and relative paths" do
-            subdir = dir.locate("subdir")
+            subdir = dir.locate("specs")
             subdir.class.should == Resources::Dir
-            subdir.relative_path.should == "/bar/subdir"
-            subdir.absolute_path.should == "#{dir.absolute_path}/subdir"
+            subdir.relative_path.should == "/bar/specs"
+            subdir.absolute_path.should == "#{dir.absolute_path}/specs"
           end
         end
 
@@ -33,6 +33,20 @@ module ScrewUnit
             not_found = dir.locate("bogus")
             not_found.class.should == FileNotFound
             not_found.relative_path.should == "#{dir.relative_path}/bogus"
+          end
+        end
+      end
+
+      describe "#glob" do
+        it "returns File resources with the correct relative and absolute paths for all files matching the pattern" do
+          glob_pattern = "/**/*.js"
+          globbed_file_resources = dir.glob(glob_pattern)
+
+          ::Dir.glob(dir.absolute_path + glob_pattern).each do |expected_absolute_path|
+            expected_relative_path = expected_absolute_path.gsub(dir.absolute_path, dir.relative_path)
+            globbed_file_resources.select do |resource|
+              resource.relative_path == expected_relative_path && resource.absolute_path == expected_absolute_path
+            end.length.should == 1
           end
         end
       end
