@@ -9,7 +9,7 @@ module ScrewUnit
 
     def start
       Thin::Server.start do
-        run Dispatcher.new
+        run Dispatcher.instance
       end
     end
   end

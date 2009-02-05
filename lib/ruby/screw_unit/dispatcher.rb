@@ -1,5 +1,9 @@
 module ScrewUnit
   class Dispatcher
+    def self.instance
+      @instance ||= new
+    end
+
     def call(env)
       request = Rack::Request.new(env)
       locate_resource(request.path_info).send(request.request_method.downcase)
