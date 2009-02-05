@@ -18,8 +18,11 @@ module ScrewUnit
         end
 
         it "returns the results of #get called on a SpecSuite instantiated with all /**/*.js files in the directory" do
-          spec_files = Dir.glob("#{spec_dir.absolute_path}/**/*.js")
+          spec_files = ::Dir.glob("#{spec_dir.absolute_path}/**/*.js")
           spec_files.should_not be_empty
+
+          content.should == SpecSuite.new(spec_files).get
+
         end
       end
     end
