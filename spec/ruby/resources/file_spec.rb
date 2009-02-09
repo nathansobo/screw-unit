@@ -82,7 +82,11 @@ module ScrewUnit
         end
 
         context "when no file exists at #absolute_path" do
+          def absolute_path
+            "bogus"
+          end
 
+          it "returns a FileNotFound resource"
         end
       end
     end

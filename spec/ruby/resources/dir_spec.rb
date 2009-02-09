@@ -6,7 +6,11 @@ module ScrewUnit
       attr_reader :dir
       before do
         spec_file_dir = ::File.dirname(__FILE__)
-        @dir = Dir.new("/bar", "#{spec_file_dir}/file_system_fixtures")
+        @dir = Dir.new(relative_path, "#{spec_file_dir}/file_system_fixtures")
+      end
+
+      def relative_path
+        "/bar"
       end
 
       describe "#locate" do
@@ -16,6 +20,16 @@ module ScrewUnit
             file.class.should == Resources::File
             file.relative_path.should == "/bar/foo.js"
             file.absolute_path.should == "#{dir.absolute_path}/foo.js"
+          end
+
+          context "when the Dir's #relative_path is '/'" do
+            def relative_path
+              '/'
+            end
+
+            it "starts the File resource's relative path with only a single /" do
+              dir.locate("foo.js").relative_path.should == "/foo.js"
+            end
           end
         end
 

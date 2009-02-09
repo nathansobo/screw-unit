@@ -2,8 +2,8 @@ module ScrewUnit
   module Resources
     class Dir < File
       def locate(name)
-        relative_child_path = "#{relative_path}/#{name}"
-        absolute_child_path = "#{absolute_path}/#{name}"
+        relative_child_path = "#{relative_path}/#{name}".gsub("//", "/")
+        absolute_child_path = "#{absolute_path}/#{name}".gsub("//", "/")
 
         if ::File.exists?(absolute_child_path)
           if ::File.directory?(absolute_child_path)
