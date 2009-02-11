@@ -1,4 +1,4 @@
-Screw.Unit(function() {
+Screw.Unit(function(c) { with(c) {
   describe('Man', function() {
     var man;
     before(function() {
@@ -31,4 +31,4 @@ Screw.Unit(function() {
       });
     });
   });
-});
+}});
