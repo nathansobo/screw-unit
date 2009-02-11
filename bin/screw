@@ -1,0 +1,7 @@
+dir = File.dirname(__FILE__)
+$LOAD_PATH.push("#{dir}/../lib/ruby")
+require "screw_unit"
+ScrewUnit::Server.start(
+  :code_under_test_path => "#{dir}/../example/models",
+  :specs_path  => "#{dir}/../example/spec"
+)

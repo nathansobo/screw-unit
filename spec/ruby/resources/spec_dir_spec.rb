@@ -32,7 +32,12 @@ module ScrewUnit
         end
 
         describe "when called with the name of a .js file including the extension" do
-          it "returns a normal File resource for the File"
+          it "returns a normal File resource for the File" do
+            spec_file = spec_dir.locate("foo_spec.js")
+            spec_file.class.should == File
+            spec_file.relative_path.should == "/specs/foo_spec.js"
+            spec_file.absolute_path.should == "#{spec_dir.absolute_path}/foo_spec.js"
+          end
         end
       end
 

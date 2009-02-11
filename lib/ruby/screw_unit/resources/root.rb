@@ -17,7 +17,7 @@ module ScrewUnit
         when "screw_unit_core"
           Dir.new("/screw_unit_core", screw_unit_core_path)
         when "specs"
-          Dir.new("/specs", specs_path)
+          SpecDir.new("/specs", specs_path)
         else
           super
         end

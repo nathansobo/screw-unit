@@ -23,9 +23,9 @@ module ScrewUnit
         end
 
         context "when called with 'specs'" do
-          it "returns a Dir resource with relative path of '/specs' and absolute path of the #spec_path" do
+          it "returns a SpecDir resource with relative path of '/specs' and absolute path of the #spec_path" do
             specs_dir = root.locate('specs')
-            specs_dir.class.should == Resources::Dir
+            specs_dir.class.should == Resources::SpecDir
             specs_dir.absolute_path.should == root.specs_path
             specs_dir.relative_path.should == "/specs"
           end
