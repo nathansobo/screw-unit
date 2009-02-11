@@ -13,18 +13,16 @@ module ScrewUnit
     end
 
     describe "#start" do
-      it "assigns Dispatcher.instance.root to a root with the appropriate #screw_unit_core_path, #code_under_test_path, #specs_path and calls Thin::Server.start" do
-        Dispatcher.instance.root.should be_nil
-        mock(Thin::Server).start
+      it "calls Thin::Server.start with an instance of the Dispatcher with the given options" do
+        stub.instance_of(Thin::Server).start!
+
+        mock.proxy(Thin::Server).start
+        mock.proxy(Dispatcher).instance("code/under/test/path", "specs/path")
 
         Server.start(
-          :code_under_test_path => "code_under_test_path",
-          :specs_path => "specs_path"
+          :code_under_test_path => "code/under/test/path",
+          :specs_path => "specs/path"
         )
-
-        root = Dispatcher.instance.root
-        root.code_under_test_path.should == "code_under_test_path"
-        root.specs_path.should == "specs_path"
       end
     end
   end
