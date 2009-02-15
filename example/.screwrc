@@ -1,0 +1,5 @@
+ScrewUnit.configure do
+  port 8082
+  code_under_test_path "models"
+  specs_path "spec"
+end
