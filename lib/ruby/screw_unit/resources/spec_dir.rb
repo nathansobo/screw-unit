@@ -5,6 +5,8 @@ module ScrewUnit
         relative_child_path = "#{relative_path}/#{name}".gsub("//", "/")
         absolute_child_path = "#{absolute_path}/#{name}".gsub("//", "/")
 
+        p absolute_child_path
+
         if ::File.exists?(absolute_child_path)
           if ::File.directory?(absolute_child_path)
             SpecDir.new(relative_child_path, absolute_child_path)

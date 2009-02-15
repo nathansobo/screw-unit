@@ -1,3 +1,5 @@
+require("/specs/spec_helper");
+
 Screw.Unit(function(c) { with(c) {
   describe('Man', function() {
     var man;

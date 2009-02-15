@@ -8,7 +8,8 @@ module ScrewUnit
     end
 
     def start(options)
-      Thin::Server.start do
+      port = options.delete(:port) || 8080
+      Thin::Server.start(port) do
         run Dispatcher.instance(options[:code_under_test_path], options[:specs_path])
       end
     end
