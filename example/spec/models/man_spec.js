@@ -23,13 +23,13 @@ Screw.Unit(function(c) { with(c) {
     
     describe('@click', function() {
       before(function() {
-        $('#dom_test').append(man.render());
+        $('#test_content').append(man.render());
       });
       
       it("removes the man's hair", function() {
-        expect($('.man')).to(have, '.hair');
+        expect($('.man .hair')).to_not(be_empty);
         $('.man').click();
-        expect($('.man')).to_not(have, '.hair');
+        expect($('.man .hair')).to(be_empty);
       });
     });
   });
