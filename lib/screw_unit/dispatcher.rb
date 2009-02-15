@@ -33,7 +33,7 @@ module ScrewUnit
     end
 
     def screw_unit_core_path
-      "#{File.dirname(__FILE__)}/../../javascript"
+      "#{File.dirname(__FILE__)}/../../javascript/lib"
     end
   end
 end
