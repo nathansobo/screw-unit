@@ -45,12 +45,12 @@ module ScrewUnit
           "/screw_unit_core/json.js",
           "/screw_unit_core/prefs.js",
           "/screw_unit_core/jquery-1.2.6.js",
+          "/screw_unit_core/jquery.print.js",
           "/screw_unit_core/foundation.js",
           "/screw_unit_core/require.js",
           "/screw_unit_core/matchers.js",
           "/screw_unit_core/core.js",
           "/screw_unit_core/disco.js",
-          "/screw_unit_core/jquery.print.js",
           "/screw_unit_core/interface.js",
         ]
       end

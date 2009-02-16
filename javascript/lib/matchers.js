@@ -21,7 +21,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + $.print(actual) + (not ? ' to not equal ' : ' to equal ') + $.print(expected);
+        return 'expected ' + jQuery.print(actual) + (not ? ' to not equal ' : ' to equal ') + jQuery.print(expected);
       }
     });
 
@@ -31,7 +31,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + $.print(actual) + (not ? ' to not ' : ' to ') + 'be greater than ' + $.print(expected);
+        return 'expected ' + jQuery.print(actual) + (not ? ' to not ' : ' to ') + 'be greater than ' + jQuery.print(expected);
       }
     });
 
@@ -41,7 +41,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + $.print(actual) + (not ? ' to not ' : ' to ') + 'be greater than or equal to ' + $.print(expected);
+        return 'expected ' + jQuery.print(actual) + (not ? ' to not ' : ' to ') + 'be greater than or equal to ' + jQuery.print(expected);
       }
     });
 
@@ -51,7 +51,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + $.print(actual) + (not ? ' to not ' : ' to ') + 'be less than ' + $.print(expected);
+        return 'expected ' + jQuery.print(actual) + (not ? ' to not ' : ' to ') + 'be less than ' + jQuery.print(expected);
       }
     });
 
@@ -61,7 +61,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + $.print(actual) + (not ? ' to not ' : ' to ') + 'be less than or equal to ' + $.print(expected);
+        return 'expected ' + jQuery.print(actual) + (not ? ' to not ' : ' to ') + 'be less than or equal to ' + jQuery.print(expected);
       }
     });
 
@@ -74,7 +74,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + $.print(actual) + (not ? ' to not match ' : ' to match ') + $.print(expected);
+        return 'expected ' + jQuery.print(actual) + (not ? ' to not match ' : ' to match ') + jQuery.print(expected);
       }
     });
 
@@ -86,7 +86,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + $.print(actual) + (not ? ' to not be empty' : ' to be empty');
+        return 'expected ' + jQuery.print(actual) + (not ? ' to not be empty' : ' to be empty');
       }
     });
 
@@ -98,7 +98,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + $.print(actual) + (not ? ' to not' : ' to') + ' have length ' + expected;
+        return 'expected ' + jQuery.print(actual) + (not ? ' to not' : ' to') + ' have length ' + expected;
       }
     });
 
@@ -108,7 +108,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + $.print(actual) + (not ? ' to not be null' : ' to be null');
+        return 'expected ' + jQuery.print(actual) + (not ? ' to not be null' : ' to be null');
       }
     });
 
@@ -118,7 +118,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + $.print(actual) + (not ? ' to not be undefined' : ' to be undefined');
+        return 'expected ' + jQuery.print(actual) + (not ? ' to not be undefined' : ' to be undefined');
       }
     });
 
@@ -128,7 +128,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + $.print(actual) + (not ? ' to not be true' : ' to be true');
+        return 'expected ' + jQuery.print(actual) + (not ? ' to not be true' : ' to be true');
       }
     });
 
@@ -138,7 +138,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + $.print(actual) + (not ? ' to not be false' : ' to be false');
+        return 'expected ' + jQuery.print(actual) + (not ? ' to not be false' : ' to be false');
       }
     });
 
@@ -152,7 +152,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + $.print(actual) + (not ? ' to not match selector ' : ' to match selector ') + expected;
+        return 'expected ' + jQuery.print(actual) + (not ? ' to not match selector ' : ' to match selector ') + expected;
       }
     });
 
@@ -166,7 +166,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + $.print(actual) + (not ? ' to not contain selector ' : ' to contain selector ') + expected;
+        return 'expected ' + jQuery.print(actual) + (not ? ' to not contain selector ' : ' to contain selector ') + expected;
       }
     });
 

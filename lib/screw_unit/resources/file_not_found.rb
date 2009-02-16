@@ -7,8 +7,17 @@ module ScrewUnit
         @relative_path = relative_path
       end
 
+      def locate(name)
+        self
+      end
+      
       def get
-        raise "No file found at relative path '#{relative_path}'¢"
+        puts "Couldn't find #{relative_path}"
+        [404, {}, "No file found at relative path '#{relative_path}'"]
+      end
+
+      def error
+        raise 
       end
     end
   end
