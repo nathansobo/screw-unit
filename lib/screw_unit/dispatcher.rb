@@ -10,7 +10,7 @@ module ScrewUnit
 
     attr_reader :root
 
-    def initialize(code_under_test_path, specs_path)
+    def initialize(screw_unit_core_path, code_under_test_path, specs_path)
       @root = Resources::Root.new(screw_unit_core_path, code_under_test_path, specs_path)
     end
 
@@ -30,10 +30,6 @@ module ScrewUnit
 
     def path_parts(path)
       path.split('/').reject { |part| part == "" }
-    end
-
-    def screw_unit_core_path
-      "#{File.dirname(__FILE__)}/../../javascript/lib"
     end
   end
 end

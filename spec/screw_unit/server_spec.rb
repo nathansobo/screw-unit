@@ -13,16 +13,31 @@ module ScrewUnit
     end
 
     describe "#start" do
-      it "calls Thin::Server.start with an instance of the Dispatcher with the given options" do
+      before do
         stub.instance_of(Thin::Server).start!
+      end
 
-        mock.proxy(Thin::Server).start(8080)
-        mock.proxy(Dispatcher).instance("code/under/test/path", "specs/path")
+      it "calls Thin::Server.start with an instance of the Dispatcher with the given options" do
+        mock.proxy(Thin::Server).start(9090)
+        mock.proxy(Dispatcher).instance("screw/unit/core/path", "code/under/test/path", "specs/path")
 
         Server.start(
+          :port => 9090,
+          :screw_unit_core_path => "screw/unit/core/path",
           :code_under_test_path => "code/under/test/path",
           :specs_path => "specs/path"
         )
+      end
+
+      context "when no port option is supplied" do
+        it "defaults to 8080" do
+          mock.proxy(Thin::Server).start(8080)
+          Server.start(
+            :screw_unit_core_path => "screw/unit/core/path",
+            :code_under_test_path => "code/under/test/path",
+            :specs_path => "specs/path"
+          )
+        end
       end
     end
   end

@@ -11,7 +11,6 @@ module ScrewUnit
 
     attr_reader :base_path
 
-
     def load_screwrc(base_path)
       @base_path = base_path
       load("#{base_path}/.screwrc")
@@ -30,6 +29,10 @@ module ScrewUnit
     def specs_path(relative_path=nil)
       @specs_path = expand_path(relative_path) if relative_path
       @specs_path
+    end
+
+    def screw_unit_core_path
+      File.expand_path("#{File.dirname(__FILE__)}/../../javascript/lib")
     end
 
     def expand_path(relative_path)

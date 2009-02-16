@@ -11,23 +11,24 @@ module ScrewUnit
     end
 
     describe ".instance" do
-      attr_reader :code_under_test_path, :specs_path
+      attr_reader :screw_unit_core_path, :code_under_test_path, :specs_path
       before do
+        @screw_unit_core_path = "screw/unit/core/path"
         @code_under_test_path = "code/under/test/path"
         @specs_path = "specs/path"
-        Dispatcher.instance(code_under_test_path, specs_path)
+        Dispatcher.instance(screw_unit_core_path, code_under_test_path, specs_path)
       end
 
       it "initializes a single instance of the Dispatcher" do
         Dispatcher.instance.should equal(Dispatcher.instance)
       end
 
-      it "assigns #root to a Root resource with the given #code_under_test_path and #specs_path and a calculated #screw_unit_core_path" do
+      it "assigns #root to a Root resource with the given paths" do
         root = Dispatcher.instance.root
         root.should_not be_nil
         root.code_under_test_path.should == code_under_test_path
         root.specs_path.should == specs_path
-        root.screw_unit_core_path.should == Dispatcher.instance.screw_unit_core_path
+        root.screw_unit_core_path.should == screw_unit_core_path
       end
     end
   end
