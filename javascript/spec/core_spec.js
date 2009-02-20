@@ -72,7 +72,6 @@ Screw.Unit(function(c) { with(c) {
 
       it("returns all failed Examples descending from this describe", function() {
         root_description.run();
-        console.debug(root_description.failed_examples());
         expect(root_description.failed_examples()).to(equal, [failing_child_example, failing_grandchild_example]);
       });
     });
