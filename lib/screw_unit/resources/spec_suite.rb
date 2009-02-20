@@ -47,8 +47,8 @@ module ScrewUnit
           "/screw_unit_core/jquery-1.2.6.js",
           "/screw_unit_core/jquery.print.js",
           "/screw_unit_core/foundation.js",
-          "/screw_unit_core/require.js",
-          "/screw_unit_core/matchers.js",
+          "/screw_unit_core/screw/require.js",
+          "/screw_unit_core/screw/matchers.js",
           "/screw_unit_core/screw.js",
           "/screw_unit_core/screw/keywords.js",
           "/screw_unit_core/screw/context.js",
@@ -57,7 +57,11 @@ module ScrewUnit
           "/screw_unit_core/screw/example.js",
           "/screw_unit_core/screw/subscription_node.js",
           "/screw_unit_core/disco.js",
-          "/screw_unit_core/interface.js",
+          "/screw_unit_core/screw/interface.js",
+          "/screw_unit_core/screw/interface/runner.js",
+          "/screw_unit_core/screw/interface/progress_bar.js",
+          "/screw_unit_core/screw/interface/description.js",
+          "/screw_unit_core/screw/interface/example.js",
         ]
       end
 
