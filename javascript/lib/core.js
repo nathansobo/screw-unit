@@ -113,12 +113,14 @@ module("Screw", function(c) { with (c) {
       }
       
       var mock_wrapper = function() {
+        var args_array = Array.prototype.slice.call(arguments)
+        
         mock_wrapper.call_count += 1;
-        mock_wrapper.call_args.push(arguments);
-        mock_wrapper.most_recent_args = arguments;
+        mock_wrapper.call_args.push(args_array);
+        mock_wrapper.most_recent_args = args_array;
 
         if (method_mock) {
-          return method_mock.apply(this, arguments);
+          return method_mock.apply(this, args_array);
         }
       };
       mock_wrapper.mocked_object = object;
