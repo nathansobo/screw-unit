@@ -374,5 +374,40 @@ Screw.Unit(function(c) { with(c) {
         });
       });
     });
+
+    describe("#have_been_called", function() {
+      var mock_fn;
+      before(function() {
+        mock_fn = mock_function();
+      });
+
+      context("when matching a mock function with no expected argument", function() {
+        it("matches if the function's #call_count is > 0", function() {
+          expect(mock_fn).to_not(have_been_called)
+          mock_fn();
+          expect(mock_fn).to(have_been_called)
+        });
+      });
+
+      context("when matching a mock function with the number of times called", function() {
+        it("matches if the function's #call_count matches the expectation", function() {
+          mock_fn();
+          expect(mock_fn).to(have_been_called, once);
+          mock_fn();
+          expect(mock_fn).to(have_been_called, twice);
+          mock_fn();
+          expect(mock_fn).to(have_been_called, thrice);
+          mock_fn();
+          expect(mock_fn).to(have_been_called, 4);
+        });
+      });
+
+      context("when matching a mock function with the expected arguments", function() {
+        it("matches if the function's #most_recent_args match the expectation", function() {
+          mock_fn("foo", "bar");
+          expect(mock_fn).to(have_been_called, with_args("foo", "bar"));
+        });
+      });
+    });
   });
 }});

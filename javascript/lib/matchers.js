@@ -172,7 +172,19 @@ module("Screw", function(c) { with(c) {
 
     def('have_been_called', {
       match: function(expected, actual) {
-        return actual.call_count > 0;
+        if (expected) {
+          return this.match_expectation(expected, actual);
+        } else {
+          return actual.call_count > 0;
+        }
+      },
+
+      match_expectation: function(expected, actual) {
+        if (typeof expected == "number") {
+          return actual.call_count == expected;
+        } else {
+          return Screw.Matchers.equal.match(expected, actual.most_recent_args);
+        }
       },
 
       failure_message: function(expected, actual, not) {
@@ -182,6 +194,14 @@ module("Screw", function(c) { with(c) {
           return 'expected ' + actual.function_name + ' to have been called, but it was not';
         }
       }
+    });
+    
+    def('once', 1);
+    def('twice', 2);
+    def('thrice', 3);
+
+    def('with_args', function() {
+      return Array.prototype.slice.call(arguments);
     });
   });
 }});
