@@ -111,28 +111,31 @@ module("Screw", function(c) { with (c) {
       if (!object[method_name]) {
         throw new Error("in mock_function: " + method_name + " is not a function that can be mocked");
       }
-      
-      var mock_wrapper = function() {
-        var args_array = Array.prototype.slice.call(arguments)
-        
-        mock_wrapper.call_count += 1;
-        mock_wrapper.call_args.push(args_array);
-        mock_wrapper.most_recent_args = args_array;
-
-        if (method_mock) {
-          return method_mock.apply(this, args_array);
-        }
-      };
-      mock_wrapper.mocked_object = object;
-      mock_wrapper.function_name = method_name;
-      mock_wrapper.original_function = object[method_name];
-      mock_wrapper.call_count = 0;
-      mock_wrapper.call_args = [];
-      mock_wrapper.most_recent_args = null;
-      Screw.mocks.push(mock_wrapper);
-      object[method_name] = mock_wrapper;
+      var mock_function = this.mock_function(method_mock);
+      mock_function.mocked_object = object;
+      mock_function.function_name = method_name;
+      mock_function.original_function = object[method_name];
+      Screw.mocks.push(mock_function);
+      object[method_name] = mock_function;
 
       return object;
+    });
+
+    def('mock_function', function(fn_to_call) {
+      var mock_function = function() {
+        var args_array = Array.prototype.slice.call(arguments)
+        mock_function.call_count += 1;
+        mock_function.call_args.push(args_array);
+        mock_function.most_recent_args = args_array;
+
+        if (fn_to_call) {
+          return fn_to_call.apply(this, args_array);
+        }
+      };
+      mock_function.call_count = 0;
+      mock_function.call_args = [];
+      mock_function.most_recent_args = null;
+      return mock_function;
     });
   });
 

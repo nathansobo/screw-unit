@@ -53,4 +53,52 @@ Screw.Unit(function(c) { with(c) {
       });
     });
   })
+
+  describe("#mock_function", function() {
+    var mock_fn;
+    before(function() {
+      mock_fn = mock_function();
+    });
+
+    it("records the #call_count on that function", function() {
+      expect(mock_fn.call_count).to(equal, 0);
+      mock_fn();
+      expect(mock_fn.call_count).to(equal, 1);
+      mock_fn();
+      expect(mock_fn.call_count).to(equal, 2);
+    });
+
+    it("pushes the arguments of the call to a #call_args array on that function", function() {
+      expect(mock_fn.call_args).to(equal, []);
+      mock_fn("bar", "baz");
+      expect(mock_fn.call_args).to(equal, [["bar", "baz"]]);
+      mock_fn("quux");
+      expect(mock_fn.call_args).to(equal, [["bar", "baz"], ["quux"]]);
+    });
+
+    it("sets #most_recent args on the function", function() {
+      expect(mock_fn.most_recent_args).to(equal, null);
+      mock_fn("bar", "baz");
+      expect(mock_fn.most_recent_args).to(equal, ["bar", "baz"]);
+      mock_fn("quux");
+      expect(mock_fn.most_recent_args).to(equal, ["quux"]);
+    });
+
+    context("when passed a function as its third argument", function() {
+      var call_args;
+      before(function() {
+        call_args = [];
+        mock_fn = mock_function(function() {
+          call_args.push(Array.prototype.slice.call(arguments));
+        });
+      });
+
+      it("calls the function", function() {
+        mock_fn("bar", "baz");
+        expect(call_args).to(equal, [["bar", "baz"]]);
+        mock_fn("quux");
+        expect(call_args).to(equal, [["bar", "baz"], ["quux"]]);
+      });
+    });
+  });
 }});
