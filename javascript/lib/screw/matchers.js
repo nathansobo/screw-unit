@@ -173,13 +173,13 @@ module("Screw", function(c) { with(c) {
     def('have_been_called', {
       match: function(expected, actual) {
         if (expected) {
-          return this.match_expectation(expected, actual);
+          return this.match_with_call_count_or_expected_args(expected, actual);
         } else {
           return actual.call_count > 0;
         }
       },
 
-      match_expectation: function(expected, actual) {
+      match_with_call_count_or_expected_args: function(expected, actual) {
         if (typeof expected == "number") {
           return actual.call_count == expected;
         } else {
@@ -187,11 +187,20 @@ module("Screw", function(c) { with(c) {
         }
       },
 
+      call_count_or_expected_args_error_message: function(expected) {
+        if (expected == null) return "";
+        if (typeof expected == "number") {
+          return expected + " time(s)";
+        } else {
+          return " with arguments " + $.print(expected);
+        }
+      },
+
       failure_message: function(expected, actual, not) {
         if (not) {
-          return 'expected ' + actual.function_name + ' to have not been called, but it was called ' + actual.call_count + ' time(s)';
+          return 'expected ' + actual.function_name + ' to have not been called ' + this.call_count_or_expected_args_error_message(expected) + ', but it was called ' + actual.call_count + ' time(s)';
         } else {
-          return 'expected ' + actual.function_name + ' to have been called, but it was not';
+          return 'expected ' + actual.function_name + ' to have been called' + this.call_count_or_expected_args_error_message(expected) + ', but it was not';
         }
       }
     });
