@@ -10,15 +10,17 @@ module("Screw", function(c) { with (c) {
 
     def('it', function(name, fn) {
       Screw.current_description().add_example(new Screw.Example(name, fn));
-    })
+    });
+
+    def('specify', Screw.Keywords.it);
 
     def('before', function(fn) {
       Screw.current_description().add_before(fn);
-    })
+    });
 
     def('after', function(fn) {
       Screw.current_description().add_after(fn);
-    })
+    });
 
     def('expect', function(actual) {
       var funcname = function(f) {
