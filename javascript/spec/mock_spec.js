@@ -84,7 +84,14 @@ Screw.Unit(function(c) { with(c) {
       expect(mock_fn.most_recent_args).to(equal, ["quux"]);
     });
 
-    context("when passed a function as its third argument", function() {
+    context("when passed a function_name as its only argument", function() {
+      it("assigns function_name to the given name", function() {
+        var mock_fn = mock_function("function name");
+        expect(mock_fn.function_name).to(equal, "function name");
+      });
+    });
+
+    context("when passed a function as its only argument", function() {
       var call_args;
       before(function() {
         call_args = [];
@@ -98,6 +105,18 @@ Screw.Unit(function(c) { with(c) {
         expect(call_args).to(equal, [["bar", "baz"]]);
         mock_fn("quux");
         expect(call_args).to(equal, [["bar", "baz"], ["quux"]]);
+      });
+    });
+
+    context("when passed a function_name and a function as its arguments", function() {
+      it("assigns function_name to the given name and calls the function when it is called", function() {
+        var function_to_call = mock_function("function to call");
+        var mock_fn = mock_function("function name", function_to_call);
+        expect(mock_fn.function_name).to(equal, "function name");
+        
+        mock_fn();
+
+        expect(function_to_call).to(have_been_called);
       });
     });
   });

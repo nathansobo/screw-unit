@@ -66,7 +66,20 @@ module("Screw", function(c) { with (c) {
       return object;
     });
 
-    def('mock_function', function(fn_to_call) {
+    def('mock_function', function() {
+      var fn_to_call, function_name;
+
+      if (arguments.length == 2) {
+        function_name = arguments[0];
+        fn_to_call = arguments[1];
+      } else if (arguments.length == 1) {
+        if (typeof arguments[0] == "function") {
+          fn_to_call = arguments[0];
+        } else {
+          function_name = arguments[0];
+        }
+      }
+
       var mock_function = function() {
         var args_array = Array.prototype.slice.call(arguments)
         mock_function.call_count += 1;
@@ -80,6 +93,7 @@ module("Screw", function(c) { with (c) {
       mock_function.call_count = 0;
       mock_function.call_args = [];
       mock_function.most_recent_args = null;
+      mock_function.function_name = function_name;
       return mock_function;
     });
   });
