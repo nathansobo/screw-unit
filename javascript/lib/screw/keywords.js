@@ -90,10 +90,14 @@ module("Screw", function(c) { with (c) {
           return fn_to_call.apply(this, args_array);
         }
       };
-      mock_function.call_count = 0;
-      mock_function.call_args = [];
-      mock_function.most_recent_args = null;
+
       mock_function.function_name = function_name;
+      mock_function.clear = function() {
+        this.call_count = 0;
+        this.call_args = [];
+        this.most_recent_args = null;
+      }
+      mock_function.clear();
       return mock_function;
     });
   });

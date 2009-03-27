@@ -119,5 +119,22 @@ Screw.Unit(function(c) { with(c) {
         expect(function_to_call).to(have_been_called);
       });
     });
+
+    describe("#clear on the results of #mock_function", function() {
+      it("resets all recorded call data", function() {
+        mock_fn("foo");
+
+        expect(mock_fn.call_count).to(equal, 1);
+        expect(mock_fn.call_args).to(equal, [["foo"]]);
+        expect(mock_fn.most_recent_args).to(equal, ["foo"]);
+
+        mock_fn.clear();
+        
+        expect(mock_fn.call_count).to(equal, 0);
+        expect(mock_fn.call_args).to(equal, []);
+        expect(mock_fn.most_recent_args).to(equal, null);
+      });
+    });
+
   });
 }});
