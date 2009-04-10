@@ -47,6 +47,7 @@ module ScrewUnit
           "/screw_unit_core/jquery-1.2.6.js",
           "/screw_unit_core/jquery.print.js",
           "/screw_unit_core/foundation.js",
+          "/screw_unit_core/screw/jquery_mapper.js",  
           "/screw_unit_core/screw/require.js",
           "/screw_unit_core/screw/matchers.js",
           "/screw_unit_core/screw.js",

@@ -2,9 +2,9 @@ Disco = function() {
   this.doc = [];
 };
 
-$.extend(Disco, {
+Screw.$.extend(Disco, {
   inherit: function(layout, template) {
-    var merged_template = $.extend(true, {}, layout, template);
+    var merged_template = Screw.$.extend(true, {}, layout, template);
     
     merged_template.methods = merged_template.methods || {};
     
@@ -68,7 +68,7 @@ $.extend(Disco, {
   }
 });
 
-$.extend(Disco.prototype, {
+Screw.$.extend(Disco.prototype, {
   tag: function() {
     if(arguments.length > 3) {
       throw("XmlBulider#tag does not accept more than three arguments");
@@ -165,7 +165,7 @@ $.extend(Disco.prototype, {
   to_view: function(template, initial_attributes) {
     var string = this.to_string();
     if (string == "") return "";
-    var post_processor = new Disco.PostProcessor($(string));
+    var post_processor = new Disco.PostProcessor(Screw.Screw.$(string));
     for(var i=0; i < this.doc.length; i++) {
       var element = this.doc[i];
       element.post_process(post_processor);
@@ -182,7 +182,7 @@ Disco.OpenTag = function(tag_name, attributes) {
   this.attributes = attributes;
 }
 
-$.extend(Disco.OpenTag.prototype, {
+Screw.$.extend(Disco.OpenTag.prototype, {
   to_string: function() {
     var serialized_attributes = [];
     for(var attributeName in this.attributes) {
@@ -205,7 +205,7 @@ Disco.CloseTag = function(tag_name) {
   this.tag_name = tag_name;
 }
 
-$.extend(Disco.CloseTag.prototype, {
+Screw.$.extend(Disco.CloseTag.prototype, {
   to_string: function() {
     return "</" + this.tag_name + ">";
   },
@@ -219,7 +219,7 @@ Disco.Text = function(value) {
   this.value = value;
 }
 
-$.extend(Disco.Text.prototype, {
+Screw.$.extend(Disco.Text.prototype, {
   to_string: function() {
     return this.value;
   },
@@ -232,7 +232,7 @@ Disco.PostProcessorInstruction = function(function_name, arguments) {
   this.arguments = arguments;
 }
 
-$.extend(Disco.PostProcessorInstruction.prototype, {
+Screw.$.extend(Disco.PostProcessorInstruction.prototype, {
   to_string: function() {
     return "";
   },
@@ -248,7 +248,7 @@ Disco.PostProcessor = function(root_view) {
   this.selector_stack = [0];
 }
 
-$.extend(Disco.PostProcessor.prototype, {
+Screw.$.extend(Disco.PostProcessor.prototype, {
   push: function() {
     this.add_child();
     this.selector_stack.push(0);
@@ -282,13 +282,13 @@ $.extend(Disco.PostProcessor.prototype, {
   close_view: function(template, initial_attributes) {
     var current_view = this.current_view();
     if (template && template.methods) {
-      $.extend(current_view, template.methods);
+      Screw.Screw.$.extend(current_view, template.methods);
     }
     if (template && template.configuration) {
       current_view.configuration = template.configuration;
     }
     if (initial_attributes) {
-      $.extend(current_view, initial_attributes);
+      Screw.Screw.$.extend(current_view, initial_attributes);
     }
     if (current_view.after_initialize) {
       current_view.after_initialize();

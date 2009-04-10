@@ -52,6 +52,10 @@ Screw.Unit(function(c) { with(c) {
         });
       });
 
+      describe('when actual is an iterable Object', function() {
+        
+      });
+
       describe("when actual is a String", function() {
         it("does not match an Array with the same characters", function() {
           expect("123").to_not(equal, ["1", "2", "3"]);

@@ -31,9 +31,9 @@ module("Screw", function(c) { with(c) {
   });
 }});
 
-$(function() {
+Screw.$(function() {
   Screw.Interface.load_preferences();
   var runner = Disco.build(Screw.Interface.Runner, {root: Screw.root_description()})
-  $('body').html(runner);
+  Screw.$('body').html(runner);
   runner.run();
 });

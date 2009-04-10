@@ -2,6 +2,15 @@ module ScrewUnit
   module Resources
     class Dir < File
       def locate(name)
+
+        # could refactor to its own method
+#        Configuration.custom_resources_locators.each do |custom_resource_locator|
+#          locator = custom_resource_locator.new(relative_path, absolute_path)
+#          if resource = locator.locate(name)
+#            return resource
+#          end
+#        end
+
         relative_child_path = "#{relative_path}/#{name}".gsub("//", "/")
         absolute_child_path = "#{absolute_path}/#{name}".gsub("//", "/")
 
