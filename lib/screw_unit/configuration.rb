@@ -26,6 +26,16 @@ module ScrewUnit
       @code_under_test_path
     end
 
+    def custom_resource_locators
+      @custom_resource_locators ||= []
+      @custom_resource_locators
+    end
+
+    def register_custom_resource_locator(klass)
+      @custom_resource_locators ||= []
+      @custom_resource_locators << klass
+    end
+
     def specs_path(relative_path=nil)
       @specs_path = expand_path(relative_path) if relative_path
       @specs_path

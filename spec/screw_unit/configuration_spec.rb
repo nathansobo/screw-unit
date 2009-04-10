@@ -9,13 +9,13 @@ module ScrewUnit
       ScrewUnit.configure(&block)
     end
   end
-  
+
   describe Configuration do
     attr_reader :configuration
     before do
       @configuration = Configuration.new
     end
-    
+
     describe ".instance" do
       it "always returns the same instance of Configuration" do
         instance = Configuration.instance
@@ -36,7 +36,7 @@ module ScrewUnit
       before do
         stub(configuration).base_path { "/base/path" }
       end
-      
+
       describe "#code_under_test_path" do
         it "assigns the no-argument result of #code_under_test_path to a path that is relative to the base path" do
           configuration.code_under_test_path.should be_nil
@@ -58,7 +58,21 @@ module ScrewUnit
           configuration.screw_unit_core_path.should == File.expand_path("#{File.dirname(__FILE__)}/../../javascript/lib")
         end
       end
+
+      describe "#register_custom_resource_locator" do
+        before do
+          class CustomLocator
+            def locate()
+            end
+          end
+        end
+
+        it "registers a locator class" do
+          lambda do
+            configuration.register_custom_resource_locator(CustomLocator)
+          end.should change(configuration.custom_resource_locators, :size).by(1)
+        end
+      end
     end
   end
 end
-  
