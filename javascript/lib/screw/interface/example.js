@@ -23,7 +23,10 @@ module("Screw", function(c) { with(c) {
             message.text(e.message);
 
             var trace = $("<pre class='failure_trace'/>");
-            trace.text(e.stack);
+            if (e.stack) {
+              enhanced_stack = e.stack.replace(/http:\/\/(.*?)\.js/g, '<a href="http://$1" target="_blank">http://$1.js</a>')
+              trace.html(enhanced_stack);
+            }
 
             self.append(message);
             self.append(trace);
