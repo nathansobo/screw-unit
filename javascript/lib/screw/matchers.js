@@ -22,7 +22,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + Screw.$(actual) + (not ? ' to not equal ' : ' to equal ') + Screw.$(expected);
+        return 'expected ' + Screw.$.print(actual) + (not ? ' to not equal ' : ' to equal ') + Screw.$.print(expected);
       }
     });
 
@@ -32,7 +32,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + Screw.$(actual) + (not ? ' to not ' : ' to ') + 'be greater than ' + Screw.$(expected);
+        return 'expected ' + Screw.$.print(actual) + (not ? ' to not ' : ' to ') + 'be greater than ' + Screw.$.print(expected);
       }
     });
 
@@ -42,7 +42,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + Screw.$(actual) + (not ? ' to not ' : ' to ') + 'be greater than or equal to ' + Screw.$(expected);
+        return 'expected ' + Screw.$.print(actual) + (not ? ' to not ' : ' to ') + 'be greater than or equal to ' + Screw.$.print(expected);
       }
     });
 
@@ -52,7 +52,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + Screw.$(actual) + (not ? ' to not ' : ' to ') + 'be less than ' + Screw.$(expected);
+        return 'expected ' + Screw.$.print(actual) + (not ? ' to not ' : ' to ') + 'be less than ' + Screw.$.print(expected);
       }
     });
 
@@ -62,7 +62,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + Screw.$(actual) + (not ? ' to not ' : ' to ') + 'be less than or equal to ' + Screw.$(expected);
+        return 'expected ' + Screw.$.print(actual) + (not ? ' to not ' : ' to ') + 'be less than or equal to ' + Screw.$.print(expected);
       }
     });
 
@@ -75,7 +75,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + Screw.$(actual) + (not ? ' to not match ' : ' to match ') + Screw.$(expected);
+        return 'expected ' + Screw.$.print(actual) + (not ? ' to not match ' : ' to match ') + Screw.$.print(expected);
       }
     });
 
@@ -129,7 +129,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + Screw.$(actual) + (not ? ' to not be empty' : ' to be empty');
+        return 'expected ' + Screw.$.print(actual) + (not ? ' to not be empty' : ' to be empty');
       }
     });
 
@@ -141,7 +141,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + Screw.$(actual) + (not ? ' to not' : ' to') + ' have length ' + expected;
+        return 'expected ' + Screw.$.print(actual) + (not ? ' to not' : ' to') + ' have length ' + expected;
       }
     });
 
@@ -161,7 +161,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + Screw.$(actual) + (not ? ' to not be null' : ' to be null');
+        return 'expected ' + Screw.$.print(actual) + (not ? ' to not be null' : ' to be null');
       }
     });
 
@@ -171,7 +171,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + Screw.$(actual) + (not ? ' to not be undefined' : ' to be undefined');
+        return 'expected ' + Screw.$.print(actual) + (not ? ' to not be undefined' : ' to be undefined');
       }
     });
 
@@ -181,7 +181,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + Screw.$(actual) + (not ? ' to not be true' : ' to be true');
+        return 'expected ' + Screw.$.print(actual) + (not ? ' to not be true' : ' to be true');
       }
     });
 
@@ -191,7 +191,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + Screw.$(actual) + (not ? ' to not be false' : ' to be false');
+        return 'expected ' + Screw.$.print(actual) + (not ? ' to not be false' : ' to be false');
       }
     });
 
@@ -205,7 +205,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + Screw.$(actual) + (not ? ' to not match selector ' : ' to match selector ') + expected;
+        return 'expected ' + Screw.$.print(actual) + (not ? ' to not match selector ' : ' to match selector ') + expected;
       }
     });
 
@@ -219,7 +219,7 @@ module("Screw", function(c) { with(c) {
       },
 
       failure_message: function(expected, actual, not) {
-        return 'expected ' + Screw.$(actual) + (not ? ' to not contain selector ' : ' to contain selector ') + expected;
+        return 'expected ' + Screw.$.print(actual) + (not ? ' to not contain selector ' : ' to contain selector ') + expected;
       }
     });
 
