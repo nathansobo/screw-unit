@@ -19,10 +19,10 @@ module("Screw", function(c) { with(c) {
           this.example.on_fail(function(e) {
             self.addClass("failed");
 
-            var message = $("<div class='failure_message'/>");
+            var message = Screw.$("<div class='failure_message'/>");
             message.text(e.message);
 
-            var trace = $("<pre class='failure_trace'/>");
+            var trace = Screw.$("<pre class='failure_trace'/>");
             if (e.stack) {
               enhanced_stack = e.stack.replace(/http:\/\/(.*?)\.js/g, '<a href="http://$1" target="_blank">http://$1.js</a>')
               trace.html(enhanced_stack);
