@@ -42,7 +42,8 @@ module("Screw", function(c) { with(c) {
         },
 
         resize_progress_div: function() {
-          this.progress_div.css("width", (this.completed_examples / this.total_examples * 100).toString() + "%");
+          var percent_complete = (this.total_examples == 0) ? 0 : (this.completed_examples / this.total_examples * 100);
+          this.progress_div.css("width", percent_complete + "%");
         },
 
         refresh_progress_text: function() {
