@@ -165,7 +165,7 @@ Screw.$.extend(Disco.prototype, {
   to_view: function(template, initial_attributes) {
     var string = this.to_string();
     if (string == "") return "";
-    var post_processor = new Disco.PostProcessor(Screw.Screw.$(string));
+    var post_processor = new Disco.PostProcessor(Screw.$(string));
     for(var i=0; i < this.doc.length; i++) {
       var element = this.doc[i];
       element.post_process(post_processor);
@@ -282,13 +282,13 @@ Screw.$.extend(Disco.PostProcessor.prototype, {
   close_view: function(template, initial_attributes) {
     var current_view = this.current_view();
     if (template && template.methods) {
-      Screw.Screw.$.extend(current_view, template.methods);
+      Screw.$.extend(current_view, template.methods);
     }
     if (template && template.configuration) {
       current_view.configuration = template.configuration;
     }
     if (initial_attributes) {
-      Screw.Screw.$.extend(current_view, initial_attributes);
+      Screw.$.extend(current_view, initial_attributes);
     }
     if (current_view.after_initialize) {
       current_view.after_initialize();
