@@ -9,24 +9,19 @@ module("Screw", function(c) { with(c) {
           });
 
           if (description.examples.length > 0) {
-            ul({'class': 'examples'}, function() {
-              Screw.each(description.examples, function() {
-                keyed_subview('examples', this.index, Screw.Interface.Example, {example: this});
-              })
-            });
+            ul({'class': 'examples'});
           }
+
           if (description.child_descriptions.length > 0) {
-            ul({'class': 'child_descriptions'}, function() {
-              Screw.each(description.child_descriptions, function() {
-                keyed_subview('child_descriptions', this.index, Screw.Interface.Description, {description: this});
-              })
-            });
+            ul({'class': 'child_descriptions'});
           }
         });
       }},
 
       methods: {
         after_initialize: function() {
+          this.build_examples();
+          this.build_child_descriptions();
 
           if (Prefs.data.show == "failed") {
             this.hide();
@@ -40,6 +35,28 @@ module("Screw", function(c) { with(c) {
               self.addClass('passed');
             }
           })
+        },
+
+        build_examples: function() {
+          var self = this;
+          var examples_container = this.find("ul.examples").eq(0);
+          Screw.each(this.description.examples, function() {
+            var subview = Disco.build(Screw.Interface.Example, {example: this});
+            self.append_in_set_timeout(examples_container, subview);
+          });
+        },
+
+        build_child_descriptions: function() {
+          var self = this;
+          var child_descriptions_container = this.find("ul.child_descriptions").eq(0);
+          Screw.each(this.description.child_descriptions, function() {
+            var subview = Disco.build(Screw.Interface.Description, {description: this});
+            self.append_in_set_timeout(child_descriptions_container, subview);
+          });
+        },
+
+        append_in_set_timeout: function(container, subview) {
+          setTimeout(function() { container.append(subview); }, 0);
         },
 
         focus: function() {
