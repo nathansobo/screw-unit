@@ -79,7 +79,6 @@ Screw.Unit(function(c) { with(c) {
     });
   });
 
-  
   describe("Screw.Interface.Runner", function() {
     var root, child_description_1, child_description_2, view;
 
@@ -89,7 +88,7 @@ Screw.Unit(function(c) { with(c) {
       child_description_2 = new Screw.Description("child description 2");
       root.add_description(child_description_1);
       root.add_description(child_description_2);
-      view = Screw.Disco.build(Screw.Interface.Runner, {root: root});
+      view = Screw.Disco.build(Screw.Interface.Runner, {root: root, build_immediately: true});
     });
 
     context("when Prefs.show == 'all'", function() {
@@ -98,7 +97,7 @@ Screw.Unit(function(c) { with(c) {
       });
 
       it("renders itself with the 'show_all' class and not the 'show_failed' class", function() {
-        view = Screw.Disco.build(Screw.Interface.Runner, {root: root});
+        view = Screw.Disco.build(Screw.Interface.Runner, {root: root, build_immediately: true});
         expect(view.hasClass("show_all")).to(be_true);
         expect(view.hasClass("show_failed")).to(be_false);
       });
@@ -110,7 +109,7 @@ Screw.Unit(function(c) { with(c) {
       });
 
       it("renders itself with the 'show_failed' class and not the 'show_all' class", function() {
-        view = Screw.Disco.build(Screw.Interface.Runner, {root: root});
+        view = Screw.Disco.build(Screw.Interface.Runner, {root: root, build_immediately: true});
         expect(view.hasClass("show_failed")).to(be_true);
         expect(view.hasClass("show_all")).to(be_false);
       });
@@ -130,9 +129,9 @@ Screw.Unit(function(c) { with(c) {
         child_description_1.add_example(passing_example);
         child_description_1.add_example(failing_example_1);
         child_description_1.add_example(failing_example_2);
-        view = Screw.Disco.build(Screw.Interface.Runner, {root: root});
+        view = Screw.Disco.build(Screw.Interface.Runner, {root: root, build_immediately: true});
       });
-      
+
       describe("when the 'Show Failed' button is clicked", function() {
         it("applies the 'show_failed' class to the root element of the view", function() {
           expect(view.hasClass('show_failed')).to(be_false);
@@ -246,7 +245,7 @@ Screw.Unit(function(c) { with(c) {
 
           mock(Screw.Interface, 'refresh');
           view.find("button#rerun_all").click();
-          
+
           Prefs.load();
           expect(Prefs.data.run_paths).to(be_null);
           expect(Screw.Interface.refresh).to(have_been_called);
@@ -325,6 +324,45 @@ Screw.Unit(function(c) { with(c) {
     });
 
     describe("#content", function() {
+      context("when the view is instantiated without the build_immediately option", function() {
+        var example_1, example_2, set_timeout_callback;
+        before(function() {
+          example_1 = new Screw.Example("example 1", function() { });
+          example_2 = new Screw.Example("example 2", function() { });
+          description.add_example(example_1);
+          description.add_example(example_2);
+        });
+
+        it("renders the outline of the Description's view immediately", function() {
+          view = Screw.Disco.build(Screw.Interface.Description, {description: description});
+
+          var examples = view.find('ul.examples');
+          expect(examples.length).to(equal, 1);
+          expect(examples.find('li').length).to(equal, 0);
+        });
+
+//        it("renders the Description's descendents in a setTimeout context", function() {
+//          var examples = view.find('ul.examples');
+//          return function() {
+//            expect(examples.length).to(equal, 1);
+//            expect(examples.find('li').length).to(equal, 2);
+//            expect(examples.html()).to(match, Screw.Disco.build(Screw.Interface.Example, {example: example_1}).html());
+//            expect(examples.html()).to(match, Screw.Disco.build(Screw.Interface.Example, {example: example_2}).html());
+//          }
+//        });
+
+        it("renders the Description's descendents in a setTimeout context", function() {
+          mock(window, "setTimeout", function(callback, delay) { callback.call(window); });
+          view = Screw.Disco.build(Screw.Interface.Description, {description: description});
+
+          var examples = view.find('ul.examples');
+          expect(examples.length).to(equal, 1);
+          expect(examples.find('li').length).to(equal, 2);
+          expect(examples.html()).to(match, Screw.Disco.build(Screw.Interface.Example, {example: example_1}).html());
+          expect(examples.html()).to(match, Screw.Disco.build(Screw.Interface.Example, {example: example_2}).html());
+        });
+      });
+
       context("when the view's Description has #examples", function() {
         var example_1, example_2;
         before(function() {
@@ -336,7 +374,7 @@ Screw.Unit(function(c) { with(c) {
           });
           description.add_example(example_1);
           description.add_example(example_2);
-          view = Screw.Disco.build(Screw.Interface.Description, {description: description});
+          view = Screw.Disco.build(Screw.Interface.Description, {description: description, build_immediately: true});
         });
 
         it("renders all examples within a ul.examples", function() {
@@ -350,7 +388,7 @@ Screw.Unit(function(c) { with(c) {
 
       context("when the view's Description has no #examples", function() {
         before(function() {
-          view = Screw.Disco.build(Screw.Interface.Description, {description: description});
+          view = Screw.Disco.build(Screw.Interface.Description, {description: description, build_immediately: true});
         });
 
         it("does not render a ul.examples", function() {
@@ -365,22 +403,22 @@ Screw.Unit(function(c) { with(c) {
           child_description_2 = new Screw.Description("child description 2");
           description.add_description(child_description_1);
           description.add_description(child_description_2);
-          view = Screw.Disco.build(Screw.Interface.Description, {description: description});
+          view = Screw.Disco.build(Screw.Interface.Description, {description: description, build_immediately: true});
         });
-        
+
         it("renders all child descriptions within a ul.child_descriptions", function() {
           var child_descriptions = view.find('ul.child_descriptions');
           expect(child_descriptions.length).to(equal, 1);
           expect(child_descriptions.find('li').length).to(equal, 2);
-          expect(child_descriptions.html()).to(match, Screw.Disco.build(Screw.Interface.Description, {description: child_description_1}).html());
-          expect(child_descriptions.html()).to(match, Screw.Disco.build(Screw.Interface.Description, {description: child_description_2}).html());
+          expect(child_descriptions.html()).to(match, Screw.Disco.build(Screw.Interface.Description, {description: child_description_1, build_immediately: true}).html());
+          expect(child_descriptions.html()).to(match, Screw.Disco.build(Screw.Interface.Description, {description: child_description_2, build_immediately: true}).html());
         });
-        
+
       });
 
       context("when the view's Description has no #child_descriptions", function() {
         before(function() {
-          view = Screw.Disco.build(Screw.Interface.Description, {description: description});
+          view = Screw.Disco.build(Screw.Interface.Description, {description: description, build_immediately: true});
         });
 
         it("does not render a ul.child_descriptions", function() {
@@ -391,9 +429,9 @@ Screw.Unit(function(c) { with(c) {
 
     describe("when span.name is clicked", function() {
       before(function() {
-        view = Screw.Disco.build(Screw.Interface.Description, {description: description});
+        view = Screw.Disco.build(Screw.Interface.Description, {description: description, build_immediately: true});
       });
-      
+
       it("calls #focus on the view", function() {
         mock(view, 'focus');
         view.find("span.name").click();
@@ -404,7 +442,7 @@ Screw.Unit(function(c) { with(c) {
     describe("when an Example nested within the associated Description is completed", function() {
       var grandchild_example, should_fail;
       before(function() {
-        view = Screw.Disco.build(Screw.Interface.Description, {description: description});
+        view = Screw.Disco.build(Screw.Interface.Description, {description: description, build_immediately: true});
         var child_description = new Screw.Description("child description");
         grandchild_example = new Screw.Example("grandchild example", function() {
           if (should_fail) throw(new Error("fails intentionally"));
@@ -446,7 +484,7 @@ Screw.Unit(function(c) { with(c) {
 
     describe("#focus", function() {
       before(function() {
-        view = Screw.Disco.build(Screw.Interface.Description, {description: description});
+        view = Screw.Disco.build(Screw.Interface.Description, {description: description, build_immediately: true});
       });
 
       it("saves [description.path()] to Prefs.data.run_paths and calls Screw.Interface.refresh", function() {
@@ -462,7 +500,7 @@ Screw.Unit(function(c) { with(c) {
       });
     });
   });
-  
+
   describe("Screw.Interface.Example", function() {
     var example, description, view, failure_message, should_fail;
     before(function() {
@@ -473,7 +511,7 @@ Screw.Unit(function(c) { with(c) {
 
       description = new Screw.Description("parent description");
       description.add_example(example);
-      view = Screw.Disco.build(Screw.Interface.Example, {example: example});
+      view = Screw.Disco.build(Screw.Interface.Example, {example: example, build_immediately: true});
     });
 
     describe("#content", function() {
@@ -481,7 +519,7 @@ Screw.Unit(function(c) { with(c) {
         expect(view.html()).to(match, example.name);
       });
     });
-    
+
     describe("when span.name is clicked", function() {
       it("calls #focus on the view", function() {
         mock(view, 'focus');
@@ -494,7 +532,7 @@ Screw.Unit(function(c) { with(c) {
       before(function() {
         should_fail = true;
       });
-      
+
       it("applies the 'failed' class to its content", function() {
         expect(view.hasClass('failed')).to(be_false);
         example.run();
@@ -544,10 +582,10 @@ Screw.Unit(function(c) { with(c) {
     describe("#focus", function() {
       var original_screw_options;
       before(function() {
-        original_screw_options =  Screw.Interface.options;
+        original_screw_options = Screw.Interface.options;
         Screw.Interface.options = {};
       });
-      
+
       after(function() {
         Screw.Interface.options = original_screw_options;
       });

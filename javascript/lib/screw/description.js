@@ -72,12 +72,12 @@ module("Screw", function(c) { with (c) {
       this.afters.push(fn);
     });
 
-    def('run', function() {
-      var run_it = function() {
-        this.run()
+    def('enqueue', function() {
+      var enqueue_it = function() {
+        this.enqueue()
       };
-      Screw.each(this.examples, run_it);
-      Screw.each(this.child_descriptions, run_it);
+      Screw.each(this.examples, enqueue_it);
+      Screw.each(this.child_descriptions, enqueue_it);
     });
 
     def('run_befores', function(example_context) {

@@ -12,30 +12,29 @@ module("Screw", function(c) { with (c) {
       this.failed = false;
     });
 
-    def('run', function() {
-      var run_async = (function(self) {
-        return function() {
-          try {
-            try {
-              var example_context = {};
-              self.parent_description.run_befores(example_context);
-              self.fn.call(example_context);
-            } finally {
-              self.parent_description.run_afters(example_context);
-              Screw.reset_mocks();
-            }
-            self.passed = true;
-            self.pass_subscription_node.publish();
-            self.example_completed_subscription_node.publish(self);
-          } catch(e) {
-            self.failed = true;
-            self.fail_subscription_node.publish(e);
-            self.example_completed_subscription_node.publish(self);
-          }
-        };
-      })(this);
+    def('enqueue', function() {
+      var self = this;
+      setTimeout(function() { self.run(); }, 0);
+    });
 
-      setTimeout(run_async, 0);
+    def('run', function() {
+      try {
+        try {
+          var example_context = {};
+          this.parent_description.run_befores(example_context);
+          this.fn.call(example_context);
+        } finally {
+          this.parent_description.run_afters(example_context);
+          Screw.reset_mocks();
+        }
+        this.passed = true;
+        this.pass_subscription_node.publish();
+        this.example_completed_subscription_node.publish(this);
+      } catch(e) {
+        this.failed = true;
+        this.fail_subscription_node.publish(e);
+        this.example_completed_subscription_node.publish(this);
+      }
     });
 
     def('on_fail', function(callback) {

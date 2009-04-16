@@ -36,6 +36,6 @@ Screw.$(function() {
   var runner = Screw.Disco.build(Screw.Interface.Runner, {root: Screw.root_description()});
   setTimeout(function() {
     Screw.$('body').html(runner);
-    runner.run();
+    runner.enqueue();
   }, 0);
 });

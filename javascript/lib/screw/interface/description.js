@@ -42,7 +42,7 @@ module("Screw", function(c) { with(c) {
           var examples_container = this.find("ul.examples").eq(0);
           Screw.each(this.description.examples, function() {
             var subview = Screw.Disco.build(Screw.Interface.Example, {example: this});
-            self.append_in_set_timeout(examples_container, subview);
+            self.build_subview(examples_container, subview);
           });
         },
 
@@ -50,13 +50,17 @@ module("Screw", function(c) { with(c) {
           var self = this;
           var child_descriptions_container = this.find("ul.child_descriptions").eq(0);
           Screw.each(this.description.child_descriptions, function() {
-            var subview = Screw.Disco.build(Screw.Interface.Description, {description: this});
-            self.append_in_set_timeout(child_descriptions_container, subview);
+            var subview = Screw.Disco.build(Screw.Interface.Description, {description: this, build_immediately: self.build_immediately});
+            self.build_subview(child_descriptions_container, subview);
           });
         },
 
-        append_in_set_timeout: function(container, subview) {
-          setTimeout(function() { container.append(subview); }, 0);
+        build_subview: function(container, subview) {
+          if (this.build_immediately) {
+            container.append(subview);
+          } else {
+            setTimeout(function() { container.append(subview); }, 0);
+          }
         },
 
         focus: function() {

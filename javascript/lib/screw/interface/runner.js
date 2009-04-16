@@ -30,7 +30,7 @@ module("Screw", function(c) { with(c) {
           div({'id': 'test_content'});
 
           ul({'class': 'descriptions'}, function() {
-            subview('root_description', Screw.Interface.Description, {description: initial_attributes.root});
+            subview('root_description', Screw.Interface.Description, {description: initial_attributes.root, build_immediately: initial_attributes.build_immediately});
           });
         });
       }},
@@ -69,9 +69,9 @@ module("Screw", function(c) { with(c) {
           Screw.Interface.refresh();
         },
 
-        run: function() {
+        enqueue: function() {
           Screw.each(Screw.Interface.examples_to_run(), function() {
-            this.run();
+            this.enqueue();
           });
         }
       }
