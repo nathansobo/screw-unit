@@ -19,6 +19,25 @@ Screw.Unit(function(c) { with(c) {
       });
     });
     
+    describe("#enqueue", function() {
+      it("calls #enqueue on all examples and child descriptions", function() {
+        var child_description = new Screw.Description("child description");
+        description.add_description(child_description);
+
+        Screw.each(examples, function() {
+          mock(this, 'enqueue');
+        })
+        mock(child_description, 'enqueue');
+
+        description.enqueue();
+
+        Screw.each(examples, function() {
+          expect(this.enqueue).to(have_been_called);
+        })
+        expect(child_description.enqueue).to(have_been_called);
+      });
+    });
+
     describe("#run", function() {
       it("calls #run on all examples and child descriptions", function() {
         var child_description = new Screw.Description("child description");
@@ -248,7 +267,21 @@ Screw.Unit(function(c) { with(c) {
         expect(example.failed).to(be_false);
       });
     });
-    
+
+    describe("#enqueue", function() {
+      it("sets up #run to be called asynchronously via setTimeout", function() {
+        var set_timeout_callback;
+        mock(window, "setTimeout", function(callback, timeout) { set_timeout_callback = callback; });
+        mock(example, "run");
+
+        example.enqueue();
+        expect(example.run).to_not(have_been_called);
+
+        set_timeout_callback.call(window);
+        expect(example.run).to(have_been_called);
+      });
+    });
+
     describe("#run", function() {
       it("with the same example context, calls parent_description.run_befores, invokes the example function, calls parent_description.run_afters, then calls Screw.reset_mocks", function() {
         example.run();

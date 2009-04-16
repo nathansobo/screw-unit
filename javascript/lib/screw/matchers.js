@@ -6,8 +6,7 @@ module("Screw", function(c) { with(c) {
         if(actual == undefined) return false;
 
         if (expected instanceof Array) {
-          //if (!(actual instanceof Array) && actual.length == null) return false;
-          if (actual.length == null) return false;
+          if (! (actual instanceof Array)) return false;
           for (var i = 0; i < actual.length; i++)
             if (!Screw.Matchers.equal.match(expected[i], actual[i])) return false;
           return actual.length == expected.length;
@@ -197,7 +196,7 @@ module("Screw", function(c) { with(c) {
 
     def('match_selector', {
       match: function(expected, actual) {
-        if (!(actual instanceof jQuery)) {
+        if (!(actual instanceof Screw.$)) {
           throw(new Error(expected.toString() + " must be an instance of jQuery to match against a selector"));
         }
 
@@ -211,7 +210,7 @@ module("Screw", function(c) { with(c) {
 
     def('contain_selector', {
       match: function(expected, actual) {
-        if (!(actual instanceof jQuery)) {
+        if (!(actual instanceof Screw.$)) {
           throw(new Error(expected.toString() + " must be an instance of jQuery to match against a selector"));
         }
 

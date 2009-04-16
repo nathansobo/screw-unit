@@ -80,6 +80,14 @@ module("Screw", function(c) { with (c) {
       Screw.each(this.child_descriptions, enqueue_it);
     });
 
+    def('run', function() {
+      var run_it = function() {
+        this.run()
+      };
+      Screw.each(this.examples, run_it);
+      Screw.each(this.child_descriptions, run_it);
+    });
+
     def('run_befores', function(example_context) {
       if (this.parent_description) {
         this.parent_description.run_befores(example_context);

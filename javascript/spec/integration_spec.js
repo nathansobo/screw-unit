@@ -162,7 +162,7 @@ Screw.Unit(function(c) { with(c) {
     });
 
     describe("an exception in a test", function() {
-      it("fails because it throws an exception", function() {
+      it("fails because it throws an exception (NOTE: deliberate failure required to exercise the next example)", function() {
         throw(new Error('an exception'));
       });
 
