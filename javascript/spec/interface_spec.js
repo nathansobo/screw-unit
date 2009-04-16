@@ -1,8 +1,8 @@
 Screw.Unit(function(c) { with(c) {
-  var original_prefs_data;
+  var original_prefs_data, original_options;
 
   before(function() {
-    original_prefs_data = jQuery.extend({}, Prefs.data);
+    original_prefs_data = Screw.$.extend({}, Prefs.data);
     Prefs.data.show = 'all';
     original_options = Screw.Interface.options;
     Screw.Interface.options = {}
@@ -16,8 +16,6 @@ Screw.Unit(function(c) { with(c) {
 
   describe("Screw.Interface", function() {
     describe(".refresh", function() {
-      var original_options;
-
       it("calls Screw.Interface.set_location with the current location", function() {
         mock(Screw.Interface, 'set_location');
         var expected_base_location = window.location.href.split('?')[0];
@@ -91,7 +89,7 @@ Screw.Unit(function(c) { with(c) {
       child_description_2 = new Screw.Description("child description 2");
       root.add_description(child_description_1);
       root.add_description(child_description_2);
-      view = Disco.build(Screw.Interface.Runner, {root: root, runnable: root});
+      view = Screw.Disco.build(Screw.Interface.Runner, {root: root});
     });
 
     context("when Prefs.show == 'all'", function() {
@@ -100,7 +98,7 @@ Screw.Unit(function(c) { with(c) {
       });
 
       it("renders itself with the 'show_all' class and not the 'show_failed' class", function() {
-        view = Disco.build(Screw.Interface.Runner, {root: root, runnable: root});
+        view = Screw.Disco.build(Screw.Interface.Runner, {root: root});
         expect(view.hasClass("show_all")).to(be_true);
         expect(view.hasClass("show_failed")).to(be_false);
       });
@@ -112,7 +110,7 @@ Screw.Unit(function(c) { with(c) {
       });
 
       it("renders itself with the 'show_failed' class and not the 'show_all' class", function() {
-        view = Disco.build(Screw.Interface.Runner, {root: root, runnable: root});
+        view = Screw.Disco.build(Screw.Interface.Runner, {root: root});
         expect(view.hasClass("show_failed")).to(be_true);
         expect(view.hasClass("show_all")).to(be_false);
       });
@@ -132,7 +130,7 @@ Screw.Unit(function(c) { with(c) {
         child_description_1.add_example(passing_example);
         child_description_1.add_example(failing_example_1);
         child_description_1.add_example(failing_example_2);
-        view = Disco.build(Screw.Interface.Runner, {root: root, runnable: root});
+        view = Screw.Disco.build(Screw.Interface.Runner, {root: root});
       });
       
       describe("when the 'Show Failed' button is clicked", function() {
@@ -281,7 +279,7 @@ Screw.Unit(function(c) { with(c) {
       description_2.add_example(example_3);
       description_2.add_example(example_4);
 
-      view = Disco.build(Screw.Interface.ProgressBar, {examples_to_run: [description_1, description_2]})
+      view = Screw.Disco.build(Screw.Interface.ProgressBar, {examples_to_run: [description_1, description_2]})
     });
 
     describe("when an example within one of the associated examples to run is completed", function() {
@@ -338,21 +336,21 @@ Screw.Unit(function(c) { with(c) {
           });
           description.add_example(example_1);
           description.add_example(example_2);
-          view = Disco.build(Screw.Interface.Description, {description: description});
+          view = Screw.Disco.build(Screw.Interface.Description, {description: description});
         });
 
         it("renders all examples within a ul.examples", function() {
           var examples = view.find('ul.examples');
           expect(examples.length).to(equal, 1);
           expect(examples.find('li').length).to(equal, 2);
-          expect(examples.html()).to(match, Disco.build(Screw.Interface.Example, {example: example_1}).html());
-          expect(examples.html()).to(match, Disco.build(Screw.Interface.Example, {example: example_2}).html());
+          expect(examples.html()).to(match, Screw.Disco.build(Screw.Interface.Example, {example: example_1}).html());
+          expect(examples.html()).to(match, Screw.Disco.build(Screw.Interface.Example, {example: example_2}).html());
         });
       });
 
       context("when the view's Description has no #examples", function() {
         before(function() {
-          view = Disco.build(Screw.Interface.Description, {description: description});
+          view = Screw.Disco.build(Screw.Interface.Description, {description: description});
         });
 
         it("does not render a ul.examples", function() {
@@ -367,22 +365,22 @@ Screw.Unit(function(c) { with(c) {
           child_description_2 = new Screw.Description("child description 2");
           description.add_description(child_description_1);
           description.add_description(child_description_2);
-          view = Disco.build(Screw.Interface.Description, {description: description});
+          view = Screw.Disco.build(Screw.Interface.Description, {description: description});
         });
         
         it("renders all child descriptions within a ul.child_descriptions", function() {
           var child_descriptions = view.find('ul.child_descriptions');
           expect(child_descriptions.length).to(equal, 1);
           expect(child_descriptions.find('li').length).to(equal, 2);
-          expect(child_descriptions.html()).to(match, Disco.build(Screw.Interface.Description, {description: child_description_1}).html());
-          expect(child_descriptions.html()).to(match, Disco.build(Screw.Interface.Description, {description: child_description_2}).html());
+          expect(child_descriptions.html()).to(match, Screw.Disco.build(Screw.Interface.Description, {description: child_description_1}).html());
+          expect(child_descriptions.html()).to(match, Screw.Disco.build(Screw.Interface.Description, {description: child_description_2}).html());
         });
         
       });
 
       context("when the view's Description has no #child_descriptions", function() {
         before(function() {
-          view = Disco.build(Screw.Interface.Description, {description: description});
+          view = Screw.Disco.build(Screw.Interface.Description, {description: description});
         });
 
         it("does not render a ul.child_descriptions", function() {
@@ -393,7 +391,7 @@ Screw.Unit(function(c) { with(c) {
 
     describe("when span.name is clicked", function() {
       before(function() {
-        view = Disco.build(Screw.Interface.Description, {description: description});
+        view = Screw.Disco.build(Screw.Interface.Description, {description: description});
       });
       
       it("calls #focus on the view", function() {
@@ -406,7 +404,7 @@ Screw.Unit(function(c) { with(c) {
     describe("when an Example nested within the associated Description is completed", function() {
       var grandchild_example, should_fail;
       before(function() {
-        view = Disco.build(Screw.Interface.Description, {description: description});
+        view = Screw.Disco.build(Screw.Interface.Description, {description: description});
         var child_description = new Screw.Description("child description");
         grandchild_example = new Screw.Example("grandchild example", function() {
           if (should_fail) throw(new Error("fails intentionally"));
@@ -448,7 +446,7 @@ Screw.Unit(function(c) { with(c) {
 
     describe("#focus", function() {
       before(function() {
-        view = Disco.build(Screw.Interface.Description, {description: description});
+        view = Screw.Disco.build(Screw.Interface.Description, {description: description});
       });
 
       it("saves [description.path()] to Prefs.data.run_paths and calls Screw.Interface.refresh", function() {
@@ -475,7 +473,7 @@ Screw.Unit(function(c) { with(c) {
 
       description = new Screw.Description("parent description");
       description.add_example(example);
-      view = Disco.build(Screw.Interface.Example, {example: example});
+      view = Screw.Disco.build(Screw.Interface.Example, {example: example});
     });
 
     describe("#content", function() {
@@ -514,7 +512,20 @@ Screw.Unit(function(c) { with(c) {
           stack = e.stack;
         })
         example.run();
-        expect(view.html()).to(match, stack);
+        stack_without_links = view.html().replace(/<a[^>]+>/g, "").replace(/<\/a>/g, "");
+        expect(stack_without_links).to(match, stack);
+      });
+
+      it("includes links to spec files within the stack trace", function() {
+        var stack;
+        example.on_fail(function(e) {
+          stack = e.stack;
+        });
+        example.run();
+
+        var matches = stack.match(/(http:\/\/.*_spec).js/);
+        expect(matches.length).to(be_gt, 1);
+        expect(view.find("a[href="+matches[1]+"]")).to_not(be_empty);
       });
     });
 
