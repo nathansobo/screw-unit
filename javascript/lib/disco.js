@@ -1,8 +1,8 @@
-Disco = function() {
+Screw.Disco = function() {
   this.doc = [];
 };
 
-Screw.$.extend(Disco, {
+Screw.$.extend(Screw.Disco, {
   inherit: function(layout, template) {
     var merged_template = Screw.$.extend(true, {}, layout, template);
     
@@ -63,12 +63,12 @@ Screw.$.extend(Disco, {
 
   register_event_type: function(event_type) {
     this.prototype[event_type] = function(fn) {
-      this.doc.push(new Disco.PostProcessorInstruction('bind', [event_type, null, fn]));
+      this.doc.push(new Screw.Disco.PostProcessorInstruction('bind', [event_type, null, fn]));
     };
   }
 });
 
-Screw.$.extend(Disco.prototype, {
+Screw.$.extend(Screw.Disco.prototype, {
   tag: function() {
     if(arguments.length > 3) {
       throw("XmlBulider#tag does not accept more than three arguments");
@@ -91,16 +91,16 @@ Screw.$.extend(Disco.prototype, {
       }
     };
 
-    var open_tag = new Disco.OpenTag(tag_name, attributes);
+    var open_tag = new Screw.Disco.OpenTag(tag_name, attributes);
     this.doc.push(open_tag);
 
     if(typeof value == 'function') {
       value.call(this);
     } else if(typeof value == 'string') {
-      this.doc.push(new Disco.Text(value));
+      this.doc.push(new Screw.Disco.Text(value));
     }
 
-    this.doc.push(new Disco.CloseTag(tag_name));
+    this.doc.push(new Screw.Disco.CloseTag(tag_name));
 
     return this;
   },
@@ -116,12 +116,12 @@ Screw.$.extend(Disco.prototype, {
   },
 
   rawtext: function(value) {
-    this.doc.push(new Disco.Text(value));
+    this.doc.push(new Screw.Disco.Text(value));
   },
 
   text: function(value) {
     var html = this.escape_html(value);
-    this.doc.push(new Disco.Text(html));
+    this.doc.push(new Screw.Disco.Text(html));
   },
 
   escape_html: function(html) {
@@ -129,15 +129,15 @@ Screw.$.extend(Disco.prototype, {
   },
 
   subview: function(name, template, initial_attributes) {
-    this.doc.push(new Disco.PostProcessorInstruction('open_subview', [name]))
+    this.doc.push(new Screw.Disco.PostProcessorInstruction('open_subview', [name]))
     template.content(this, initial_attributes);
-    this.doc.push(new Disco.PostProcessorInstruction('close_view', [template, initial_attributes]))
+    this.doc.push(new Screw.Disco.PostProcessorInstruction('close_view', [template, initial_attributes]))
   },
 
   keyed_subview: function(name, key, template, initial_attributes) {
-    this.doc.push(new Disco.PostProcessorInstruction('open_subview', [name, key]))
+    this.doc.push(new Screw.Disco.PostProcessorInstruction('open_subview', [name, key]))
     template.content(this, initial_attributes);
-    this.doc.push(new Disco.PostProcessorInstruction('close_view', [template, initial_attributes]))
+    this.doc.push(new Screw.Disco.PostProcessorInstruction('close_view', [template, initial_attributes]))
   },
 
   bind: function() {
@@ -150,7 +150,7 @@ Screw.$.extend(Disco.prototype, {
       var fn = arguments[1];
     }
 
-    this.doc.push(new Disco.PostProcessorInstruction('bind', [type, data, fn]));
+    this.doc.push(new Screw.Disco.PostProcessorInstruction('bind', [type, data, fn]));
   },
 
   to_string: function() {
@@ -165,7 +165,7 @@ Screw.$.extend(Disco.prototype, {
   to_view: function(template, initial_attributes) {
     var string = this.to_string();
     if (string == "") return "";
-    var post_processor = new Disco.PostProcessor(Screw.$(string));
+    var post_processor = new Screw.Disco.PostProcessor(Screw.$(string));
     for(var i=0; i < this.doc.length; i++) {
       var element = this.doc[i];
       element.post_process(post_processor);
@@ -175,14 +175,14 @@ Screw.$.extend(Disco.prototype, {
   }
 });
 
-Disco.initialize();
+Screw.Disco.initialize();
 
-Disco.OpenTag = function(tag_name, attributes) {
+Screw.Disco.OpenTag = function(tag_name, attributes) {
   this.tag_name = tag_name;
   this.attributes = attributes;
 }
 
-Screw.$.extend(Disco.OpenTag.prototype, {
+Screw.$.extend(Screw.Disco.OpenTag.prototype, {
   to_string: function() {
     var serialized_attributes = [];
     for(var attributeName in this.attributes) {
@@ -200,12 +200,12 @@ Screw.$.extend(Disco.OpenTag.prototype, {
   }
 });
 
-Disco.CloseTag = function(tag_name) {
+Screw.Disco.CloseTag = function(tag_name) {
   var that = this;
   this.tag_name = tag_name;
 }
 
-Screw.$.extend(Disco.CloseTag.prototype, {
+Screw.$.extend(Screw.Disco.CloseTag.prototype, {
   to_string: function() {
     return "</" + this.tag_name + ">";
   },
@@ -215,11 +215,11 @@ Screw.$.extend(Disco.CloseTag.prototype, {
   }
 });
 
-Disco.Text = function(value) {
+Screw.Disco.Text = function(value) {
   this.value = value;
 }
 
-Screw.$.extend(Disco.Text.prototype, {
+Screw.$.extend(Screw.Disco.Text.prototype, {
   to_string: function() {
     return this.value;
   },
@@ -227,12 +227,12 @@ Screw.$.extend(Disco.Text.prototype, {
   post_process: function(processor) {}
 });
 
-Disco.PostProcessorInstruction = function(function_name, arguments) {
+Screw.Disco.PostProcessorInstruction = function(function_name, arguments) {
   this.function_name = function_name;
   this.arguments = arguments;
 }
 
-Screw.$.extend(Disco.PostProcessorInstruction.prototype, {
+Screw.$.extend(Screw.Disco.PostProcessorInstruction.prototype, {
   to_string: function() {
     return "";
   },
@@ -242,13 +242,13 @@ Screw.$.extend(Disco.PostProcessorInstruction.prototype, {
   }
 });
 
-Disco.PostProcessor = function(root_view) {
+Screw.Disco.PostProcessor = function(root_view) {
   this.root_view = root_view;
   this.view_stack = [root_view];
   this.selector_stack = [0];
 }
 
-Screw.$.extend(Disco.PostProcessor.prototype, {
+Screw.$.extend(Screw.Disco.PostProcessor.prototype, {
   push: function() {
     this.add_child();
     this.selector_stack.push(0);

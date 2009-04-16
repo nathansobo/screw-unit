@@ -33,7 +33,7 @@ module("Screw", function(c) { with(c) {
 
 Screw.$(function() {
   Screw.Interface.load_preferences();
-  var runner = Disco.build(Screw.Interface.Runner, {root: Screw.root_description()});
+  var runner = Screw.Disco.build(Screw.Interface.Runner, {root: Screw.root_description()});
   setTimeout(function() {
     Screw.$('body').html(runner);
     runner.run();
