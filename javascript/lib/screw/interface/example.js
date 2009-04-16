@@ -24,7 +24,7 @@ module("Screw", function(c) { with(c) {
 
             var trace = Screw.$("<pre class='failure_trace'/>");
             if (e.stack) {
-              enhanced_stack = e.stack.replace(/http:\/\/(.*?)\.js/g, '<a href="http://$1" target="_blank">http://$1.js</a>')
+              enhanced_stack = e.stack.replace(/http:\/\/(.*_spec)\.js/g, '<a href="http://$1" target="_blank">http://$1.js</a>')
               trace.html(enhanced_stack);
             }
 
