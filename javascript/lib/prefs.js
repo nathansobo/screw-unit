@@ -11,7 +11,7 @@ var Prefs = {
       }
     }
 
-    if (prefs_string && prefs_string != 'undefined') {
+    if (prefs_string¢) {
       this.data = JSON.parse(unescape(prefs_string));
     }
     return this.data;
