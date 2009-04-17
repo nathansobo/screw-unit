@@ -121,12 +121,6 @@ Screw.Unit(function(c) { with(c) {
         expect(Screw.$.print(args)).to(equal, '[ 1, 2, 3 ]');
       });
     });
-
-    describe('when given a jQuery', function() {
-      it("returns the printed array of elements engirthed in '$()'", function() {
-        expect(Screw.$.print(Screw.$('<div>'))).to(equal, '$([ <div> ])');
-      });
-    });
     
     describe('when given a NodeList', function() {
       it("returns the printed array of elements in the list", function() {

@@ -236,53 +236,7 @@ Screw.Unit(function(c) { with(c) {
         });
       });
     });
-
-    describe('#match_selector', function() {
-      var elt;
-      before(function() {
-        elt = Screw.$("<div class='foo'></div>");
-      });
-
-      it("matches a jQuery element against the expected selector", function() {
-        expect(elt).to(match_selector, 'div.foo');
-        expect(elt).to_not(match_selector, 'div.bar');
-      });
-
-      describe(".failure_message", function() {
-        it("prints 'expected [actual] to (not) match selector [expected]", function() {
-          var message = false;
-          try { expect(elt).to(match_selector, 'div.bar') } catch(e) { message = e.message }
-          expect(message).to(equal, 'expected $([ <div class="foo"> ]) to match selector div.bar');
-          
-          try { expect(elt).to_not(match_selector, 'div.foo') } catch(e) { message = e.message }
-          expect(message).to(equal, 'expected $([ <div class="foo"> ]) to not match selector div.foo');
-        });
-      });
-    });
-
-    describe('#contain_selector', function() {
-      var elt;
-      before(function() {
-        elt = Screw.$("<div><div class='foo'></div></div>");
-      });
-
-      it("matches a jQuery element against the expected selector", function() {
-        expect(elt).to(contain_selector, 'div.foo');
-        expect(elt).to_not(contain_selector, 'div.bar');
-      });
-
-      describe(".failure_message", function() {
-        it("prints 'expected [actual] to (not) match selector [expected]", function() {
-          var message = false;
-          try { expect(elt).to(contain_selector, 'div.bar') } catch(e) { message = e.message }
-          expect(message).to(equal, 'expected $([ <div> ]) to contain selector div.bar');
-
-          try { expect(elt).to_not(contain_selector, 'div.foo') } catch(e) { message = e.message }
-          expect(message).to(equal, 'expected $([ <div> ]) to not contain selector div.foo');
-        });
-      });
-    });
-
+    
     describe('#be_gt', function() {
       it('matches integers greater than the expected value', function() {
         expect(2).to(be_gt, 1);

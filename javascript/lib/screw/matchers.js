@@ -78,36 +78,6 @@ module("Screw", function(c) { with(c) {
       }
     });
 
-    def('match_html', {
-      munge: function(mungee) {
-        if (mungee instanceof jQuery) {
-          mungee = mungee.html();
-        } else if (typeof(mungee) == "string") {
-          var span = document.createElement("span");
-          span.innerHTML = mungee;
-          mungee = span.innerHTML;
-        }
-
-        var regEx = /\sjQuery\d+=['"]\d+['"]/g;
-        mungee = mungee.replace(regEx, "");
-
-        return mungee;
-      },
-
-      match: function(expected, actual) {
-        var trimmedExpected = this.munge(expected);
-        var trimmedActual = this.munge(actual);
-        return trimmedActual.indexOf(trimmedExpected) > -1;
-      },
-
-      failure_message: function(expected, actual, not) {
-        var trimmedExpected = this.munge(expected);
-        var trimmedActual = this.munge(actual);
-        return 'expected ' + Screw.$.print(trimmedActual, { max_string: 300 }) +
-               (not ? ' to not contain ' : ' to contain ') + Screw.$.print(trimmedExpected, { max_string: 300 });
-      }
-    });
-
     def('be_blank', {
       match: function(expected, actual) {
         if (actual == undefined) return true;
@@ -191,34 +161,6 @@ module("Screw", function(c) { with(c) {
 
       failure_message: function(expected, actual, not) {
         return 'expected ' + Screw.$.print(actual) + (not ? ' to not be false' : ' to be false');
-      }
-    });
-
-    def('match_selector', {
-      match: function(expected, actual) {
-        if (!(actual instanceof Screw.$)) {
-          throw(new Error(expected.toString() + " must be an instance of jQuery to match against a selector"));
-        }
-
-        return actual.is(expected);
-      },
-
-      failure_message: function(expected, actual, not) {
-        return 'expected ' + Screw.$.print(actual) + (not ? ' to not match selector ' : ' to match selector ') + expected;
-      }
-    });
-
-    def('contain_selector', {
-      match: function(expected, actual) {
-        if (!(actual instanceof Screw.$)) {
-          throw(new Error(expected.toString() + " must be an instance of jQuery to match against a selector"));
-        }
-
-        return actual.find(expected).length > 0;
-      },
-
-      failure_message: function(expected, actual, not) {
-        return 'expected ' + Screw.$.print(actual) + (not ? ' to not contain selector ' : ' to contain selector ') + expected;
       }
     });
 
