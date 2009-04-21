@@ -7,9 +7,14 @@ require "screw_unit"
 configuration = ScrewUnit::Configuration.instance 
 configuration.load_screwrc(Dir.pwd)
 
+$exit_status = 0
+
 ScrewUnit::Server.start(
   :port => configuration.port,   
   :screw_unit_core_path => configuration.screw_unit_core_path,
   :code_under_test_path => configuration.code_under_test_path,
-  :specs_path  => configuration.specs_path
+  :specs_path  => configuration.specs_path,
+  :selenium => ARGV.include?("--selenium")
 )
+
+exit $exit_status

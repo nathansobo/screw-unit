@@ -3,13 +3,14 @@ require "#{File.dirname(__FILE__)}/../../screw_unit_spec_helper"
 module ScrewUnit
   module Resources
     describe Root do
-      attr_reader :root
+      attr_reader :root, :options
       before do
         dir = ::File.dirname(__FILE__)
         screw_unit_core_path = "#{dir}/../../../lib/javascript"
         specs_path = "#{dir}/file_system_fixtures/specs"
         code_under_test_path = "#{dir}/file_system_fixtures/code_under_test"
-        @root = Root.instance(screw_unit_core_path, code_under_test_path, specs_path)
+        @options = {:foo => "bar", :baz => "quux"}
+        @root = Root.instance(screw_unit_core_path, code_under_test_path, specs_path, options)
       end
 
       describe "#locate" do
@@ -37,6 +38,14 @@ module ScrewUnit
             file_resource.class.should == Resources::File
             file_resource.absolute_path.should == "#{root.absolute_path}/code_under_test.js"
             file_resource.relative_path.should == "/code_under_test.js"
+          end
+        end
+
+        context "when called with 'complete'" do
+          it "returns a SuiteCompletion with the given options" do
+            suite_completion = root.locate('complete')
+            suite_completion.class.should == Resources::SuiteCompletion
+            suite_completion.options.should == options
           end
         end
       end

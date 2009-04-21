@@ -33,7 +33,21 @@ module("Screw", function(c) { with(c) {
 
 Screw.$(function() {
   Screw.Interface.load_preferences();
-  var runner = Screw.Disco.build(Screw.Interface.Runner, {root: Screw.root_description()});
+
+  var root_description = Screw.root_description();
+
+  // TODO: refactor
+  var completed_example_count = 0;
+  var total_example_count = root_description.total_examples();
+  root_description.on_example_completed(function() {
+    completed_example_count++;
+    if (completed_example_count == total_example_count) {
+      var outcome = (root_description.failed_examples().length == 0) ? "success" : "failure";
+      Screw.$.ajax({ type: 'POST', url: '/complete', data: outcome });
+    }
+  });
+
+  var runner = Screw.Disco.build(Screw.Interface.Runner, {root: root_description});
   setTimeout(function() {
     Screw.$('body').html(runner);
     runner.enqueue();

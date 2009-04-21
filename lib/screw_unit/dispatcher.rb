@@ -10,13 +10,21 @@ module ScrewUnit
 
     attr_reader :root
 
-    def initialize(screw_unit_core_path, code_under_test_path, specs_path)
-      @root = Resources::Root.new(screw_unit_core_path, code_under_test_path, specs_path)
+    def initialize(screw_unit_core_path, code_under_test_path, specs_path, options = {})
+      @root = Resources::Root.new(screw_unit_core_path, code_under_test_path, specs_path, options)
     end
 
     def call(env)
       request = Rack::Request.new(env)
-      locate_resource(request.path_info).send(request.request_method.downcase)
+      next_resource = locate_resource(request.path_info)
+      case(request.request_method)
+      when "GET":
+        next_resource.get
+      when "POST":
+        next_resource.post(request)
+      else
+        raise "unrecognized HTTP method #{request.request_method}"
+      end
     rescue Exception => e
       puts e.message
       puts e.backtrace

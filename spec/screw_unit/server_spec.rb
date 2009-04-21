@@ -13,25 +13,27 @@ module ScrewUnit
     end
 
     describe "#start" do
-      before do
-        stub.instance_of(Thin::Server).start!
-      end
-
       it "calls Thin::Server.start with an instance of the Dispatcher with the given options" do
-        mock.proxy(Thin::Server).start(9090)
-        mock.proxy(Dispatcher).instance("screw/unit/core/path", "code/under/test/path", "specs/path")
+        mock.proxy(Thin::Server).new(9090) do |return_value|
+          stub(return_value).start
+        end
+        mock.proxy(Dispatcher).instance("screw/unit/core/path", "code/under/test/path", "specs/path", :selenium => true, :some_future_option => "some value")
 
         Server.start(
           :port => 9090,
           :screw_unit_core_path => "screw/unit/core/path",
           :code_under_test_path => "code/under/test/path",
-          :specs_path => "specs/path"
+          :specs_path => "specs/path",
+          :selenium => true,
+          :some_future_option => "some value"
         )
       end
 
       context "when no port option is supplied" do
         it "defaults to 8080" do
-          mock.proxy(Thin::Server).start(8080)
+          mock.proxy(Thin::Server).new(8080) do |return_value|
+            stub(return_value).start
+          end
           Server.start(
             :screw_unit_core_path => "screw/unit/core/path",
             :code_under_test_path => "code/under/test/path",

@@ -16,7 +16,8 @@ module ScrewUnit
         @screw_unit_core_path = "screw/unit/core/path"
         @code_under_test_path = "code/under/test/path"
         @specs_path = "specs/path"
-        Dispatcher.instance(screw_unit_core_path, code_under_test_path, specs_path)
+        @options = { :selenium => true, :some_future_option => "some value" }
+        Dispatcher.instance(screw_unit_core_path, code_under_test_path, specs_path, options)
       end
 
       it "initializes a single instance of the Dispatcher" do
@@ -29,6 +30,7 @@ module ScrewUnit
         root.code_under_test_path.should == code_under_test_path
         root.specs_path.should == specs_path
         root.screw_unit_core_path.should == screw_unit_core_path
+        root.options.should == options
       end
     end
   end
