@@ -19,7 +19,7 @@ module ScrewUnit
       end
 
       def get
-        SpecSuite.new(glob("/**/*.js")).get
+        SpecSuite.new(glob("/**/*_spec.js")).get
       end
     end
   end
