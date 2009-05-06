@@ -32,7 +32,6 @@ module ScrewUnit
           end
         end
 
-
         it "includes the relative paths of all the scripts files with which it was initialized" do
           spec_file_resources.each do |spec_file_resource|
             expected_include_tag = %{<script type="text/javascript" src="#{spec_file_resource.relative_path}"></script>}

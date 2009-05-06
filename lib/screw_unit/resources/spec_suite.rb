@@ -31,9 +31,47 @@ module ScrewUnit
       end
 
       def spec_file_include_tags
-        spec_file_resources.map do |spec_file_resource|
-          script_tag(spec_file_resource.relative_path)
+        spec_file_relative_paths.map do |relative_path|
+          script_tag(relative_path)
         end.join("\n")
+      end
+
+      def spec_file_relative_paths
+        spec_file_resources.map do |spec_file_resource|
+          spec_file_resource.relative_path
+        end
+      end
+
+      def spec_file_absolute_paths
+        spec_file_resources.map do |spec_file_resource|
+          spec_file_resource.absolute_path
+        end
+      end
+
+      def sprocket_required_relative_paths
+        sprocket_required_absolute_paths.map do |path|
+          path.gsub(Configuration.specs_path, "/specs").gsub(Configuration.code_under_test_path, "")
+        end
+      end
+
+      def sprocket_required_absolute_paths
+        secretary = Sprockets::Secretary.new(
+          :root => Configuration.specs_path,
+          :asset_root   => nil,
+          :load_path    => sprockets_load_paths,
+          :source_files => spec_file_absolute_paths
+        )
+        absolute_paths = secretary.preprocessor.source_files.map {|f| f.pathname.absolute_location}
+        absolute_paths - spec_file_absolute_paths
+      end
+
+      def sprockets_load_paths
+        [
+          Configuration.code_under_test_path,
+          Configuration.specs_path,
+          "#{Configuration.code_under_test_path}/**/*",
+          "#{Configuration.specs_path}/**/*"
+        ]
       end
 
       def script_tag(path)
