@@ -13,11 +13,24 @@ module ScrewUnit
 
       protected
       def content
-        screw_unit_css_file +
-        "\n\n" +
-        core_file_include_tags +
-        "\n\n" +
-        spec_file_include_tags
+        content =
+          screw_unit_css_file +
+          "\n\n" +
+          "<!-- ScrewUnit core scripts -->\n" +
+          core_file_include_tags +
+          "\n\n"
+
+        if Configuration.sprockets_enabled
+          content +=
+            "<!-- Sprockets-required scripts -->\n" +
+            sprockets_file_include_tags +
+            "\n\n"
+        end
+
+
+        content +
+          "<!-- Spec Suite Scripts -->\n" +
+          spec_file_include_tags
       end
 
       def screw_unit_css_file
@@ -48,13 +61,19 @@ module ScrewUnit
         end
       end
 
-      def sprocket_required_relative_paths
-        sprocket_required_absolute_paths.map do |path|
+      def sprockets_file_include_tags
+        sprockets_required_relative_paths.map do |relative_path|
+          script_tag(relative_path)
+        end.join("\n")
+      end
+
+      def sprockets_required_relative_paths
+        sprockets_required_absolute_paths.map do |path|
           path.gsub(Configuration.specs_path, "/specs").gsub(Configuration.code_under_test_path, "")
         end
       end
 
-      def sprocket_required_absolute_paths
+      def sprockets_required_absolute_paths
         secretary = Sprockets::Secretary.new(
           :root => Configuration.specs_path,
           :asset_root   => nil,

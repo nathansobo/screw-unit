@@ -41,6 +41,11 @@ module ScrewUnit
       File.expand_path("#{File.dirname(__FILE__)}/../../javascript/lib")
     end
 
+    def sprockets_enabled(enabled=nil)
+      @sprockets_enabled = enabled unless enabled.nil?
+      @sprockets_enabled
+    end
+
     def custom_resource_locators
       @custom_resource_locators ||= []
       @custom_resource_locators
