@@ -80,7 +80,7 @@ module ScrewUnit
           :load_path    => sprockets_load_paths,
           :source_files => spec_file_absolute_paths
         )
-        absolute_paths = secretary.preprocessor.source_files.map {|f| f.pathname.absolute_location}
+        absolute_paths = secretary.preprocessor.dependency_ordered_source_files.map {|f| f.pathname.absolute_location}
         absolute_paths - spec_file_absolute_paths
       end
 
