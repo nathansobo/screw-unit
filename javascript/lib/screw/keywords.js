@@ -13,6 +13,7 @@ module("Screw", function(c) { with (c) {
     });
 
     def('specify', Screw.Keywords.it);
+    def('they', Screw.Keywords.it);
 
     def('before', function(fn) {
       Screw.current_description().add_before(fn);
