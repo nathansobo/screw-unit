@@ -209,5 +209,26 @@ module("Screw", function(c) { with(c) {
     def('with_args', function() {
       return Array.prototype.slice.call(arguments);
     });
+
+    def('throw_exception', {
+      match: function(expected, actual) {
+        var threw_exception;
+        try {
+          actual();
+          threw_exception = false;
+        } catch(e) {
+          threw_exception = true;
+        }
+        return threw_exception;
+      },
+      
+      failure_message: function(expected, actual, not) {
+        if (not) {
+          return "expected function to not throw an exception, but it did";
+        } else {
+          return "expected function to throw an exception, but it did not";
+        }
+      }
+    });
   });
 }});

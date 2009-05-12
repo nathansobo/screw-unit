@@ -367,5 +367,32 @@ Screw.Unit(function(c) { with(c) {
         });
       });
     });
+
+    describe("#throw_exception", function() {
+      var throws, does_not_throw;
+
+      before(function() {
+        throws = function() { throw new Error("intentional"); };
+        does_not_throw = function() { };
+      });
+
+      it("matches functions that throw exceptions when called", function() {
+        expect(throws).to(throw_exception);
+        expect(does_not_throw).to_not(throw_exception);
+      });
+
+      describe(".failure_message", function() {
+        it("prints a message about the expected throwing", function() {
+          var message = true;
+
+          try { expect(does_not_throw).to(throw_exception) } catch(e) { message = e.message }
+          expect(message).to(equal, 'expected function to throw an exception, but it did not');
+
+          try { expect(throws).to_not(throw_exception) } catch(e) { message = e.message }
+          expect(message).to(equal, 'expected function to not throw an exception, but it did');
+        });
+      });
+
+    });
   });
 }});
