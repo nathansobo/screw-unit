@@ -84,6 +84,21 @@ Screw.Unit(function(c) { with(c) {
       expect(mock_fn.most_recent_args).to(equal, ["quux"]);
     });
 
+    it("pushes the 'this' value of the call to a #this_values array and sets #most_recent_this_vaule", function() {
+      var a = { mock_fn: mock_fn };
+      var b = { mock_fn: mock_fn };
+
+      expect(mock_fn.this_values).to(equal, []);
+      expect(mock_fn.most_recent_this_value).to(be_null);
+      a.mock_fn();
+      expect(mock_fn.this_values).to(equal, [a]);
+      expect(mock_fn.most_recent_this_value).to(equal, a);
+
+      b.mock_fn();
+      expect(mock_fn.this_values).to(equal, [a, b]);
+      expect(mock_fn.most_recent_this_value).to(equal, b);
+    });
+
     context("when passed a function_name as its only argument", function() {
       it("assigns function_name to the given name", function() {
         var mock_fn = mock_function("function name");
@@ -92,18 +107,24 @@ Screw.Unit(function(c) { with(c) {
     });
 
     context("when passed a function as its only argument", function() {
-      var call_args;
+      var this_value, call_args;
       before(function() {
         call_args = [];
         mock_fn = mock_function(function() {
+          this_value = this;
           call_args.push(Array.prototype.slice.call(arguments));
         });
       });
 
-      it("calls the function", function() {
-        mock_fn("bar", "baz");
+      it("calls the function with the same 'this'", function() {
+        var a = { mock_fn: mock_fn };
+        var b = { mock_fn: mock_fn };
+        a.mock_fn("bar", "baz");
+        expect(this_value).to(equal, a);
         expect(call_args).to(equal, [["bar", "baz"]]);
-        mock_fn("quux");
+
+        b.mock_fn("quux");
+        expect(this_value).to(equal, b);
         expect(call_args).to(equal, [["bar", "baz"], ["quux"]]);
       });
     });
@@ -122,14 +143,19 @@ Screw.Unit(function(c) { with(c) {
 
     describe("#clear on the results of #mock_function", function() {
       it("resets all recorded call data", function() {
-        mock_fn("foo");
+        var a = { mock_fn: mock_fn };
+        a.mock_fn("foo");
 
+        expect(mock_fn.this_values).to(equal, [a]);
+        expect(mock_fn.most_recent_this_value).to(equal, a);
         expect(mock_fn.call_count).to(equal, 1);
         expect(mock_fn.call_args).to(equal, [["foo"]]);
         expect(mock_fn.most_recent_args).to(equal, ["foo"]);
 
         mock_fn.clear();
-        
+
+        expect(mock_fn.this_values).to(equal, []);
+        expect(mock_fn.most_recent_this_value).to(equal, null);
         expect(mock_fn.call_count).to(equal, 0);
         expect(mock_fn.call_args).to(equal, []);
         expect(mock_fn.most_recent_args).to(equal, null);
