@@ -366,6 +366,14 @@ Screw.Unit(function(c) { with(c) {
           expect(mock_fn).to(have_been_called, with_args("foo", "bar"));
         });
       });
+
+      context("when matching a mock function with the expected this value", function() {
+        it("matches if the function's #most_recent_this_value match the expectation", function() {
+          var a = { mock_fn: mock_fn };
+          a.mock_fn();
+          expect(mock_fn).to(have_been_called, on_object(a));
+        });
+      });
     });
 
     describe("#throw_exception", function() {
