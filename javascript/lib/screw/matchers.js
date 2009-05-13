@@ -175,7 +175,7 @@ module("Screw", function(c) { with(c) {
 
       match_with_expectation: function(expected, actual) {
         if (expected.__with_args__) {
-          return Screw.Matchers.equal.match(expected, actual.most_recent_args);
+          return Screw.Matchers.equal.match(expected.arguments, actual.most_recent_args);
         } else if (expected.__on_object__) {
           return Screw.Matchers.equal.match(expected.object, actual.most_recent_this_value);
         } else if (typeof expected == "number") {
@@ -186,11 +186,12 @@ module("Screw", function(c) { with(c) {
       },
 
       error_message_expectation_fragment: function(expected) {
-        if (expected == null) return "";
-        if (typeof expected == "number") {
-          return expected + " time(s)";
+        if (expected.__with_args__) {
+          return "with arguments " + Screw.$.print(expected.arguments);
+        } else if (expected.__on_object__) {
+          return "on object " + Screw.$.print(expected.object);
         } else {
-          return " with arguments " + Screw.$.print(expected);
+          return expected.call_count + " time" + ((expected.call_count == 1) ? "" : "s");
         }
       },
 
@@ -198,7 +199,7 @@ module("Screw", function(c) { with(c) {
         if (expected.__with_args__) {
           return "with arguments " + Screw.$.print(actual.most_recent_args);
         } else if (expected.__on_object__) {
-          return "on object " + Screw.$.print(expected);
+          return "on object " + Screw.$.print(actual.most_recent_this_value);
         } else {
           return actual.call_count + " time" + ((actual.call_count == 1) ? "" : "s");
         }
@@ -221,9 +222,10 @@ module("Screw", function(c) { with(c) {
     def('thrice', 3);
 
     def('with_args', function() {
-      var arguments = Array.prototype.slice.call(arguments);
-      arguments.__with_args__ = true;
-      return arguments;
+      return {
+        __with_args__: true,
+        arguments: Array.prototype.slice.call(arguments)
+      };
     });
 
     def('on_object', function(object) {
