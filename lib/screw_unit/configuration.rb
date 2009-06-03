@@ -5,8 +5,20 @@ module ScrewUnit
   end
 
   class Configuration
-    def self.instance
-      @instance ||= new
+    DEFAULT_SELENIUM_HOST = "localhost"
+    DEFAULT_SELENIUM_PORT = 4444
+    DEFAULT_SELENIUM_BROWSER_STRING = "*firefox"
+    DEFAULT_SELENIUM_SCREW_SERVER_URL = "http://localhost"
+    DEFAULT_SELENIUM_SPECS_PATH = "/specs"
+
+    class << self
+      def instance
+        @instance ||= new
+      end
+
+      def method_missing(method_name, *args, &block)
+        instance.send(method_name, *args, &block)
+      end
     end
 
     attr_reader :base_path
@@ -47,6 +59,31 @@ module ScrewUnit
 
     def expand_path(relative_path)
       File.expand_path("#{base_path}/#{relative_path}")
+    end
+
+
+    def selenium_host
+      ENV['SELENIUM_HOST'] || DEFAULT_SELENIUM_HOST
+    end
+
+    def selenium_port
+      ENV['SELENIUM_PORT'] || DEFAULT_SELENIUM_PORT
+    end
+
+    def selenium_browser_string
+      ENV['SELENIUM_BROWSER_STRING'] || DEFAULT_SELENIUM_BROWSER_STRING
+    end
+
+    def selenium_screw_server_url
+      ENV['SELENIUM_SCREW_SERVER_URL'] || DEFAULT_SELENIUM_SCREW_SERVER_URL
+    end
+
+    def selenium_screw_server_port
+      ENV['SELENIUM_SCREW_SERVER_PORT'] || port
+    end
+
+    def selenium_specs_path
+      ENV['SELENIUM_SPECS_PATH'] || DEFAULT_SELENIUM_SPECS_PATH
     end
   end
 end

@@ -21,12 +21,17 @@ module ScrewUnit
     end
 
     def open_suite_with_selenium(port)
-      selenium_driver = Selenium::SeleniumDriver.new("localhost", 4444, "*firefox", "http://localhost:#{port}/")
+      selenium_driver = Selenium::SeleniumDriver.new(
+        Configuration.selenium_host,
+        Configuration.selenium_port,
+        Configuration.selenium_browser_string,
+        "#{Configuration.selenium_screw_server_url}:#{Configuration.selenium_screw_server_port}"
+      )
 
       Thread.new do
         sleep 1
         selenium_driver.start
-        selenium_driver.open("/specs")
+        selenium_driver.open(Configuration.selenium_specs_path)
       end
 
       at_exit do
