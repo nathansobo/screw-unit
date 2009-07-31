@@ -19,10 +19,8 @@ module ScrewUnit
       next_resource = locate_resource(request.path_info)
       case(request.request_method)
       when "GET":
-        puts "screw-unit: received GET request to #{request.path_info}" if ENV['SCREW_UNIT_DEBUG']
         next_resource.get
       when "POST":
-        puts "screw-unit: received POST request to #{request.path_info}: '#{request.body.string}'" if ENV['SCREW_UNIT_DEBUG']
         next_resource.post(request)
       else
         raise "unrecognized HTTP method #{request.request_method}"

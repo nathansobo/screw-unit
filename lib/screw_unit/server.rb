@@ -35,6 +35,7 @@ module ScrewUnit
       end
 
       at_exit do
+        selenium_driver.close
         selenium_driver.stop
       end
     end
