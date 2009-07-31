@@ -35,10 +35,7 @@ module ScrewUnit
       end
 
       at_exit do
-        if ENV['SELENIUM_BROWSER_STRING'] == "*iexplore"
-          selenium_driver.close
-          sleep 10
-        end
+        sleep 1 if ENV['SELENIUM_BROWSER_STRING'] == "*iexplore"
         selenium_driver.stop
       end
     end
