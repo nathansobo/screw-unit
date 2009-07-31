@@ -237,8 +237,8 @@ module("Screw", function(c) { with(c) {
 
     def('contain', {
       match: function(expected, actual) {
-        for(var i = 0; i < expected.length; i++) {
-          if (expected[i] == actual) return true;
+        for(var i = 0; i < actual.length; i++) {
+          if (actual[i] == expected) return true;
         }
         return false;
       },
