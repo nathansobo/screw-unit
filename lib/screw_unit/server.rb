@@ -36,7 +36,7 @@ module ScrewUnit
 
       at_exit do
         selenium_driver.stop
-        selenium_driver.close if RUBY_PLATFORM =~ /mswin/
+        selenium_driver.close if ENV['SELENIUM_BROWSER_STRING'] == "*iexplore"
       end
     end
   end
