@@ -235,6 +235,23 @@ module("Screw", function(c) { with(c) {
       };
     });
 
+    def('contain', {
+      match: function(expected, actual) {
+        for(var i = 0; i < expected.length; i++) {
+          if (expected[i] == actual) return true;
+        }
+        return false;
+      },
+
+      failure_message: function(expected, actual, not) {
+        if (not) {
+          return "expected " + Screw.$.print(actual) + " to not contain " + Screw.$.print(expected) + ", but it did";
+        } else {
+          return "expected " + Screw.$.print(actual) + " to contain " + Screw.$.print(expected) + ", but it did not";
+        }
+      }
+    });
+
     def('throw_exception', {
       match: function(expected, actual) {
         var threw_exception;

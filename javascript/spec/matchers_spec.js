@@ -376,6 +376,26 @@ Screw.Unit(function(c) { with(c) {
       });
     });
 
+//    describe("#contain", function() {
+//      it("matches arrays containing the expected value", function() {
+//        expect([1,2,3]).to(contain, 2);
+//        expect([1,2,3]).to_not(contain, 7);
+//      });
+//
+//      describe(".failure message", function() {
+//        it('prints "expected [expected] to (not) contain [actual]"', function() {
+//          var message = null;
+//          try { expect([1,2]).to(contain, 3) } catch(e) { message = e.message }
+//          expect(message).to(equal, 'expected [ 1, 2 ] to contain 3, but it did not');
+//
+//
+//          try { expect([1,2]).to_not(contain, 2) } catch(e) { message = e.message }
+//          expect(message).to(equal, 'expected [ 1, 2 ] to not contain 2, but it did');
+//        });
+//
+//      });
+//    });
+
     describe("#throw_exception", function() {
       var throws, does_not_throw;
 
