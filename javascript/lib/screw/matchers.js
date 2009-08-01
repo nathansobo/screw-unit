@@ -185,20 +185,28 @@ module("Screw", function(c) { with(c) {
         }
       },
 
-      error_message_expectation_fragment: function(expected) {
-        if (expected.__with_args__) {
-          return "with arguments " + Screw.$.print(expected.arguments);
-        } else if (expected.__on_object__) {
-          return "on object " + Screw.$.print(expected.object);
+      error_message_expectation_fragment: function(expected, not) {
+        if (!expected) {
+          if (not) {
+            return "";
+          } else {
+            return " at least once";
+          }
         } else {
-          return expected.call_count + " time" + ((expected.call_count == 1) ? "" : "s");
+          if (expected.__with_args__) {
+            return " with arguments " + Screw.$.print(expected.arguments);
+          } else if (expected.__on_object__) {
+            return " on object " + Screw.$.print(expected.object);
+          } else {
+            return " " + expected.call_count + " time" + ((expected.call_count == 1) ? "" : "s");
+          }
         }
       },
 
-      error_message_actual_fragment: function(expected, actual) {
-        if (expected.__with_args__) {
+      error_message_actual_fragment: function(expected, actual, not) {
+        if (expected && expected.__with_args__) {
           return "with arguments " + Screw.$.print(actual.most_recent_args);
-        } else if (expected.__on_object__) {
+        } else if (expected && expected.__on_object__) {
           return "on object " + Screw.$.print(actual.most_recent_this_value);
         } else {
           return actual.call_count + " time" + ((actual.call_count == 1) ? "" : "s");
@@ -208,11 +216,11 @@ module("Screw", function(c) { with(c) {
       failure_message: function(expected, actual, not) {
         var message;
         if (not) {
-          message = 'expected ' + actual.function_name + ' to have not been called ' + this.error_message_expectation_fragment(expected);
+          message = 'expected ' + actual.function_name + ' to have not been called' + this.error_message_expectation_fragment(expected, not);
         } else {
-          message = 'expected ' + actual.function_name + ' to have been called ' + this.error_message_expectation_fragment(expected);
+          message = 'expected ' + actual.function_name + ' to have been called' + this.error_message_expectation_fragment(expected, not);
         }
-        message += ', but it was called ' + this.error_message_actual_fragment(expected, actual);
+        message += ', but it was called ' + this.error_message_actual_fragment(expected, actual, not);
         return message;
       }
     });

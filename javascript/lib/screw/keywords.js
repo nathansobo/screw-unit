@@ -81,6 +81,8 @@ module("Screw", function(c) { with (c) {
         }
       }
 
+      function_name = function_name || "mock function";
+
       var mock_function = function() {
         var args_array = Array.prototype.slice.call(arguments)
         mock_function.call_count += 1;
