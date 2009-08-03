@@ -7,6 +7,7 @@ module ScrewUnit
       end
 
       def post(request)
+        puts request.body.string unless request.body.string == "success"
         if options[:selenium]
           $exit_status = (request.body.string == "success") ? 0 : 1
           $thin_server.stop!

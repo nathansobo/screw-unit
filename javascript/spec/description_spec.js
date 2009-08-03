@@ -68,7 +68,7 @@ Screw.Unit(function(c) { with(c) {
       });
     });
 
-    describe("#failed_examples", function() {
+    describe("with failing examples", function() {
       var root_description, child_description, passing_child_example, failing_child_example, passing_grandchild_example, failing_grandchild_example;
       before(function() {
         root_description = new Screw.Description("root description")
@@ -76,10 +76,10 @@ Screw.Unit(function(c) { with(c) {
         passing_child_example = new Screw.Example("passing child example", function() {});
         passing_grandchild_example = new Screw.Example("passing grandchild example", function() {});
         failing_child_example = new Screw.Example("failing child example", function() {
-          throw new Exception();
+          throw new Error("child error message");
         })
         failing_grandchild_example = new Screw.Example("failing grandchild example", function() {
-          throw new Exception();
+          throw new Error("grandchild error message");
         })
 
         root_description.add_description(child_description);
@@ -89,9 +89,18 @@ Screw.Unit(function(c) { with(c) {
         child_description.add_example(failing_grandchild_example);
       });
 
-      it("returns all failed Examples descending from this describe", function() {
-        root_description.run();
-        expect(root_description.failed_examples()).to(equal, [failing_child_example, failing_grandchild_example]);
+      describe("#failed_examples", function() {
+        it("returns all failed Examples descending from this describe", function() {
+          root_description.run();
+          expect(root_description.failed_examples()).to(equal, [failing_child_example, failing_grandchild_example]);
+        });
+      });
+
+      describe("#failure_messages", function() {
+        it("returns an array of the failure messages for all failing descendent examples", function() {
+          root_description.run();
+          expect(root_description.failure_messages()).to(equal, [failing_child_example.failure_message,  failing_grandchild_example.failure_message]);
+        });
       });
     });
 

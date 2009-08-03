@@ -129,5 +129,26 @@ Screw.Unit(function(c) { with(c) {
         expect(example.path()).to(equal, parent_description.path() + [example.index]);
       });
     });
+
+    describe("#failure_message", function() {
+      describe("when the example passes", function() {
+        it("returns null", function() {
+          example.run();
+          expect(example.failure_message).to(equal, null);
+        });
+      });
+
+      describe("when the example fails", function() {
+        before(function() {
+          should_fail = true;
+        });
+
+        it("returns the a message including the example's name and the error message", function() {
+          example.run();
+          expect(example.failure_message).to(match, example.name);
+          expect(example.failure_message).to(match, "sad times");
+        });
+      });
+    });
   });
 }});

@@ -33,6 +33,14 @@ module("Screw", function(c) { with (c) {
       return failed_examples;
     });
 
+    def('failure_messages', function() {
+      var messages = [];
+      Screw.each(this.failed_examples(), function() {
+        messages.push(this.failure_message);
+      });
+      return messages;
+    });
+
     def('runnable_at_path', function(path) {
       var current_runnable = this;
       Screw.each(path, function() {

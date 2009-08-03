@@ -10,6 +10,7 @@ module("Screw", function(c) { with (c) {
       this.example_completed_subscription_node = new Screw.SubscriptionNode();
       this.passed = false;
       this.failed = false;
+      this.failure_message = null;
     });
 
     def('enqueue', function() {
@@ -32,6 +33,7 @@ module("Screw", function(c) { with (c) {
         this.example_completed_subscription_node.publish(this);
       } catch(e) {
         this.failed = true;
+        this.failure_message = "Failure in '" + this.name + "':\n" + e.stack;
         this.fail_subscription_node.publish(e);
         this.example_completed_subscription_node.publish(this);
       }

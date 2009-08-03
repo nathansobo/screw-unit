@@ -42,7 +42,7 @@ Screw.$(function() {
   root_description.on_example_completed(function() {
     completed_example_count++;
     if (completed_example_count == total_example_count) {
-      var outcome = (root_description.failed_examples().length == 0) ? "success" : "failure";
+      var outcome = (root_description.failed_examples().length == 0) ? "success" : root_description.failure_messages().join("\n");
       Screw.$.ajax({ type: 'POST', url: '/complete', data: outcome });
     }
   });
