@@ -22,9 +22,11 @@ module ScrewUnit
               stub(mock_request).body { StringIO.new("success") }
             end
 
-            it "sets the $exit_status to 0 and stops the $thin_server" do
-              mock($thin_server).stop!
-              suite_completion.post(mock_request)
+            it "sends a success response and sets the $exit_status to 0" do
+              status, headers, body = suite_completion.post(mock_request)
+              status.should == 200
+              headers.should == {}
+              body.should == "OK"
               $exit_status.should == 0
             end
           end
@@ -34,9 +36,11 @@ module ScrewUnit
               stub(mock_request).body { StringIO.new("failure") }
             end
 
-            it "sets the $exit_status to 1 and stops the $thin_server" do
-              mock($thin_server).stop!
-              suite_completion.post(mock_request)
+            it "sends a success response and sets the $exit_status to 1" do
+              status, headers, body = suite_completion.post(mock_request)
+              status.should == 200
+              headers.should == {}
+              body.should == "OK"
               $exit_status.should == 1
             end
           end
@@ -48,9 +52,11 @@ module ScrewUnit
             stub(mock_request).body { StringIO.new("anything") }
           end
 
-          it "does not change $exit_status or stop the $thin_server" do
-            dont_allow($thin_server).stop!
-            suite_completion.post(mock_request)
+          it "sends a success response and does not change $exit_status" do
+            status, headers, body = suite_completion.post(mock_request)
+            status.should == 200
+            headers.should == {}
+            body.should == "OK"
             $exit_status.should be_nil
           end
         end

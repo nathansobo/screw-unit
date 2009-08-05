@@ -10,8 +10,12 @@ module ScrewUnit
         puts request.body.string unless request.body.string == "success"
         if options[:selenium]
           $exit_status = (request.body.string == "success") ? 0 : 1
-          $thin_server.stop!
+          Thread.new do
+            sleep 1 # give the server thread a moment to send the response before we kill it
+            $thin_server.stop!
+          end
         end
+        [200, {}, "OK"]
       end
     end
   end
