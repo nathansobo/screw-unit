@@ -49,6 +49,14 @@ div#screw_unit_progress_bar div#screw_unit_progress {
   height: 25px;
 }
 
+ul.descriptions.failed {
+  background-color: #F62B2B;
+}
+
+ul.descriptions.passed {
+  background-color: #1E7C0E;
+}
+
 li {
   list-style-type: none;
 }

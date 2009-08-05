@@ -172,5 +172,51 @@ Screw.Unit(function(c) { with(c) {
         });
       });
     });
+
+    describe("#update", function() {
+      describe("when the examples are completed", function() {
+        before(function() {
+          view.completed_example_count = 0;
+          view.total_examples = 1;
+        });
+
+        after(function() {
+          expect(view.completed_example_count).to(equal, view.total_examples);
+        });
+
+        describe("when there were failures", function() {
+          before(function() {
+            mock(Screw.root_description(), "failed_examples", function() { return [1]; });
+          });
+
+          after(function() {
+            Screw.$("ul.descriptions").removeClass("failed"));
+          });
+
+          it("adds the .failed class to the root description", function() {
+            view.update();
+
+            expect(Screw.root_description().failed_examples).to(have_been_called, once);
+            expect(Screw.$("ul.descriptions").hasClass("failed")).to(be_true);
+          });
+        });
+
+        describe("when all examples passed", function() {
+          before(function() {
+            mock(Screw.root_description(), "failed_examples", function() { return []; });
+          });
+
+          after(function() {
+            Screw.$("ul.descriptions").removeClass("passed"));
+          });
+
+          it("adds the .passed class to the root description", function() {
+              view.update();
+              expect(Screw.root_description().failed_examples).to(have_been_called, once);
+              expect(Screw.$("ul.descriptions").hasClass("passed")).to(be_true);
+          });
+        });
+      });
+    });
   });
 }});

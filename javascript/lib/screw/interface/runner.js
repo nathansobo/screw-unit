@@ -70,9 +70,23 @@ module("Screw", function(c) { with(c) {
         },
 
         enqueue: function() {
+          var self = this;
+          this.completed_example_count = 0;
+          this.total_examples = Screw.root_description().total_examples();
+
+          Screw.root_description().on_example_completed(function() { self.update() } );
           Screw.each(Screw.Interface.examples_to_run(), function() {
             this.enqueue();
           });
+        },
+
+        update: function() {
+          this.completed_example_count++;
+          
+          if (this.completed_example_count == this.total_examples) {
+            var is_success = (Screw.root_description().failed_examples().length == 0);
+            Screw.$("ul.descriptions").addClass(is_success ? "passed" : "failed");
+          }
         }
       }
     });
