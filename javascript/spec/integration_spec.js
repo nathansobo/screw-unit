@@ -171,4 +171,30 @@ Screw.Unit(function(c) { with(c) {
       });
     });
   });
+
+  describe("A describe with init blocks and before blocks", function() {
+    var init_and_before_invocations;
+
+    init(function() {
+      init_and_before_invocations = ["outer init"];
+    });
+
+    before(function() {
+      init_and_before_invocations.push("outer before");
+    });
+
+    describe("a nested describe with init and before blocks", function() {
+      init(function() {
+        init_and_before_invocations.push("inner init");
+      });
+
+      before(function() {
+        init_and_before_invocations.push("inner before");
+      });
+
+      it("invokes all the init blocks, then all the before blocks, then this example", function() {
+        expect(init_and_before_invocations).to(equal, ["outer init", "inner init", "outer before", "inner before"]);
+      });
+    });
+  });
 }});

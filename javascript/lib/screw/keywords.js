@@ -19,6 +19,10 @@ module("Screw", function(c) { with (c) {
       Screw.current_description().add_before(fn);
     });
 
+    def('init', function(fn) {
+      Screw.current_description().add_init(fn);
+    });
+
     def('after', function(fn) {
       Screw.current_description().add_after(fn);
     });
