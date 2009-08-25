@@ -13,11 +13,24 @@ module ScrewUnit
 
       protected
       def content
-        screw_unit_css_file +
-        "\n\n" +
-        core_file_include_tags +
-        "\n\n" +
-        spec_file_include_tags
+        content =
+          screw_unit_css_file +
+          "\n\n" +
+          "<!-- ScrewUnit core scripts -->\n" +
+          core_file_include_tags +
+          "\n\n"
+
+        if Configuration.sprockets_enabled
+          content +=
+            "<!-- Sprockets-required scripts -->\n" +
+            sprockets_file_include_tags +
+            "\n\n"
+        end
+
+
+        content +
+          "<!-- Spec Suite Scripts -->\n" +
+          spec_file_include_tags
       end
 
       def screw_unit_css_file
@@ -31,9 +44,53 @@ module ScrewUnit
       end
 
       def spec_file_include_tags
-        spec_file_resources.map do |spec_file_resource|
-          script_tag(spec_file_resource.relative_path)
+        spec_file_relative_paths.map do |relative_path|
+          script_tag(relative_path)
         end.join("\n")
+      end
+
+      def spec_file_relative_paths
+        spec_file_resources.map do |spec_file_resource|
+          spec_file_resource.relative_path
+        end
+      end
+
+      def spec_file_absolute_paths
+        spec_file_resources.map do |spec_file_resource|
+          spec_file_resource.absolute_path
+        end
+      end
+
+      def sprockets_file_include_tags
+        sprockets_required_relative_paths.map do |relative_path|
+          script_tag(relative_path)
+        end.join("\n")
+      end
+
+      def sprockets_required_relative_paths
+        sprockets_required_absolute_paths.map do |path|
+          path.gsub(Configuration.specs_path, "/specs").gsub(Configuration.code_under_test_path, "")
+        end
+      end
+
+      def sprockets_required_absolute_paths
+        secretary = Sprockets::Secretary.new(
+          :root => Configuration.specs_path,
+          :asset_root   => nil,
+          :load_path    => sprockets_load_paths,
+          :source_files => spec_file_absolute_paths
+        )
+        absolute_paths = secretary.preprocessor.dependency_ordered_source_files.map {|f| f.pathname.absolute_location}
+        absolute_paths - spec_file_absolute_paths
+      end
+
+      def sprockets_load_paths
+        [
+          Configuration.code_under_test_path,
+          Configuration.specs_path,
+          "#{Configuration.code_under_test_path}/**/*",
+          "#{Configuration.specs_path}/**/*"
+        ]
       end
 
       def script_tag(path)

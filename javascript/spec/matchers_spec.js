@@ -366,6 +366,61 @@ Screw.Unit(function(c) { with(c) {
           expect(mock_fn).to(have_been_called, with_args("foo", "bar"));
         });
       });
+
+      context("when matching a mock function with the expected this value", function() {
+        it("matches if the function's #most_recent_this_value match the expectation", function() {
+          var a = { mock_fn: mock_fn };
+          a.mock_fn();
+          expect(mock_fn).to(have_been_called, on_object(a));
+        });
+      });
+    });
+
+    describe("#contain", function() {
+      it("matches arrays containing the expected value", function() {
+        expect([1,2,3]).to(contain, 2);
+        expect([1,2,3]).to_not(contain, 7);
+      });
+
+      describe(".failure message", function() {
+        it('prints "expected [expected] to (not) contain [actual]"', function() {
+          var message = null;
+          try { expect([1,2]).to(contain, 3) } catch(e) { message = e.message }
+          expect(message).to(equal, 'expected [ 1, 2 ] to contain 3, but it did not');
+
+
+          try { expect([1,2]).to_not(contain, 2) } catch(e) { message = e.message }
+          expect(message).to(equal, 'expected [ 1, 2 ] to not contain 2, but it did');
+        });
+
+      });
+    });
+
+    describe("#throw_exception", function() {
+      var throws, does_not_throw;
+
+      before(function() {
+        throws = function() { throw new Error("intentional"); };
+        does_not_throw = function() { };
+      });
+
+      it("matches functions that throw exceptions when called", function() {
+        expect(throws).to(throw_exception);
+        expect(does_not_throw).to_not(throw_exception);
+      });
+
+      describe(".failure_message", function() {
+        it("prints a message about the expected throwing", function() {
+          var message = true;
+
+          try { expect(does_not_throw).to(throw_exception) } catch(e) { message = e.message }
+          expect(message).to(equal, 'expected function to throw an exception, but it did not');
+
+          try { expect(throws).to_not(throw_exception) } catch(e) { message = e.message }
+          expect(message).to(equal, 'expected function to not throw an exception, but it did');
+        });
+      });
+
     });
   });
 }});

@@ -1,6 +1,7 @@
 module("Screw", function(c) { with (c) {
   def('Unit', function(specification) {
-    specification(new Screw.Context());
+    if (!this.shared_context) this.shared_context = new Screw.Context();
+    specification(this.shared_context);
   });
 
   def('root_description', function() {

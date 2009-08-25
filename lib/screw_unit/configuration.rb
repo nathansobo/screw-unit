@@ -16,8 +16,8 @@ module ScrewUnit
         @instance ||= new
       end
 
-      def method_missing(method_name, *args, &block)
-        instance.send(method_name, *args, &block)
+      def method_missing(method, *args, &block)
+        instance.send(method, *args, &block)
       end
     end
 
@@ -38,6 +38,20 @@ module ScrewUnit
       @code_under_test_path
     end
 
+    def specs_path(relative_path=nil)
+      @specs_path = expand_path(relative_path) if relative_path
+      @specs_path
+    end
+
+    def screw_unit_core_path
+      File.expand_path("#{File.dirname(__FILE__)}/../../javascript/lib")
+    end
+
+    def sprockets_enabled(enabled=nil)
+      @sprockets_enabled = enabled unless enabled.nil?
+      @sprockets_enabled
+    end
+
     def custom_resource_locators
       @custom_resource_locators ||= []
       @custom_resource_locators
@@ -46,15 +60,6 @@ module ScrewUnit
     def register_custom_resource_locator(klass)
       @custom_resource_locators ||= []
       @custom_resource_locators << klass
-    end
-
-    def specs_path(relative_path=nil)
-      @specs_path = expand_path(relative_path) if relative_path
-      @specs_path
-    end
-
-    def screw_unit_core_path
-      File.expand_path("#{File.dirname(__FILE__)}/../../javascript/lib")
     end
 
     def expand_path(relative_path)

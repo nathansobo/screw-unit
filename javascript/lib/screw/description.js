@@ -7,6 +7,7 @@ module("Screw", function(c) { with (c) {
       this.children = [];
       this.child_descriptions = [];
       this.examples = [];
+      this.inits = [];
       this.befores = [];
       this.afters = [];
       this.example_completed_subscription_node = new Screw.SubscriptionNode();
@@ -72,6 +73,10 @@ module("Screw", function(c) { with (c) {
       });
     });
 
+    def('add_init', function(fn) {
+      this.inits.push(fn);
+    });
+
     def('add_before', function(fn) {
       this.befores.push(fn);
     });
@@ -94,6 +99,16 @@ module("Screw", function(c) { with (c) {
       };
       Screw.each(this.examples, run_it);
       Screw.each(this.child_descriptions, run_it);
+    });
+
+    def('run_inits', function(example_context) {
+      if (this.parent_description) {
+        this.parent_description.run_inits(example_context);
+      }
+
+      Screw.each(this.inits, function() {
+        this.call(example_context);
+      });
     });
 
     def('run_befores', function(example_context) {

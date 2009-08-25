@@ -22,6 +22,7 @@ module("Screw", function(c) { with (c) {
       try {
         try {
           var example_context = {};
+          this.parent_description.run_inits(example_context);
           this.parent_description.run_befores(example_context);
           this.fn.call(example_context);
         } finally {

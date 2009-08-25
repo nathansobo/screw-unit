@@ -13,9 +13,14 @@ module("Screw", function(c) { with (c) {
     });
 
     def('specify', Screw.Keywords.it);
+    def('they', Screw.Keywords.it);
 
     def('before', function(fn) {
       Screw.current_description().add_before(fn);
+    });
+
+    def('init', function(fn) {
+      Screw.current_description().add_init(fn);
     });
 
     def('after', function(fn) {
@@ -80,9 +85,13 @@ module("Screw", function(c) { with (c) {
         }
       }
 
+      function_name = function_name || "mock function";
+
       var mock_function = function() {
         var args_array = Array.prototype.slice.call(arguments)
         mock_function.call_count += 1;
+        mock_function.this_values.push(this);
+        mock_function.most_recent_this_value =  this;
         mock_function.call_args.push(args_array);
         mock_function.most_recent_args = args_array;
 
@@ -95,7 +104,9 @@ module("Screw", function(c) { with (c) {
       mock_function.clear = function() {
         this.call_count = 0;
         this.call_args = [];
+        this.this_values = [];
         this.most_recent_args = null;
+        this.most_recent_this_value = null;
       }
       mock_function.clear();
       return mock_function;
