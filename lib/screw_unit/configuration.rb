@@ -52,6 +52,11 @@ module ScrewUnit
       @sprockets_enabled
     end
 
+    def sprockets_load_paths(*relative_paths)
+      return @sprockets_load_paths if relative_paths.empty?
+      @sprockets_load_paths = relative_paths.map {|relative_path| expand_path(relative_path)}
+    end
+
     def custom_resource_locators
       @custom_resource_locators ||= []
       @custom_resource_locators

@@ -85,12 +85,7 @@ module ScrewUnit
       end
 
       def sprockets_load_paths
-        [
-          Configuration.code_under_test_path,
-          Configuration.specs_path,
-          "#{Configuration.code_under_test_path}/**/*",
-          "#{Configuration.specs_path}/**/*"
-        ]
+        Configuration.sprockets_load_paths || [Configuration.code_under_test_path, Configuration.specs_path]
       end
 
       def script_tag(path)
