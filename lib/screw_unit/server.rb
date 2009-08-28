@@ -36,6 +36,7 @@ module ScrewUnit
       end
 
       selenium_driver.start
+      selenium_driver.set_timeout(300000)
       selenium_driver.open(Configuration.selenium_specs_path)
     end
   end
