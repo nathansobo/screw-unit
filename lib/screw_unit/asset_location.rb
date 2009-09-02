@@ -1,0 +1,53 @@
+module ScrewUnit
+  class AssetLocation
+    attr_reader :virtual_prefix, :physical_prefix
+
+    def initialize(virtual_prefix, physical_prefix)
+      @virtual_prefix, @physical_prefix = virtual_prefix, physical_prefix
+    end
+
+    def virtualize_path(physical_path)
+      physical_path.gsub(physical_prefix, virtual_prefix) if matches_physical_path?(physical_path)
+    end
+
+    def physicalize_path(virtual_path)
+      virtual_path.gsub(virtual_prefix, physical_prefix) if matches_virtual_path?(virtual_path)
+    end
+
+    def matches_physical_path?(physical_path)
+      physical_path.starts_with?(physical_prefix)
+    end
+
+    def matches_virtual_path?(virtual_path)
+      virtual_path.starts_with?(virtual_prefix)
+    end
+
+    def matches_virtual_glob_pattern?(virtual_glob_pattern)
+      subsumes_virtual_glob_pattern?(virtual_glob_pattern) || is_subsumed_by_virtual_glob_pattern?(virtual_glob_pattern)
+    end
+
+    def is_subsumed_by_virtual_glob_pattern?(pattern)
+      glob_pattern_without_wildcards = pattern.gsub(/\/\*.*/, "")
+      virtual_prefix.starts_with?(glob_pattern_without_wildcards)
+    end
+
+    def subsumes_virtual_glob_pattern?(pattern)
+      pattern.starts_with?(virtual_prefix)
+    end
+
+    def virtual_glob(virtual_glob_pattern)
+      Dir[physicalize_glob_pattern(virtual_glob_pattern)].map {|physical_path| virtualize_path(physical_path)}
+    end
+
+    def physicalize_glob_pattern(virtual_glob_pattern)
+      if subsumes_virtual_glob_pattern?(virtual_glob_pattern)
+        physicalize_path(virtual_glob_pattern)
+      elsif is_subsumed_by_virtual_glob_pattern?(virtual_glob_pattern)
+        wildcard = virtual_glob_pattern.scan(/\/\*.*/).first
+        physical_prefix + wildcard
+      else
+        raise "Does not match glob pattern"
+      end
+    end
+  end
+end
