@@ -1,10 +1,11 @@
 module ScrewUnit
   module Resources
     class SpecSuite
-      attr_reader :spec_file_resources
+      attr_reader :spec_file_resources, :asset_manager
 
-      def initialize(spec_file_resources)
+      def initialize(spec_file_resources, asset_manager)
         @spec_file_resources = spec_file_resources
+        @asset_manager = asset_manager
       end
 
       def get
@@ -14,78 +15,54 @@ module ScrewUnit
       protected
       def content
         content =
-          screw_unit_css_file +
+          screw_unit_css_file_link_tag +
           "\n\n" +
           "<!-- ScrewUnit core scripts -->\n" +
-          core_file_include_tags +
+          core_file_script_tags +
           "\n\n"
 
-        if Configuration.sprockets_enabled
-          content +=
-            "<!-- Sprockets-required scripts -->\n" +
-            sprockets_file_include_tags +
-            "\n\n"
-        end
-
-
-        content +
-          "<!-- Spec Suite Scripts -->\n" +
-          spec_file_include_tags
+        content +=
+          "<!-- scripts required by the specs -->\n" +
+          required_script_tags +
+          "\n"
       end
 
-      def screw_unit_css_file
-        %{<link rel="stylesheet" type="text/css" href="/screw_unit_core/screw.css"/>}
+      def screw_unit_css_file_link_tag
+        %{<link rel="stylesheet" type="text/css" href="/screw_unit_stylesheets/screw.css"/>}
       end
 
-      def core_file_include_tags
+      def core_file_script_tags
         core_file_paths.map do |core_file_path|
           script_tag(core_file_path)
         end.join("\n")
       end
 
-      def spec_file_include_tags
-        spec_file_relative_paths.map do |relative_path|
-          script_tag(relative_path)
+      def spec_file_script_tags
+        spec_file_virtual_paths.map do |virtual_path|
+          script_tag(virtual_path)
         end.join("\n")
       end
 
-      def spec_file_relative_paths
+      def spec_file_virtual_paths
         spec_file_resources.map do |spec_file_resource|
-          spec_file_resource.relative_path
+          spec_file_resource.virtual_path
         end
       end
 
-      def spec_file_absolute_paths
+      def spec_file_physical_paths
         spec_file_resources.map do |spec_file_resource|
-          spec_file_resource.absolute_path
+          spec_file_resource.physical_path
         end
       end
 
-      def sprockets_file_include_tags
-        sprockets_required_relative_paths.map do |relative_path|
-          script_tag(relative_path)
+      def required_script_tags
+        required_virtual_paths.map do |virtual_path|
+          script_tag(virtual_path)
         end.join("\n")
       end
 
-      def sprockets_required_relative_paths
-        sprockets_required_absolute_paths.map do |path|
-          path.gsub(Configuration.specs_path, "/specs").gsub(Configuration.code_under_test_path, "")
-        end
-      end
-
-      def sprockets_required_absolute_paths
-        secretary = Sprockets::Secretary.new(
-          :root => Configuration.specs_path,
-          :asset_root   => nil,
-          :load_path    => sprockets_load_paths,
-          :source_files => spec_file_absolute_paths
-        )
-        absolute_paths = secretary.preprocessor.dependency_ordered_source_files.map {|f| f.pathname.absolute_location}
-        absolute_paths - spec_file_absolute_paths
-      end
-
-      def sprockets_load_paths
-        Configuration.sprockets_load_paths || [Configuration.code_under_test_path, Configuration.specs_path]
+      def required_virtual_paths
+        asset_manager.virtual_dependency_paths_from_physical_paths(spec_file_physical_paths)
       end
 
       def script_tag(path)
@@ -93,31 +70,8 @@ module ScrewUnit
       end
 
       def core_file_paths
-        [
-          "/screw_unit_core/json.js",
-          "/screw_unit_core/prefs.js",
-          "/screw_unit_core/jquery-1.2.6.js",
-          "/screw_unit_core/jquery.print.js",
-          "/screw_unit_core/foundation.js",
-          "/screw_unit_core/screw/jquery_mapper.js",  
-          "/screw_unit_core/screw/require.js",
-          "/screw_unit_core/screw/matchers.js",
-          "/screw_unit_core/screw.js",
-          "/screw_unit_core/screw/keywords.js",
-          "/screw_unit_core/screw/context.js",
-          "/screw_unit_core/screw/runnable_methods.js",
-          "/screw_unit_core/screw/description.js",
-          "/screw_unit_core/screw/example.js",
-          "/screw_unit_core/screw/subscription_node.js",
-          "/screw_unit_core/disco.js",
-          "/screw_unit_core/screw/interface.js",
-          "/screw_unit_core/screw/interface/runner.js",
-          "/screw_unit_core/screw/interface/progress_bar.js",
-          "/screw_unit_core/screw/interface/description.js",
-          "/screw_unit_core/screw/interface/example.js",
-        ]
+        asset_manager.virtual_dependency_paths_from_load_path(["screw.js"])
       end
-
     end
   end
 end

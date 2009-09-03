@@ -1,10 +1,10 @@
 module ScrewUnit
   module Resources
     class FileNotFound
-      attr_reader :relative_path
+      attr_reader :virtual_path
 
-      def initialize(relative_path)
-        @relative_path = relative_path
+      def initialize(virtual_path)
+        @virtual_path = virtual_path
       end
 
       def locate(name)
@@ -12,8 +12,8 @@ module ScrewUnit
       end
       
       def get
-        puts "Couldn't find #{relative_path}"
-        [404, {}, "No file found at relative path '#{relative_path}'"]
+        puts "Couldn't find #{virtual_path}"
+        [404, {}, "No file found at relative path '#{virtual_path}'"]
       end
 
       def error

@@ -49,7 +49,7 @@ module ScrewUnit
     class GlobalRequireDeclaration
       attr_reader :js_file
       def initialize(global_path, asset_manager)
-        @js_file = asset_manager.find_on_js_load_path(global_path + ".js")
+        @js_file = JsFile.new(asset_manager.physicalize_path_from_js_load_path(global_path + ".js"), asset_manager)
       end
     end
   end

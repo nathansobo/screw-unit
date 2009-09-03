@@ -12,4 +12,7 @@ require "#{dir}/screw_unit/js_file"
 
 module ScrewUnit
   VERSION = "1.9.0"
+
+  dir = File.dirname(__FILE__)
+  SCREW_UNIT_ROOT = File.expand_path("#{dir}/..")
 end

@@ -1,3 +1,21 @@
+//= require <foundation>
+//= require <jquery-1.2.6>
+//= require <disco>
+//= require <jquery.print>
+//= require <json>
+//= require <prefs>
+//= require "screw/jquery_disco_compatibility"
+
+//= require "screw/keywords"
+//= require "screw/matchers"
+//= require "screw/context"
+//= require "screw/runnable_methods"
+//= require "screw/description"
+//= require "screw/example"
+//= require "screw/interface"
+//= require "screw/require"
+//= require "screw/subscription_node"
+
 module("Screw", function(c) { with (c) {
   def('Unit', function(specification) {
     if (!this.shared_context) this.shared_context = new Screw.Context();

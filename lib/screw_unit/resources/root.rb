@@ -1,25 +1,23 @@
 module ScrewUnit
   module Resources
     class Root < Resources::Dir
-      attr_accessor :screw_unit_core_path, :code_under_test_path, :specs_path, :options
+      attr_accessor :configuration, :options
 
-      def self.instance(*args)
-        @instance ||= new(*args)
+      def initialize(configuration)
+        @configuration = configuration
+        super("/", asset_manager)
       end
 
-      def initialize(screw_unit_core_path, code_under_test_path, specs_path, options = {})
-        @screw_unit_core_path, @code_under_test_path, @specs_path, @options = screw_unit_core_path, code_under_test_path, specs_path, options
-        super("/", code_under_test_path)
+      def asset_manager
+        configuration.asset_manager
       end
 
       def locate(path_fragment)
         case path_fragment
-        when "screw_unit_core"
-          Dir.new("/screw_unit_core", screw_unit_core_path)
         when "specs"
-          SpecDir.new("/specs", specs_path)
+          SpecDir.new("/specs", configuration.asset_manager)
         when "complete"
-          SuiteCompletion.new(options)
+          SuiteCompletion.new(configuration.selenium_mode?)
         else
           super
         end

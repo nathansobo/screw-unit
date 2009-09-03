@@ -12,9 +12,9 @@ module ScrewUnit
           @mock_request = Object.new
         end
 
-        context "when @options[:selenium] is true" do
+        context "when #kill_server_on_completion? is true" do
           before do
-            @suite_completion = SuiteCompletion.new(:selenium => true)
+            @suite_completion = SuiteCompletion.new(true)
           end
 
           context "when the request body is 'success'" do
@@ -33,6 +33,7 @@ module ScrewUnit
 
           context "when the request body is anything else" do
             before do
+              stub(suite_completion).puts
               stub(mock_request).body { StringIO.new("failure") }
             end
 
@@ -46,9 +47,10 @@ module ScrewUnit
           end
         end
 
-        context "when @options[:selenium] is not true" do
+        context "when #kill_server_on_completion? is not true" do
           before do
-            @suite_completion = SuiteCompletion.new
+            @suite_completion = SuiteCompletion.new(false)
+            stub(suite_completion).puts
             stub(mock_request).body { StringIO.new("anything") }
           end
 

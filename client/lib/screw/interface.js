@@ -1,3 +1,8 @@
+//= require "interface/description"
+//= require "interface/example"
+//= require "interface/progress_bar"
+//= require "interface/runner"
+
 module("Screw", function(c) { with(c) {
   module("Interface", function() {
     def('load_preferences', function() {

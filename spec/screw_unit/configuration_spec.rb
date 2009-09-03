@@ -25,53 +25,26 @@ module ScrewUnit
     end
 
     describe "#load_screwrc" do
-      it "loads .screwrc from the given base_path and assigns #base_path" do
+      it "loads .screwrc from the given base_path and assigns #path_containing_screwrc" do
         mock(configuration).load("/base/path/.screwrc")
         configuration.load_screwrc("/base/path")
-        configuration.base_path.should == "/base/path"
+        configuration.path_containing_screwrc.should == "/base/path"
       end
     end
 
-    describe "path configuration methods" do
-      before do
-        stub(configuration).base_path { "/base/path" }
+    describe "#add_js_location" do
+      it "proxies to #asset_manager after absolutizing the relative physical path from the path containing the .screwrc file" do
+        stub(configuration).path_containing_screwrc { '/path_containing_screwrc' }
+        mock(configuration.asset_manager).add_js_location('/foo', '/path_containing_screwrc/bar')
+        configuration.add_js_location('/foo', 'bar')
       end
+    end
 
-      describe "#code_under_test_path" do
-        it "assigns the no-argument result of #code_under_test_path to a path that is relative to the base path" do
-          configuration.code_under_test_path.should be_nil
-          configuration.code_under_test_path("foo").should == "/base/path/foo"
-          configuration.code_under_test_path.should == "/base/path/foo"
-        end
-      end
-
-      describe "#specs_path" do
-        it "assigns the no-argument result of #specs_path to a path that is relative to the base path" do
-          configuration.specs_path.should be_nil
-          configuration.specs_path("foo").should == "/base/path/foo"
-          configuration.specs_path.should == "/base/path/foo"
-        end
-      end
-
-      describe "#screw_unit_core_path" do
-        it "returns the javascripts/lib directory in the current implementation" do
-          configuration.screw_unit_core_path.should == File.expand_path("#{File.dirname(__FILE__)}/../../javascript/lib")
-        end
-      end
-
-      describe "#register_custom_resource_locator" do
-        before do
-          class CustomLocator
-            def locate()
-            end
-          end
-        end
-
-        it "registers a locator class" do
-          lambda do
-            configuration.register_custom_resource_locator(CustomLocator)
-          end.should change(configuration.custom_resource_locators, :size).by(1)
-        end
+    describe "#add_location" do
+      it "proxies to #asset_manager after absolutizing the relative physical path from the path containing the .screwrc file" do
+        stub(configuration).path_containing_screwrc { '/path_containing_screwrc' }
+        mock(configuration.asset_manager).add_location('/foo', '/path_containing_screwrc/bar')
+        configuration.add_location('/foo', 'bar')
       end
     end
   end

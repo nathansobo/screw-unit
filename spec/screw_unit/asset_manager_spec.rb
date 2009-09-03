@@ -20,6 +20,11 @@ module ScrewUnit
         manager.virtualize_path("#{dir}/asset_manager_spec/dir_3/3.js").should == "/implementations/3.js"
         manager.virtualize_path("/crap").should be_nil
       end
+
+      it "corrently handles handles a virtual path of '/'" do
+        manager.add_location('/', "#{dir}/asset_manager_spec/dir_4")
+        manager.virtualize_path("#{dir}/asset_manager_spec/dir_4/1.css").should == "/1.css"
+      end
     end
 
     describe "#physicalize_path" do
@@ -27,6 +32,11 @@ module ScrewUnit
         manager.physicalize_path("/specs/1/1.js").should == "#{dir}/asset_manager_spec/dir_1/1.js"
         manager.physicalize_path("/specs/2/2.js").should == "#{dir}/asset_manager_spec/dir_2/2.js"
         manager.physicalize_path("/implementations/3.js").should == "#{dir}/asset_manager_spec/dir_3/3.js"
+      end
+
+      it "corrently handles handles a virtual path of '/'" do
+        manager.add_location('/', "#{dir}/asset_manager_spec/dir_4")
+        manager.physicalize_path('/1.css').should == "#{dir}/asset_manager_spec/dir_4/1.css"
       end
     end
 
@@ -40,7 +50,7 @@ module ScrewUnit
       end
     end
 
-    describe "#virtual_dependency_paths" do
+    describe "#virtual_dependency_paths_from_load_path" do
       it "computes the virtual paths of the require graph extending out from the files on the load path corresponding to the given paths" do
         expected_dependency_paths = [
           "/specs/1/subdir_1/4.js",
@@ -48,8 +58,22 @@ module ScrewUnit
           "/implementations/3.js",
           "/specs/1/1.js"
         ]
-        manager.virtual_dependency_paths("1.js", "subdir_3/5.js").should == expected_dependency_paths
+        manager.virtual_dependency_paths_from_load_path(["1.js", "subdir_3/5.js"]).should == expected_dependency_paths
       end
     end
+
+    describe "#virtual_dependency_paths_from_physical_paths" do
+      it "computes the virtual paths of the require graph extending out from thes files at the given absolute paths" do
+        expected_dependency_paths = [
+          "/specs/1/subdir_1/4.js",
+          "/implementations/subdir_3/5.js",
+          "/implementations/3.js",
+          "/specs/1/1.js"
+        ]
+        physical_paths = [manager.physicalize_path("/specs/1/1.js"), manager.physicalize_path("/implementations/subdir_3/5.js")]
+        manager.virtual_dependency_paths_from_physical_paths(physical_paths).should == expected_dependency_paths
+      end
+    end
+
   end
 end

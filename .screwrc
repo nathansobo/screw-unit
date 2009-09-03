@@ -1,5 +1,5 @@
 ScrewUnit.configure do
   port 8181
-  code_under_test_path "javascript/lib"
-  specs_path "javascript/spec"
+  add_js_location "/under_test", "client/lib"
+  add_js_location "/specs", "client/spec"
 end

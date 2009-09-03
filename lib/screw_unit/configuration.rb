@@ -21,56 +21,41 @@ module ScrewUnit
       end
     end
 
-    attr_reader :base_path
+    attr_reader :path_containing_screwrc, :asset_manager
 
-    def load_screwrc(base_path)
-      @base_path = base_path
-      load("#{base_path}/.screwrc")
+    def initialize
+      @asset_manager = AssetManager.new
+    end
+
+    def load_screwrc(path_containing_screwrc)
+      @path_containing_screwrc = path_containing_screwrc
+      load("#{path_containing_screwrc}/.screwrc")
     end
     
     def port(port=nil)
       @port = port if port
-      @port
+      @port || 8080
     end
 
-    def code_under_test_path(relative_path=nil)
-      @code_under_test_path = expand_path(relative_path) if relative_path
-      @code_under_test_path
+    def add_js_location(virtual_path, relative_path)
+      asset_manager.add_js_location(virtual_path, absolutize_path(relative_path))
     end
 
-    def specs_path(relative_path=nil)
-      @specs_path = expand_path(relative_path) if relative_path
-      @specs_path
+    def add_location(virtual_path, relative_path)
+      asset_manager.add_location(virtual_path, absolutize_path(relative_path))
     end
 
-    def screw_unit_core_path
-      File.expand_path("#{File.dirname(__FILE__)}/../../javascript/lib")
+    def absolutize_path(relative_path)
+      File.expand_path(File.join(path_containing_screwrc, relative_path))
     end
 
-    def sprockets_enabled(enabled=nil)
-      @sprockets_enabled = enabled unless enabled.nil?
-      @sprockets_enabled
+    def selenium_mode
+      @selenium_mode = true
     end
 
-    def sprockets_load_paths(*relative_paths)
-      return @sprockets_load_paths if relative_paths.empty?
-      @sprockets_load_paths = relative_paths.map {|relative_path| expand_path(relative_path)}
+    def selenium_mode?
+      !@selenium_mode.nil?
     end
-
-    def custom_resource_locators
-      @custom_resource_locators ||= []
-      @custom_resource_locators
-    end
-
-    def register_custom_resource_locator(klass)
-      @custom_resource_locators ||= []
-      @custom_resource_locators << klass
-    end
-
-    def expand_path(relative_path)
-      File.expand_path("#{base_path}/#{relative_path}")
-    end
-
 
     def selenium_host
       ENV['SELENIUM_HOST'] || DEFAULT_SELENIUM_HOST

@@ -190,7 +190,7 @@ Screw.Unit(function(c) { with(c) {
           });
 
           after(function() {
-            Screw.$("ul.descriptions").removeClass("failed"));
+            Screw.$("ul.descriptions").removeClass("failed");
           });
 
           it("adds the .failed class to the root description", function() {
@@ -207,7 +207,7 @@ Screw.Unit(function(c) { with(c) {
           });
 
           after(function() {
-            Screw.$("ul.descriptions").removeClass("passed"));
+            Screw.$("ul.descriptions").removeClass("passed");
           });
 
           it("adds the .passed class to the root description", function() {

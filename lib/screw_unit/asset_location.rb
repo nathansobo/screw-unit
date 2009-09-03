@@ -7,11 +7,17 @@ module ScrewUnit
     end
 
     def virtualize_path(physical_path)
-      physical_path.gsub(physical_prefix, virtual_prefix) if matches_physical_path?(physical_path)
+      if matches_physical_path?(physical_path)
+        path_relative_to_location = physical_path.gsub(/^#{physical_prefix}/, "")
+        File.join(virtual_prefix, path_relative_to_location)
+      end
     end
 
     def physicalize_path(virtual_path)
-      virtual_path.gsub(virtual_prefix, physical_prefix) if matches_virtual_path?(virtual_path)
+      if matches_virtual_path?(virtual_path)
+        path_relative_to_location = virtual_path.gsub(/^#{virtual_prefix}/, "")
+        File.join(physical_prefix, path_relative_to_location)
+      end
     end
 
     def matches_physical_path?(physical_path)

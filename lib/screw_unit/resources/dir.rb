@@ -2,36 +2,23 @@ module ScrewUnit
   module Resources
     class Dir < File
       def locate(name)
+        virtual_child_path = ::File.join(virtual_path, name)
+        physical_child_path = asset_manager.physicalize_path(virtual_child_path)
 
-        # could refactor to its own method
-        Configuration.instance.custom_resource_locators.each do |custom_resource_locator|
-          locator = custom_resource_locator.new(relative_path, absolute_path)
-          if resource = locator.locate(name)
-            return resource
-          end
-        end
-
-        relative_child_path = "#{relative_path}/#{name}".gsub("//", "/")
-        absolute_child_path = "#{absolute_path}/#{name}".gsub("//", "/")
-
-        if ::File.exists?(absolute_child_path)
-          if ::File.directory?(absolute_child_path)
-            Dir.new(relative_child_path, absolute_child_path)
+        if ::File.exists?(physical_child_path)
+          if ::File.directory?(physical_child_path)
+            Dir.new(virtual_child_path, asset_manager)
           else
-            File.new(relative_child_path, absolute_child_path)
+            File.new(virtual_child_path, asset_manager)
           end
         else
-          FileNotFound.new(relative_child_path)
+          FileNotFound.new(virtual_child_path)
         end
       end
 
       def glob(glob_pattern)
-        ::Dir.glob(absolute_path + glob_pattern).map do |absolute_child_path|
-          relative_child_path = absolute_child_path.gsub(absolute_path, relative_path)
-          File.new(relative_child_path, absolute_child_path)
-        end
+        asset_manager.glob_virtual_paths(::File.join(virtual_path, glob_pattern)).map {|virtual_path| File.new(virtual_path, asset_manager)}
       end
-
     end
   end
 end

@@ -3,12 +3,14 @@ require "#{File.dirname(__FILE__)}/../../screw_unit_spec_helper"
 module ScrewUnit
   module Resources
     describe SpecSuite do
-      attr_reader :dir, :spec_file_resources, :spec_suite
+      attr_reader :dir, :spec_file_resources, :spec_suite, :asset_manager
 
       before do
         @dir = ::File.dirname(__FILE__)
-        @spec_file_resources = Dir.new("/specs", "#{dir}/file_system_fixtures/specs").glob("**/*.js")
-        @spec_suite = SpecSuite.new(spec_file_resources)
+        @asset_manager = AssetManager.new
+        asset_manager.add_location("/specs", "#{dir}/file_system_fixtures/specs")
+        @spec_file_resources = Dir.new("/specs", asset_manager).glob("**/*.js")
+        @spec_suite = SpecSuite.new(spec_file_resources, asset_manager)
       end
 
       describe "#get" do
@@ -26,15 +28,15 @@ module ScrewUnit
         end
 
         it "includes the relative paths of all the screw unit core files" do
-          Dir.new("/screw_unit_core", "#{dir}/../../../lib/javascript").glob("**/*.js").each do |core_file_resource|
-            expected_include_tag = %{<script type="text/javascript" src="#{core_file_resource.relative_path}"></script>}
+          Dir.new("/screw_unit_core", asset_manager).glob("/**/*.js").each do |core_file_resource|
+            expected_include_tag = %{<script type="text/javascript" src="#{core_file_resource.virtual_path}"></script>}
             content.should match(/#{expected_include_tag}/)
           end
         end
 
         it "includes the relative paths of all the scripts files with which it was initialized" do
           spec_file_resources.each do |spec_file_resource|
-            expected_include_tag = %{<script type="text/javascript" src="#{spec_file_resource.relative_path}"></script>}
+            expected_include_tag = %{<script type="text/javascript" src="#{spec_file_resource.virtual_path}"></script>}
             content.should match(/#{expected_include_tag}/)
           end
         end

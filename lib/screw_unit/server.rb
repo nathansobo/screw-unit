@@ -8,21 +8,16 @@ module ScrewUnit
       new.start(options)
     end
 
-    def start(options)
-      port = options.delete(:port) || 8080
-      screw_unit_core_path = options.delete(:screw_unit_core_path)
-      code_under_test_path = options.delete(:code_under_test_path)
-      specs_path = options.delete(:specs_path)
-
-      start_thin_server_in_new_thread(port, screw_unit_core_path, code_under_test_path, specs_path, options)
-      open_suite_with_selenium(port) if options[:selenium]
+    def start(configuration)
+      start_thin_server_in_new_thread(configuration)
+      open_suite_with_selenium(configuration) if configuration.selenium_mode?
       thin_thread.join
     end
 
-    def start_thin_server_in_new_thread(port, screw_unit_core_path, code_under_test_path, specs_path, options)
+    def start_thin_server_in_new_thread(configuration)
       @thin_thread = Thread.new do
-        $thin_server = Thin::Server.new(port) do
-          run Dispatcher.instance(screw_unit_core_path, code_under_test_path, specs_path, options)
+        $thin_server = Thin::Server.new(configuration.port) do
+          run Dispatcher.new(configuration)
         end
         $thin_server.start
       end
