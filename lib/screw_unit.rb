@@ -8,6 +8,7 @@ require "#{dir}/screw_unit/resources"
 require "#{dir}/screw_unit/configuration"
 require "#{dir}/screw_unit/asset_manager"
 require "#{dir}/screw_unit/asset_location"
+require "#{dir}/screw_unit/js_file"
 
 module ScrewUnit
   VERSION = "1.9.0"

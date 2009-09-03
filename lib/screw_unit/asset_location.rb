@@ -49,5 +49,10 @@ module ScrewUnit
         raise "Does not match glob pattern"
       end
     end
+
+    def relative_find(relative_path)
+      physical_path = File.join(physical_prefix, relative_path)
+      return physical_path if File.exist?(physical_path)
+    end
   end
 end

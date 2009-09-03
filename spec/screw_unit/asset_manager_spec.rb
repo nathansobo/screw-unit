@@ -7,9 +7,10 @@ module ScrewUnit
     before do
       @dir = File.dirname(__FILE__)
       @manager = AssetManager.new
-      manager.add_location("/specs/1", "#{dir}/asset_manager_spec/dir_1")
-      manager.add_location("/specs/2", "#{dir}/asset_manager_spec/dir_2")
-      manager.add_location("/implementations", "#{dir}/asset_manager_spec/dir_3")
+      manager.add_js_location("/specs/1", "#{dir}/asset_manager_spec/dir_1")
+      manager.add_js_location("/specs/2", "#{dir}/asset_manager_spec/dir_2")
+      manager.add_js_location("/implementations", "#{dir}/asset_manager_spec/dir_3")
+      manager.add_location("/css", "#{dir}/asset_manager_spec/dir_4")
     end
 
     describe "#virtualize_path" do
@@ -31,11 +32,23 @@ module ScrewUnit
 
     describe "#glob_virtual_paths" do
       it "maps the glob pattern to the declared locations, potentially spanning multiple physical locations, and returns the matching relative paths" do
-        manager.glob_virtual_paths("/specs/**/*.js").should == ["/specs/1/1.js", "/specs/1/subdir_1/4.js", "/specs/2/2.js"]
+        manager.glob_virtual_paths("/specs/**/*.js").should == ["/specs/2/2.js", "/specs/1/1.js", "/specs/1/subdir_1/4.js"]
         manager.glob_virtual_paths("/specs/1/*.js").should == ["/specs/1/1.js"]
         manager.glob_virtual_paths("/specs/x/*.js").should == []
         manager.glob_virtual_paths("/implementations/**/*.js").should == ["/implementations/3.js", "/implementations/subdir_3/5.js"]
         manager.glob_virtual_paths("/implementations/*.js").should == ["/implementations/3.js"]
+      end
+    end
+
+    describe "#virtual_dependency_paths" do
+      it "computes the virtual paths of the require graph extending out from the files on the load path corresponding to the given paths" do
+        expected_dependency_paths = [
+          "/specs/1/subdir_1/4.js",
+          "/implementations/subdir_3/5.js",
+          "/implementations/3.js",
+          "/specs/1/1.js"
+        ]
+        manager.virtual_dependency_paths("1.js", "subdir_3/5.js").should == expected_dependency_paths
       end
     end
   end
