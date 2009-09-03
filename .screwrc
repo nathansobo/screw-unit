@@ -1,4 +1,4 @@
-ScrewUnit.configure do
+  ScrewUnit.configure do
   port 8181
   add_js_location "/under_test", "client/lib"
   add_js_location "/specs", "client/spec"

@@ -1,5 +1,4 @@
 module ScrewUnit
-
   def self.configure(&block)
     Configuration.instance.instance_eval(&block)
   end
@@ -25,6 +24,9 @@ module ScrewUnit
 
     def initialize
       @asset_manager = AssetManager.new
+      asset_manager.add_js_location("/screw_unit_core", "#{SCREW_UNIT_ROOT}/client/lib")
+      asset_manager.add_js_location("/screw_unit_vendor", "#{SCREW_UNIT_ROOT}/client/vendor")
+      asset_manager.add_js_location("/screw_unit_stylesheets", "#{SCREW_UNIT_ROOT}/client/stylesheets")
     end
 
     def load_screwrc(path_containing_screwrc)

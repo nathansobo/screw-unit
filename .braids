@@ -1,8 +1,0 @@
---- 
-vendor/sprockets: 
-  squashed: true
-  url: git://github.com/nathansobo/sprockets.git
-  branch: master
-  type: git
-  revision: 6a4c881e40aa25071f1d064b4ddf295ed8851d3c
-  remote: braid/vendor/sprockets

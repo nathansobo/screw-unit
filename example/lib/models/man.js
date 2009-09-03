@@ -8,10 +8,10 @@ function Man(options) {
     return luck;
   };
   this.render = function() {
-    return $('<ul class="man">')
+    return Screw.$('<ul class="man">')
       .append('<li class="hair">')
       .click(function() {
-        $(this).children('.hair').remove();
+        Screw.$(this).children('.hair').remove();
       });
   };
 }

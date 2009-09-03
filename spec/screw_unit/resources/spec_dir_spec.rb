@@ -7,7 +7,7 @@ module ScrewUnit
 
       before do
         dir = ::File.dirname(__FILE__)
-        @asset_manager = AssetManager.new
+        @asset_manager = Configuration.new.asset_manager
         asset_manager.add_js_location("/specs", "#{dir}/file_system_fixtures/specs")
         @spec_dir = SpecDir.new("/specs", asset_manager)
       end

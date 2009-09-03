@@ -1,4 +1,4 @@
-require("/specs/spec_helper")
+//= require "../spec_helper"
 
 Screw.Unit(function(c) { with(c) {
   describe('Cat', function() {

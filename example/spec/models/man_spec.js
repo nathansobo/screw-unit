@@ -1,4 +1,4 @@
-require("/specs/spec_helper");
+//= require "../spec_helper"
 
 Screw.Unit(function(c) { with(c) {
   describe('Man', function() {
@@ -23,13 +23,13 @@ Screw.Unit(function(c) { with(c) {
     
     describe('@click', function() {
       before(function() {
-        $('#test_content').append(man.render());
+        Screw.$('#test_content').append(man.render());
       });
       
       it("removes the man's hair", function() {
-        expect($('.man .hair')).to_not(be_empty);
-        $('.man').click();
-        expect($('.man .hair')).to(be_empty);
+        expect(Screw.$('.man .hair')).to_not(be_empty);
+        Screw.$('.man').click();
+        expect(Screw.$('.man .hair')).to(be_empty);
       });
     });
   });

@@ -7,36 +7,36 @@ module ScrewUnit
     before do
       @dir = File.dirname(__FILE__)
       @manager = AssetManager.new
-      manager.add_js_location("/specs/1", "#{dir}/asset_manager_spec/dir_1")
-      manager.add_js_location("/specs/2", "#{dir}/asset_manager_spec/dir_2")
-      manager.add_js_location("/implementations", "#{dir}/asset_manager_spec/dir_3")
-      manager.add_location("/css", "#{dir}/asset_manager_spec/dir_4")
+      manager.add_js_location("/specs/1", "#{dir}/file_system_fixtures_for_asset_manager_specs/dir_1")
+      manager.add_js_location("/specs/2", "#{dir}/file_system_fixtures_for_asset_manager_specs/dir_2")
+      manager.add_js_location("/implementations", "#{dir}/file_system_fixtures_for_asset_manager_specs/dir_3")
+      manager.add_location("/css", "#{dir}/file_system_fixtures_for_asset_manager_specs/dir_4")
     end
 
     describe "#virtualize_path" do
       it "converts a physical path to a virtual path based on the declared locations" do
-        manager.virtualize_path("#{dir}/asset_manager_spec/dir_1/1.js").should == "/specs/1/1.js"
-        manager.virtualize_path("#{dir}/asset_manager_spec/dir_2/2.js").should == "/specs/2/2.js"
-        manager.virtualize_path("#{dir}/asset_manager_spec/dir_3/3.js").should == "/implementations/3.js"
+        manager.virtualize_path("#{dir}/file_system_fixtures_for_asset_manager_specs/dir_1/1.js").should == "/specs/1/1.js"
+        manager.virtualize_path("#{dir}/file_system_fixtures_for_asset_manager_specs/dir_2/2.js").should == "/specs/2/2.js"
+        manager.virtualize_path("#{dir}/file_system_fixtures_for_asset_manager_specs/dir_3/3.js").should == "/implementations/3.js"
         manager.virtualize_path("/crap").should be_nil
       end
 
       it "corrently handles handles a virtual path of '/'" do
-        manager.add_location('/', "#{dir}/asset_manager_spec/dir_4")
-        manager.virtualize_path("#{dir}/asset_manager_spec/dir_4/1.css").should == "/1.css"
+        manager.add_location('/', "#{dir}/file_system_fixtures_for_asset_manager_specs/dir_4")
+        manager.virtualize_path("#{dir}/file_system_fixtures_for_asset_manager_specs/dir_4/1.css").should == "/1.css"
       end
     end
 
     describe "#physicalize_path" do
       it "converts a virtual path to a physical path based on the declared locations" do
-        manager.physicalize_path("/specs/1/1.js").should == "#{dir}/asset_manager_spec/dir_1/1.js"
-        manager.physicalize_path("/specs/2/2.js").should == "#{dir}/asset_manager_spec/dir_2/2.js"
-        manager.physicalize_path("/implementations/3.js").should == "#{dir}/asset_manager_spec/dir_3/3.js"
+        manager.physicalize_path("/specs/1/1.js").should == "#{dir}/file_system_fixtures_for_asset_manager_specs/dir_1/1.js"
+        manager.physicalize_path("/specs/2/2.js").should == "#{dir}/file_system_fixtures_for_asset_manager_specs/dir_2/2.js"
+        manager.physicalize_path("/implementations/3.js").should == "#{dir}/file_system_fixtures_for_asset_manager_specs/dir_3/3.js"
       end
 
       it "corrently handles handles a virtual path of '/'" do
-        manager.add_location('/', "#{dir}/asset_manager_spec/dir_4")
-        manager.physicalize_path('/1.css').should == "#{dir}/asset_manager_spec/dir_4/1.css"
+        manager.add_location('/', "#{dir}/file_system_fixtures_for_asset_manager_specs/dir_4")
+        manager.physicalize_path('/1.css').should == "#{dir}/file_system_fixtures_for_asset_manager_specs/dir_4/1.css"
       end
     end
 

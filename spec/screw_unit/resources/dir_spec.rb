@@ -7,20 +7,20 @@ module ScrewUnit
 
       before do
         spec_file_dir = ::File.dirname(__FILE__)
-        @asset_manager = AssetManager.new
+        @asset_manager = Configuration.new.asset_manager
       end
 
       describe "#locate" do
         before do
-          asset_manager.add_location("/", "#{::File.dirname(__FILE__)}/file_system_fixtures")
-          @dir = Dir.new("/", asset_manager)
+          asset_manager.add_location("/x", "#{::File.dirname(__FILE__)}/file_system_fixtures")
+          @dir = Dir.new("/x", asset_manager)
         end
 
         context "when the string names a file in the directory" do
           it "returns a File resource with the appropriate virtual path and the same AssetManager" do
             file = dir.locate("foo.js")
             file.class.should == Resources::File
-            file.virtual_path.should == "/foo.js"
+            file.virtual_path.should == "/x/foo.js"
             file.asset_manager.should == asset_manager
           end
         end
@@ -29,7 +29,7 @@ module ScrewUnit
           it "returns a Dir resource with the appropriate absolute path and the same AssetManeger" do
             subdir = dir.locate("specs")
             subdir.class.should == Resources::Dir
-            subdir.virtual_path.should == "/specs"
+            subdir.virtual_path.should == "/x/specs"
             subdir.asset_manager.should == asset_manager
           end
         end
@@ -37,6 +37,10 @@ module ScrewUnit
         context "when the string names a file that doesn't exist" do
           it "returns a FileNotFound resource with the relative path" do
             not_found = dir.locate("bogus")
+            not_found.class.should == FileNotFound
+            not_found.virtual_path.should == "/x/bogus"
+
+            not_found = Dir.new("/", asset_manager).locate("bogus")
             not_found.class.should == FileNotFound
             not_found.virtual_path.should == "/bogus"
           end

@@ -10,9 +10,6 @@ module ScrewUnit
     def initialize
       @locations = []
       @js_locations = []
-      add_js_location("/screw_unit_core", "#{SCREW_UNIT_ROOT}/client/lib")
-      add_js_location("/screw_unit_vendor", "#{SCREW_UNIT_ROOT}/client/vendor")
-      add_js_location("/screw_unit_stylesheets", "#{SCREW_UNIT_ROOT}/client/stylesheets")
     end
 
     def add_location(virtual_path, physical_path)
