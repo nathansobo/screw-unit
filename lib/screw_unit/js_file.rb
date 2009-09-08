@@ -6,6 +6,8 @@ module ScrewUnit
     attr_reader :physical_path, :containing_dir, :asset_manager
     
     def initialize(physical_path, asset_manager)
+      raise "JsFile created with nil physical_path" if physical_path.nil? 
+
       @physical_path, @asset_manager = physical_path, asset_manager
       @containing_dir = File.dirname(physical_path)
     end
@@ -49,7 +51,9 @@ module ScrewUnit
     class GlobalRequireDeclaration
       attr_reader :js_file
       def initialize(global_path, asset_manager)
-        @js_file = JsFile.new(asset_manager.physicalize_path_from_js_load_path(global_path + ".js"), asset_manager)
+        physical_path = asset_manager.physicalize_path_from_js_load_path(global_path + ".js")
+        raise "No file '#{global_path}.js' found on load path" unless physical_path
+        @js_file = JsFile.new(physical_path, asset_manager)
       end
     end
   end

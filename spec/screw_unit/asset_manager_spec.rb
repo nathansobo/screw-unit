@@ -25,6 +25,11 @@ module ScrewUnit
         manager.add_location('/', "#{dir}/file_system_fixtures_for_asset_manager_specs/dir_4")
         manager.virtualize_path("#{dir}/file_system_fixtures_for_asset_manager_specs/dir_4/1.css").should == "/1.css"
       end
+
+      it "is not confused by multiple physical paths with the same partial prefix" do
+        manager.add_location("/specs/b", "#{dir}/file_system_fixtures_for_asset_manager_specs/dir")
+        manager.virtualize_path("#{dir}/file_system_fixtures_for_asset_manager_specs/dir_1/1.js").should == "/specs/1/1.js"
+      end
     end
 
     describe "#physicalize_path" do
@@ -37,6 +42,12 @@ module ScrewUnit
       it "corrently handles handles a virtual path of '/'" do
         manager.add_location('/', "#{dir}/file_system_fixtures_for_asset_manager_specs/dir_4")
         manager.physicalize_path('/1.css').should == "#{dir}/file_system_fixtures_for_asset_manager_specs/dir_4/1.css"
+      end
+
+      it "is not confused by multiple virtual paths with the same partial prefix" do
+        manager.add_location("/foo_prime", "#{dir}/file_system_fixtures_for_asset_manager_specs/dir_1")
+        manager.add_location("/foo", "#{dir}/file_system_fixtures_for_asset_manager_specs/dir_2")
+        manager.physicalize_path("/foo_prime/1.js").should == "#{dir}/file_system_fixtures_for_asset_manager_specs/dir_1/1.js"
       end
     end
 

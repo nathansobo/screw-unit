@@ -6,6 +6,8 @@ require "#{dir}/screw_unit/server"
 require "#{dir}/screw_unit/resources"
 require "#{dir}/screw_unit/configuration"
 require "#{dir}/screw_unit/asset_manager"
+require "#{dir}/screw_unit/string_extension"
+require "#{dir}/screw_unit/array_extension"
 require "#{dir}/screw_unit/asset_location"
 require "#{dir}/screw_unit/js_file"
 

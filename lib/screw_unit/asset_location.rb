@@ -3,6 +3,9 @@ module ScrewUnit
     attr_reader :virtual_prefix, :physical_prefix
 
     def initialize(virtual_prefix, physical_prefix)
+
+      raise "No directory exists at #{physical_prefix}" unless File.exist?(physical_prefix) && File.directory?(physical_prefix)
+
       @virtual_prefix, @physical_prefix = virtual_prefix, physical_prefix
     end
 
@@ -21,11 +24,11 @@ module ScrewUnit
     end
 
     def matches_physical_path?(physical_path)
-      physical_path.starts_with?(physical_prefix)
+      physical_path.path_starts_with?(physical_prefix)
     end
 
     def matches_virtual_path?(virtual_path)
-      virtual_path.starts_with?(virtual_prefix)
+      virtual_path.path_starts_with?(virtual_prefix)
     end
 
     def matches_virtual_glob_pattern?(virtual_glob_pattern)
@@ -34,11 +37,11 @@ module ScrewUnit
 
     def is_subsumed_by_virtual_glob_pattern?(pattern)
       glob_pattern_without_wildcards = pattern.gsub(/\/\*.*/, "")
-      virtual_prefix.starts_with?(glob_pattern_without_wildcards)
+      virtual_prefix.path_starts_with?(glob_pattern_without_wildcards)
     end
 
     def subsumes_virtual_glob_pattern?(pattern)
-      pattern.starts_with?(virtual_prefix)
+      pattern.path_starts_with?(virtual_prefix)
     end
 
     def virtual_glob(virtual_glob_pattern)

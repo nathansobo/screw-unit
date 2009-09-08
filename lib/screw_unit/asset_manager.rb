@@ -1,9 +1,3 @@
-class String
-  def starts_with?(prefix)
-    index(prefix) == 0
-  end
-end
-
 module ScrewUnit
   class AssetManager
     attr_reader :locations, :js_locations
