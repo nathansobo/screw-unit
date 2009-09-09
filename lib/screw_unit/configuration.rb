@@ -20,10 +20,11 @@ module ScrewUnit
       end
     end
 
-    attr_reader :path_containing_screwrc, :asset_manager
+    attr_reader :path_containing_screwrc, :asset_manager, :resource_locators
 
     def initialize
       @asset_manager = AssetManager.new
+      @resource_locators = []
       asset_manager.add_js_location("/screw_unit_core", "#{SCREW_UNIT_ROOT}/client/lib")
       asset_manager.add_js_location("/screw_unit_vendor", "#{SCREW_UNIT_ROOT}/client/vendor")
       asset_manager.add_js_location("/screw_unit_stylesheets", "#{SCREW_UNIT_ROOT}/client/stylesheets")
@@ -45,6 +46,10 @@ module ScrewUnit
 
     def add_location(virtual_path, relative_path)
       asset_manager.add_location(virtual_path, absolutize_path(relative_path))
+    end
+
+    def add_resource_locator(locator)
+      resource_locators.unshift(locator)
     end
 
     def absolutize_path(relative_path)
