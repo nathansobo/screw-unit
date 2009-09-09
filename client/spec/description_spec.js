@@ -18,7 +18,121 @@ Screw.Unit(function(c) { with(c) {
         expect(description.name).to(equal, name);
       });
     });
-    
+
+    describe("#clone", function() {
+      it("makes a copy of the Description and all its children, setting up to propagate on_example_completed events from its children to a new node", function() {
+        description.add_description(new Screw.Description("child description"));
+        description.child_descriptions[0].add_example(new Screw.Example("grandchild example", function() {}));
+
+        var original_example_completed_callback = mock_function("original example completed callback");
+        var clone_example_completed_callback = mock_function("clone example completed callback");
+
+        description.on_example_completed(original_example_completed_callback);
+        var clone = description.clone();
+        clone.on_example_completed(clone_example_completed_callback)
+
+        clone.examples[0].run();
+        expect(original_example_completed_callback).to_not(have_been_called);
+        expect(clone_example_completed_callback).to(have_been_called);
+
+        original_example_completed_callback.clear();
+        clone_example_completed_callback.clear();
+
+        clone.child_descriptions[0].examples[0].run();
+        expect(original_example_completed_callback).to_not(have_been_called);
+        expect(clone_example_completed_callback).to(have_been_called);
+      });
+    });
+
+
+    describe("#add_scenario", function() {
+      function names_of(array) {
+        return Screw.map(array, function() {
+          return this.name;
+        });
+      }
+
+      it("causes all current and future Examples / Descriptions defined on the current Description to be defined on all scenario Descriptions instead", function() {
+        var examples_on_parent_before_scenario_added = Screw.$.extend([], description.examples);
+        expect(examples_on_parent_before_scenario_added).to_not(be_empty);
+
+        description.add_description(new Screw.Description("child description"));
+        var child_descriptions_on_parent_before_scenario_added = Screw.$.extend([], description.child_descriptions);
+        expect(child_descriptions_on_parent_before_scenario_added).to_not(be_empty);
+
+        // adding the first scenario moves all examples and child descriptions to that scenario
+        var scenario_1 = new Screw.Description("scenario 1");
+        description.add_scenario(scenario_1);
+
+        expect(description.examples).to(be_empty);
+        expect(description.child_descriptions).to(equal, [scenario_1]);
+        expect(description.scenario_examples).to(equal, examples_on_parent_before_scenario_added);
+        expect(description.scenario_child_descriptions).to(equal, child_descriptions_on_parent_before_scenario_added);
+
+        expect(names_of(scenario_1.examples)).to(equal, names_of(examples_on_parent_before_scenario_added));
+        expect(names_of(scenario_1.child_descriptions)).to(equal, names_of(child_descriptions_on_parent_before_scenario_added));
+
+        // subsequent examples and descriptions are added to scenarios, not to the description itself
+        var example_added_after_scenario = new Screw.Example("example added after scenario", function() {});
+        description.add_example(example_added_after_scenario);
+
+        var child_description_added_after_scenario = new Screw.Description("child description added after scenario");
+        child_description_added_after_scenario.add_example(new Screw.Example("example in child description added after scenario", function() {}));
+        description.add_description(child_description_added_after_scenario);
+
+        expect(description.examples).to(be_empty);
+        expect(description.child_descriptions).to(equal, [scenario_1]);
+
+        var expected_scenario_examples = examples_on_parent_before_scenario_added.concat([example_added_after_scenario]);
+        var expected_scenario_child_descriptions = child_descriptions_on_parent_before_scenario_added.concat([child_description_added_after_scenario]);
+        expect(description.scenario_examples).to(equal, expected_scenario_examples);
+        expect(description.scenario_child_descriptions).to(equal, expected_scenario_child_descriptions);
+        expect(names_of(scenario_1.examples)).to(equal, names_of(expected_scenario_examples));
+        expect(names_of(scenario_1.child_descriptions)).to(equal, names_of(expected_scenario_child_descriptions));
+
+        // subsequent scenarios are added to child_descriptions, and inherit all examples and child descriptions already on other scenarios
+        var scenario_2 = new Screw.Description("scenario 2");
+        description.add_scenario(scenario_2);
+
+        expect(description.child_descriptions).to(equal, [scenario_1, scenario_2]);
+
+        expect(names_of(scenario_2.examples)).to(equal, names_of(expected_scenario_examples));
+        expect(names_of(scenario_2.child_descriptions)).to(equal, names_of(expected_scenario_child_descriptions));
+        expect(names_of(scenario_1.examples)).to(equal, names_of(expected_scenario_examples));
+        expect(names_of(scenario_1.child_descriptions)).to(equal, names_of(expected_scenario_child_descriptions));
+
+        // copies of examples and descriptions copied to multiple scenarios have the correct parent_description
+        expect(scenario_1.examples[0].parent_description).to(equal, scenario_1);
+        expect(scenario_1.child_descriptions[0].parent_description).to(equal, scenario_1);
+        expect(scenario_2.examples[0].parent_description).to(equal, scenario_2);
+        expect(scenario_2.child_descriptions[0].parent_description).to(equal, scenario_2);
+
+        // correctly wires together on_example_completed_events
+        var description_example_completed_callback = mock_function("description example completed callback")
+        var scenario_1_example_completed_callback = mock_function("scenario 1 example completed callback");
+        var scenario_2_example_completed_callback = mock_function("scenario 2 example completed callback");
+
+        description.on_example_completed(description_example_completed_callback);
+        scenario_1.on_example_completed(scenario_1_example_completed_callback);
+        scenario_2.on_example_completed(scenario_2_example_completed_callback);
+        
+        scenario_1.examples[0].run();
+        expect(description_example_completed_callback).to(have_been_called, once);
+        expect(scenario_1_example_completed_callback).to(have_been_called, once);
+        expect(scenario_2_example_completed_callback).to_not(have_been_called);
+
+        description_example_completed_callback.clear();
+        scenario_1_example_completed_callback.clear();
+        scenario_2_example_completed_callback.clear();
+
+        scenario_2.child_descriptions[1].examples[0].run();
+        expect(scenario_2_example_completed_callback).to(have_been_called, once);
+        expect(scenario_1_example_completed_callback).to_not(have_been_called);
+        expect(description_example_completed_callback).to(have_been_called, once);
+      });
+    });
+
+
     describe("#enqueue", function() {
       it("calls #enqueue on all examples and child descriptions", function() {
         var child_description = new Screw.Description("child description");

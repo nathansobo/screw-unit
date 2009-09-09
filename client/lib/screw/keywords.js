@@ -8,6 +8,12 @@ module("Screw", function(c) { with (c) {
 
     def('context', Screw.Keywords.describe);
 
+    def('scenario', function(name, fn) {
+      Screw.push_scenario(new Screw.Description(name));
+      fn();
+      Screw.pop_scenario();
+    })
+
     def('it', function(name, fn) {
       Screw.current_description().add_example(new Screw.Example(name, fn));
     });

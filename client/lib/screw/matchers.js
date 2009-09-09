@@ -165,40 +165,40 @@ module("Screw", function(c) { with(c) {
     });
 
     def('have_been_called', {
-      match: function(expected, actual) {
-        if (expected) {
-          return this.match_with_expectation(expected, actual);
+      match: function(expectation, mock_function) {
+        if (expectation) {
+          return this.match_with_expectation(expectation, mock_function);
         } else {
-          return actual.call_count > 0;
+          return mock_function.call_count > 0;
         }
       },
 
-      match_with_expectation: function(expected, actual) {
-        if (expected.__with_args__) {
-          return Screw.Matchers.equal.match(expected.arguments, actual.most_recent_args);
-        } else if (expected.__on_object__) {
-          return Screw.Matchers.equal.match(expected.object, actual.most_recent_this_value);
-        } else if (typeof expected == "number") {
-          return actual.call_count == expected;
+      match_with_expectation: function(expectation, mock_function) {
+        if (expectation.__with_args__) {
+          return Screw.Matchers.equal.match(expectation.arguments, mock_function.most_recent_args);
+        } else if (expectation.__on_object__) {
+          return Screw.Matchers.equal.match(expectation.object, mock_function.most_recent_this_value);
+        } else if (typeof expectation == "number") {
+          return mock_function.call_count == expectation;
         } else {
-          throw new Error("unrecognized expectation argument for mock function: " + expected);
+          throw new Error("unrecognized expectation argument for mock function: " + expectation);
         }
       },
 
-      error_message_expectation_fragment: function(expected, not) {
-        if (!expected) {
+      error_message_expectation_fragment: function(expectation, not) {
+        if (!expectation) {
           if (not) {
             return "";
           } else {
             return " at least once";
           }
         } else {
-          if (expected.__with_args__) {
-            return " with arguments " + Screw.$.print(expected.arguments);
-          } else if (expected.__on_object__) {
-            return " on object " + Screw.$.print(expected.object);
+          if (expectation.__with_args__) {
+            return " with arguments " + Screw.$.print(expectation.arguments);
+          } else if (expectation.__on_object__) {
+            return " on object " + Screw.$.print(expectation.object);
           } else {
-            return " " + expected.call_count + " time" + ((expected.call_count == 1) ? "" : "s");
+            return " " + expectation + " time" + ((expectation == 1) ? "" : "s");
           }
         }
       },

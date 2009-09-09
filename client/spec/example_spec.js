@@ -48,6 +48,42 @@ Screw.Unit(function(c) { with(c) {
       });
     });
 
+    describe("#clone", function() {
+      it("makes a copy of the Example, with fresh SubscriptionNodes", function() {
+        var original_pass_callback = mock_function("original pass callback");
+        var original_fail_callback = mock_function("original fail callback");
+        var original_completed_callback = mock_function("original completed callback");
+        var clone_pass_callback = mock_function("clone pass callback");
+        var clone_fail_callback = mock_function("clone fail callback");
+        var clone_completed_callback = mock_function("clone completed callback");
+
+
+        example.on_pass(original_pass_callback);
+        example.on_fail(original_fail_callback);
+        example.on_example_completed(original_completed_callback);
+
+        var clone = example.clone();
+
+        expect(clone.name).to(equal, example.name);
+        expect(clone.fn).to(equal, example.fn);
+
+        clone.on_pass(clone_pass_callback);
+        clone.on_fail(clone_fail_callback);
+        clone.on_example_completed(clone_completed_callback);
+
+        clone.run();
+        expect(clone_pass_callback).to(have_been_called, once);
+        expect(original_pass_callback).to_not(have_been_called);
+        expect(clone_completed_callback).to(have_been_called, once);
+        expect(original_completed_callback).to_not(have_been_called);
+
+        should_fail = true;
+        clone.run();
+        expect(clone_fail_callback).to(have_been_called, once);
+        expect(original_fail_callback).to_not(have_been_called);
+      });
+    });
+
     describe("#enqueue", function() {
       it("sets up #run to be called asynchronously via setTimeout", function() {
         var set_timeout_callback;

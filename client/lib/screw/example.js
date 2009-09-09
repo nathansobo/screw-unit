@@ -13,6 +13,12 @@ module("Screw", function(c) { with (c) {
       this.failure_message = null;
     });
 
+    def('clone', function() {
+      var clone = Screw.$.extend(new Screw.Example(), this);
+      clone.initialize(this.name, this.fn);
+      return clone;
+    });
+
     def('enqueue', function() {
       var self = this;
       setTimeout(function() { self.run(); }, 0);

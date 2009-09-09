@@ -197,4 +197,44 @@ Screw.Unit(function(c) { with(c) {
       });
     });
   });
+
+  describe("A describe with scenarios", function() {
+    var example_run_count = 0;
+    var nested_describe_before_run_count = 0;
+    var scenario_number;
+
+    scenario("1, defined before example", function() {
+      before(function() {
+        scenario_number = 1;
+      });
+    });
+
+    it("runs this example within every scenario", function() {
+      example_run_count++;
+      expect(scenario_number).to(equal, example_run_count);
+    });
+
+    scenario("2, defined after example", function() {
+      before(function() {
+        scenario_number = 2;
+      });
+    });
+
+    scenario("3, defined after example", function() {
+      before(function() {
+        scenario_number = 3;
+      });
+    });
+
+    describe("should be copied within each scenario", function() {
+      before(function() {
+        nested_describe_before_run_count++;
+        expect(scenario_number).to(equal, nested_describe_before_run_count);
+      })
+
+      it("runs this example within its describe in every scenario", function() {
+        expect(scenario_number).to(equal, nested_describe_before_run_count);
+      });
+    });
+  });
 }});

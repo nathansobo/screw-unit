@@ -40,12 +40,21 @@ module("Screw", function(c) { with (c) {
   });
 
   def('push_description', function(description) {
-    this.current_description().add_description(description);
     this.description_stack().push(description);
   });
 
   def('pop_description', function() {
-    this.description_stack().pop();
+    var description = this.description_stack().pop();
+    this.current_description().add_description(description)
+  });
+
+  def('push_scenario', function(scenario_description) {
+    this.description_stack().push(scenario_description);
+  });
+
+  def('pop_scenario', function() {
+    var scenario_description = this.description_stack().pop();
+    this.current_description().add_scenario(scenario_description);
   });
 
   def('description_stack', function() {
