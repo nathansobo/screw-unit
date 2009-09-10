@@ -53,8 +53,8 @@ module ScrewUnit
 
     describe "#glob_virtual_paths" do
       it "maps the glob pattern to the declared locations, potentially spanning multiple physical locations, and returns the matching relative paths" do
-        manager.glob_virtual_paths("/specs/**/*.js").should == ["/specs/2/2.js", "/specs/1/1.js", "/specs/1/subdir_1/4.js"]
-        manager.glob_virtual_paths("/specs/1/*.js").should == ["/specs/1/1.js"]
+        manager.glob_virtual_paths("/specs/**/*.js").should == ["/specs/2/2.js", "/specs/1/1.js", "/specs/1/7.js", "/specs/1/subdir_1/4.js"]
+        manager.glob_virtual_paths("/specs/1/*.js").should == ["/specs/1/1.js", "/specs/1/7.js"]
         manager.glob_virtual_paths("/specs/x/*.js").should == []
         manager.glob_virtual_paths("/implementations/**/*.js").should == ["/implementations/3.js", "/implementations/subdir_3/5.js"]
         manager.glob_virtual_paths("/implementations/*.js").should == ["/implementations/3.js"]
@@ -64,6 +64,7 @@ module ScrewUnit
     describe "#virtual_dependency_paths_from_load_path" do
       it "computes the virtual paths of the require graph extending out from the files on the load path corresponding to the given paths" do
         expected_dependency_paths = [
+          "/specs/1/7.js",
           "/specs/1/subdir_1/4.js",
           "/implementations/subdir_3/5.js",
           "/implementations/3.js",
@@ -76,6 +77,7 @@ module ScrewUnit
     describe "#virtual_dependency_paths_from_physical_paths" do
       it "computes the virtual paths of the require graph extending out from thes files at the given absolute paths" do
         expected_dependency_paths = [
+          "/specs/1/7.js",
           "/specs/1/subdir_1/4.js",
           "/implementations/subdir_3/5.js",
           "/implementations/3.js",

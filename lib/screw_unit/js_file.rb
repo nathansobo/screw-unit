@@ -44,7 +44,7 @@ module ScrewUnit
       attr_reader :js_file
 
       def initialize(parent_dir, relative_path, asset_manager)
-        @js_file = JsFile.new(File.join(parent_dir, relative_path + ".js"), asset_manager)
+        @js_file = JsFile.new(File.expand_path(File.join(parent_dir, relative_path + ".js")), asset_manager)
       end
     end
 
