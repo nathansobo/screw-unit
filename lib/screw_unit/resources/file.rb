@@ -11,9 +11,29 @@ module ScrewUnit
       end
 
       def get
-        file = Rack::File.new(nil)
-        file.path = asset_manager.physicalize_path(virtual_path)
-        file.serving
+        [200, headers, ::File.read(physical_path)]
+      end
+
+      MIME_TYPES = {
+        ".css" => "text/css",
+        ".gif" => "image/gif",
+        ".js" => "application/javascript",
+        ".jpg" => "image/jpeg",
+        ".jpeg" => "image/jpeg",
+        ".png" => "image/png",
+        }
+
+      def headers
+        {
+          "Content-Type" => mime_type(physical_path),
+          "Last-Modified" => ::File.mtime(physical_path).httpdate
+        }
+      end
+
+      protected
+
+      def mime_type(physical_path)
+        MIME_TYPES[::File.extname(physical_path)]
       end
     end
   end
