@@ -1,14 +1,17 @@
-module("Screw", function(c) { with (c) {
-  module("RunnableMethods", function() {
-    def('path', function() {
-      if (!this.parent_description) {
-        return [];
-      }
-      return this.parent_description.path().concat([this.index]);
-    });
+(function(Screw, Monarch) {
 
-    def('on_example_completed', function(callback) {
-      this.example_completed_subscription_node.subscribe(callback);
-    });
-  });
-}});
+Monarch.module("Screw.RunnableMethods", {
+  path: function() {
+    if (!this.parent_description) {
+      return [];
+    }
+    return this.parent_description.path().concat([this.index]);
+  },
+
+  on_example_completed: function(callback) {
+    this.example_completed_subscription_node.subscribe(callback);
+  }
+});
+
+})(Screw, Monarch);
+

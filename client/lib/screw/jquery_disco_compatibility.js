@@ -1,9 +1,12 @@
 module("Screw", function(c) { with(c) {
 }});
 
-Screw.$ = jQuery.noConflict(true);
-delete window.jQuery;
-delete window.$;
+Screw.$ = jQuery;
+Screw.jQuery = jQuery;
+jQuery.noConflict(true);
+
+Screw.Monarch = window.Monarch;
+delete window.Monarch;
 
 Screw.Disco = window.Disco;
 delete window.Disco;

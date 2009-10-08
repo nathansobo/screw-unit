@@ -1,6 +1,5 @@
-module("Screw", function(c) { with (c) {
-  constructor("Context", function() {
-    include(Screw.Matchers);
-    include(Screw.Keywords);
-  });
-}});
+(function(Screw, Monarch, jQuery) {
+
+Monarch.constructor("Screw.Context", Screw.Matchers, Screw.Keywords);
+
+})(Screw, Monarch);
