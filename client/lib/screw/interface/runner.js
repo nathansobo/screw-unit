@@ -1,11 +1,9 @@
-(function(Screw, Monarch, Prefs, jQuery) {
+(function(Screw, Monarch, jQuery) {
 
 Monarch.constructor("Screw.Interface.Runner", Monarch.View.Template, {
   constructor_properties: {
-    run_specs_on_page_load: function() {
+    run_specs_on_page_load: function(show) {
       jQuery(function() {
-        Screw.Interface.load_preferences();
-
         var root_description = Screw.root_description();
         var completed_example_count = 0;
         var total_example_count = root_description.total_examples();
@@ -21,7 +19,7 @@ Monarch.constructor("Screw.Interface.Runner", Monarch.View.Template, {
 
         var runner;
         queue.add(function() {
-          runner = Screw.Interface.Runner.to_view({root: root_description});
+          runner = Screw.Interface.Runner.to_view({root: root_description, show: show || "all"});
         });
         queue.add(function() {
           Screw.$('body').html(runner);
@@ -70,36 +68,28 @@ Monarch.constructor("Screw.Interface.Runner", Monarch.View.Template, {
 
   view_properties: {
     initialize: function() {
-      if (Prefs.data.show == "all") this.addClass("show_all");
-      if (Prefs.data.show == "failed") this.addClass("show_failed");
+      if (this.show == "all") this.addClass('show_all');
+      if (this.show == "failed") this.addClass("show_failed");
     },
 
     show_failed: function() {
-      Prefs.data.show = "failed";
-      Prefs.save();
+      // TODO: Save across refreshes
       this.addClass('show_failed');
       this.removeClass('show_all');
     },
 
     show_all: function() {
-      Prefs.data.show = "all";
-      Prefs.save();
+      // TODO: Save somehow across refreshes
       this.addClass('show_all');
       this.removeClass('show_failed');
     },
 
     rerun_failed: function() {
-      Prefs.data.run_paths = Screw.map(this.root.failed_examples(), function() {
-        return this.path();
-      });
-      Prefs.save();
-      Screw.Interface.refresh();
+      throw new Error("not implemented");
     },
 
     rerun_all: function() {
-      Prefs.data.run_paths = null;
-      Prefs.save();
-      Screw.Interface.refresh();
+      throw new Error("not implemented");
     },
 
     enqueue: function() {
@@ -124,10 +114,10 @@ Monarch.constructor("Screw.Interface.Runner", Monarch.View.Template, {
           
       if (this.completed_example_count == this.total_examples) {
         var is_success = (Screw.root_description().failed_examples().length == 0);
-        Screw.$("ul.descriptions").addClass(is_success ? "passed" : "failed");
+        this.find("ul.descriptions").addClass(is_success ? "passed" : "failed");
       }
     }
   }
 });
 
-})(Screw, Monarch, Prefs, jQuery);
+})(Screw, Monarch, jQuery);

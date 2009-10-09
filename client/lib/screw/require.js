@@ -17,9 +17,13 @@ Monarch.module("Screw.Require", {
       full_path += '?' + Screw.Require.cache_buster;
     }
 
-    jQuery.getScript(full_path, function() {
+    var script_tag = document.createElement('script');
+    script_tag.type = 'text/javascript';
+    script_tag.src = full_path;
+    script_tag.onload = function() {
       if (onload) onload();
-    });
+    };
+    jQuery('head')[0].appendChild(script_tag);
 
     Screw.Require.required_paths[javascript_path] = true;
   },

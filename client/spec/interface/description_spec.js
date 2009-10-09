@@ -155,23 +155,5 @@ Screw.Unit(function(c) { with(c) {
         });
       });
     });
-
-    describe("#focus", function() {
-      before(function() {
-        view = Screw.Interface.Description.to_view({description: description, build_immediately: true});
-      });
-
-      it("saves [description.path()] to Screw.Prefs.data.run_paths and calls Screw.Interface.refresh", function() {
-        mock(Screw.Interface, 'refresh');
-        Screw.Prefs.data.run_paths = null;
-        Screw.Prefs.save();
-
-        view.focus();
-
-        Screw.Prefs.load();
-        expect(Screw.Prefs.data.run_paths).to(equal, [description.path()]);
-        expect(Screw.Interface.refresh).to(have_been_called);
-      });
-    });
   });
 }});

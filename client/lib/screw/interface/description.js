@@ -1,4 +1,4 @@
-(function(Screw, Monarch, Prefs) {
+(function(Screw, Monarch) {
 
 Monarch.constructor("Screw.Interface.Description", Monarch.View.Template, {
   content: function(initial_attributes) { with (this.builder) {
@@ -60,11 +60,9 @@ Monarch.constructor("Screw.Interface.Description", Monarch.View.Template, {
     },
 
     focus: function() {
-      Prefs.data.run_paths = [this.description.path()];
-      Prefs.save();
-      Screw.Interface.refresh();
+      throw new Error("Not yet implemented");
     }
   }
 });
 
-})(Screw, Monarch, Prefs);
+})(Screw, Monarch);

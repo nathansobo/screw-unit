@@ -135,18 +135,19 @@ Screw.Unit(function(c) { with(c) {
 
     describe("#enqueue", function() {
       it("calls #enqueue on all examples and child descriptions", function() {
+        Screw.Monarch.Queue.synchronous = true;
         var child_description = new Screw.Description("child description");
         description.add_description(child_description);
 
         Screw.each(examples, function() {
-          mock(this, 'enqueue');
-        })
+          mock(this, 'run');
+        });
         mock(child_description, 'enqueue');
 
         description.enqueue();
 
         Screw.each(examples, function() {
-          expect(this.enqueue).to(have_been_called);
+          expect(this.run).to(have_been_called);
         })
         expect(child_description.enqueue).to(have_been_called);
       });

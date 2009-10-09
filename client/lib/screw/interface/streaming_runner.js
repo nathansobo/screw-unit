@@ -12,24 +12,29 @@
       div(function() {
         div(function() {
           span("Total Examples: ");
-          span().ref('num_completed_examples_span');
+          span("0").ref('num_completed_examples_span');
         });
         
         div(function() {
+          span("Failed Examples: ");
+          span("0").ref('num_failed_examples_span');
+        });
+
+        div(function() {
           span("Files: ")
-          span().ref('num_completed_files_span');
+          span("0").ref('num_completed_files_span');
           span(" / ");
           span().ref('total_files_span');
         });
 
         div(function() {
-          span("Current File: ");
+          span("Current File Path: ");
           span().ref('current_file_span');
         })
 
         div(function() {
           span("Examples In Current File: ")
-          span().ref('completed_examples_in_current_file_span');
+          span("0").ref('completed_examples_in_current_file_span');
           span(" / ")
           span().ref('total_examples_in_current_file_span');
         });
@@ -45,9 +50,8 @@
     view_properties: {
       initialize: function() {
         this.num_completed_examples = 0;
+        this.num_failed_examples = 0;
         this.num_completed_files = 0;
-        this.num_completed_examples_span.html("0");
-        this.num_completed_files_span.html("0");
         this.total_files_span.html(this.spec_paths.length);
         this.load_next_spec_path();
       },
@@ -59,9 +63,13 @@
         this.current_file_span.html(path);
 
         setTimeout(function() {
-          jQuery.getScript(path, function() {
-            self.run_examples_for_current_spec_file();
-          });
+          var script_tag = document.createElement('script');
+          script_tag.type = 'text/javascript';
+          script_tag.src = path;
+          script_tag.onload = function() {
+            self.run_examples_for_current_spec_file()
+          };
+          jQuery('head')[0].appendChild(script_tag);
         }, 1);
       },
 
@@ -86,6 +94,8 @@
       },
 
       handle_failed_example: function(example) {
+        this.num_failed_examples++;
+        this.num_failed_examples_span.html(this.num_failed_examples);
         this.failures_list.append_view(function(b) {
           b.li(function() {
             b.div(example.full_name());

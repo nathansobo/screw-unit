@@ -18,11 +18,6 @@ Monarch.constructor("Screw.Example", Screw.RunnableMethods, {
     return clone;
   },
 
-  enqueue: function() {
-    var self = this;
-    setTimeout(function() { self.run(); }, 0);
-  },
-
   run: function() {
     try {
       try {

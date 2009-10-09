@@ -87,18 +87,6 @@ Screw.Unit(function(c) { with(c) {
       after(function() {
         Screw.Interface.options = original_screw_options;
       });
-
-      it("saves [example.path()] to Screw.Prefs.data.run_paths and calls Screw.Interface.refresh", function() {
-        mock(Screw.Interface, 'refresh');
-        Screw.Prefs.data.run_paths = null;
-        Screw.Prefs.save();
-
-        view.focus();
-
-        Screw.Prefs.load();
-        expect(Screw.Prefs.data.run_paths).to(equal, [example.path()]);
-        expect(Screw.Interface.refresh).to(have_been_called);
-      });
     });
   });
 }});

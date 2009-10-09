@@ -84,20 +84,6 @@ Screw.Unit(function(c) { with(c) {
       });
     });
 
-    describe("#enqueue", function() {
-      it("sets up #run to be called asynchronously via setTimeout", function() {
-        var set_timeout_callback;
-        mock(window, "setTimeout", function(callback, timeout) { set_timeout_callback = callback; });
-        mock(example, "run");
-
-        example.enqueue();
-        expect(example.run).to_not(have_been_called);
-
-        set_timeout_callback.call(window);
-        expect(example.run).to(have_been_called);
-      });
-    });
-
     describe("#run", function() {
       it("with the same example context, calls parent_description.run_befores, invokes the example function, calls parent_description.run_afters, then calls Screw.reset_mocks", function() {
         example.run();
