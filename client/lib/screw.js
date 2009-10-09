@@ -1,9 +1,5 @@
 //= require <monarch_view>
-//= require <foundation>
-//= require <jquery-1.2.6>
-//= require <disco>
 //= require <jquery.print>
-//= require <json>
 //= require <prefs>
 
 //= require "screw/screw"
@@ -26,5 +22,5 @@ delete window.$;
 delete window.jQuery;
 delete window.Monarch;
 
-delete window.Disco;
+//delete window.Disco;
 delete window.Prefs;
