@@ -3,6 +3,7 @@ Screw.Unit(function(c) { with(c) {
     var description, name, examples;
 
     before(function() {
+      Screw.Monarch.Queue.synchronous = true;
       name = "description"
       description = new Screw.Description(name);
       examples = [];
@@ -129,27 +130,6 @@ Screw.Unit(function(c) { with(c) {
         expect(scenario_2_example_completed_callback).to(have_been_called, once);
         expect(scenario_1_example_completed_callback).to_not(have_been_called);
         expect(description_example_completed_callback).to(have_been_called, once);
-      });
-    });
-
-
-    describe("#enqueue", function() {
-      it("calls #enqueue on all examples and child descriptions", function() {
-        Screw.Monarch.Queue.synchronous = true;
-        var child_description = new Screw.Description("child description");
-        description.add_description(child_description);
-
-        Screw.each(examples, function() {
-          mock(this, 'run');
-        });
-        mock(child_description, 'enqueue');
-
-        description.enqueue();
-
-        Screw.each(examples, function() {
-          expect(this.run).to(have_been_called);
-        })
-        expect(child_description.enqueue).to(have_been_called);
       });
     });
 

@@ -20,7 +20,6 @@ Monarch.module("Screw.Interface", {
   },
 
   examples_to_run: function() {
-    // TODO: Add handling for this
     return [Screw.root_description()];
   }
 });

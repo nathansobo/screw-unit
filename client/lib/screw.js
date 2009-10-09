@@ -1,5 +1,6 @@
 //= require <monarch_view>
 //= require <jquery.print>
+//= require <jquery.cookie>
 
 //= require "screw/screw"
 //= require "screw/keywords"

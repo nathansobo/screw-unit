@@ -9,6 +9,7 @@ Screw.Unit(function(c) { with(c) {
       root.add_description(child_description_1);
       root.add_description(child_description_2);
       view = Screw.Interface.Runner.to_view({root: root, build_immediately: true, show: show});
+      mock(Screw.jQuery, 'cookie');
     });
 
     context("when passed the show: 'all' option", function() {
@@ -65,6 +66,11 @@ Screw.Unit(function(c) { with(c) {
           view.find("button#show_failed").click();
           expect(view.hasClass('show_all')).to(be_false);
         });
+
+        it("stores a cookie to retain the setting across refreshes", function() {
+          view.find("button#show_failed").click();
+          expect(Screw.jQuery.cookie).to(have_been_called, with_args("__screw_unit__show", "failed"));
+        });
       });
 
       describe("when the 'Show All' button is clicked", function() {
@@ -87,6 +93,11 @@ Screw.Unit(function(c) { with(c) {
           view.addClass("show_failed");
           view.find("button#show_all").click();
           expect(view.hasClass('show_failed')).to(be_false);
+        });
+
+        it("stores a cookie to retain the setting across refreshes", function() {
+          view.find("button#show_all").click();
+          expect(Screw.jQuery.cookie).to(have_been_called, with_args("__screw_unit__show", "all"));
         });
       });
     });
