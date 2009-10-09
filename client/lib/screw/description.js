@@ -9,13 +9,13 @@ Monarch.constructor("Screw.Description", Screw.RunnableMethods, {
     this.inits = [];
     this.befores = [];
     this.afters = [];
-    this.example_completed_subscription_node = new Screw.SubscriptionNode();
+    this.example_completed_subscription_node = new Monarch.SubscriptionNode();
     this.has_scenario = false;
   },
 
   clone: function() {
     var clone = Screw.$.extend(new Screw.Description(), this);
-    clone.example_completed_subscription_node = new Screw.SubscriptionNode();
+    clone.example_completed_subscription_node = new Monarch.SubscriptionNode();
     clone.children = [];
     clone.child_descriptions = [];
     clone.examples = [];

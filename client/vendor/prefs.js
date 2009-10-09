@@ -1,4 +1,4 @@
-var Prefs = {
+Prefs = {
   data: {},
 
   load: function () {

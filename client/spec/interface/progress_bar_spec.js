@@ -23,7 +23,7 @@ Screw.Unit(function(c) { with(c) {
       description_2.add_example(example_3);
       description_2.add_example(example_4);
 
-      view = Screw.Disco.build(Screw.Interface.ProgressBar, {examples_to_run: [description_1, description_2]})
+      view = Screw.Interface.ProgressBar.to_view({examples_to_run: [description_1, description_2]});
     });
 
     describe("when an example within one of the associated examples to run is completed", function() {

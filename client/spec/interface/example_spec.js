@@ -9,7 +9,7 @@ Screw.Unit(function(c) { with(c) {
 
       description = new Screw.Description("parent description");
       description.add_example(example);
-      view = Screw.Disco.build(Screw.Interface.Example, {example: example, build_immediately: true});
+      view = Screw.Interface.Example.to_view({example: example, build_immediately: true});
     });
 
     describe("#content", function() {
@@ -48,7 +48,7 @@ Screw.Unit(function(c) { with(c) {
           stack = e.stack;
         })
         example.run();
-        stack_without_links = view.html().replace(/<a[^>]+>/g, "").replace(/<\/a>/g, "");
+        var stack_without_links = view.html().replace(/<a[^>]+>/g, "").replace(/<\/a>/g, "");
         expect(stack_without_links).to(match, stack);
       });
 
@@ -88,15 +88,15 @@ Screw.Unit(function(c) { with(c) {
         Screw.Interface.options = original_screw_options;
       });
 
-      it("saves [example.path()] to Prefs.data.run_paths and calls Screw.Interface.refresh", function() {
+      it("saves [example.path()] to Screw.Prefs.data.run_paths and calls Screw.Interface.refresh", function() {
         mock(Screw.Interface, 'refresh');
-        Prefs.data.run_paths = null;
-        Prefs.save();
+        Screw.Prefs.data.run_paths = null;
+        Screw.Prefs.save();
 
         view.focus();
 
-        Prefs.load();
-        expect(Prefs.data.run_paths).to(equal, [example.path()]);
+        Screw.Prefs.load();
+        expect(Screw.Prefs.data.run_paths).to(equal, [example.path()]);
         expect(Screw.Interface.refresh).to(have_been_called);
       });
     });

@@ -8,28 +8,28 @@ Screw.Unit(function(c) { with(c) {
       child_description_2 = new Screw.Description("child description 2");
       root.add_description(child_description_1);
       root.add_description(child_description_2);
-      view = Screw.Disco.build(Screw.Interface.Runner, {root: root, build_immediately: true});
+      view = Screw.Interface.Runner.to_view({root: root, build_immediately: true});
     });
 
-    context("when Prefs.show == 'all'", function() {
+    context("when Screw.Prefs.show == 'all'", function() {
       before(function() {
-        Prefs.data.show = "all";
+        Screw.Prefs.data.show = "all";
       });
 
       it("renders itself with the 'show_all' class and not the 'show_failed' class", function() {
-        view = Screw.Disco.build(Screw.Interface.Runner, {root: root, build_immediately: true});
+        view = Screw.Interface.Runner.to_view({root: root, build_immediately: true});
         expect(view.hasClass("show_all")).to(be_true);
         expect(view.hasClass("show_failed")).to(be_false);
       });
     });
 
-    context("when Prefs.show == 'failed'", function() {
+    context("when Screw.Prefs.show == 'failed'", function() {
       before(function() {
-        Prefs.data.show = "failed";
+        Screw.Prefs.data.show = "failed";
       });
 
       it("renders itself with the 'show_failed' class and not the 'show_all' class", function() {
-        view = Screw.Disco.build(Screw.Interface.Runner, {root: root, build_immediately: true});
+        view = Screw.Interface.Runner.to_view({root: root, build_immediately: true});
         expect(view.hasClass("show_failed")).to(be_true);
         expect(view.hasClass("show_all")).to(be_false);
       });
@@ -49,7 +49,7 @@ Screw.Unit(function(c) { with(c) {
         child_description_1.add_example(passing_example);
         child_description_1.add_example(failing_example_1);
         child_description_1.add_example(failing_example_2);
-        view = Screw.Disco.build(Screw.Interface.Runner, {root: root, build_immediately: true});
+        view = Screw.Interface.Runner.to_view({root: root, build_immediately: true});
       });
 
       describe("when the 'Show Failed' button is clicked", function() {
@@ -68,31 +68,32 @@ Screw.Unit(function(c) { with(c) {
         it("hides descriptions that have no failing examples", function() {
           passing_example.run();
 
-          expect(view.find("li:contains('child description 1'):visible")).to_not(be_empty);
-          expect(view.find("li:contains('child description 2'):visible")).to_not(be_empty);
+          expect(view.find("li:contains('child description 1')").css('display')).to(equal, 'block');
+          expect(view.find("li:contains('child description 2')").css('display')).to(equal, 'block');
           view.find("button#show_failed").click();
-          expect(view.find("li:contains('child description 1'):visible")).to(be_empty);
-          expect(view.find("li:contains('child description 2'):visible")).to(be_empty);
+          expect(view.find("li:contains('child description 1')").css('display')).to(equal, 'none');
+          expect(view.find("li:contains('child description 2')").css('display')).to(equal, 'none');
         });
 
         it("shows only descriptions that have failing examples", function() {
           failing_example_1.run();
 
-          expect(view.find("li ul li:contains('child description 1'):visible")).to_not(be_empty);
-          expect(view.find("li ul li:contains('child description 2'):visible")).to_not(be_empty);
+          expect(view.find("li ul li:contains('child description 1')").css('display')).to(equal, 'block');
+          expect(view.find("li ul li:contains('child description 2')").css('display')).to(equal, 'block');
+
           view.find("button#show_failed").click();
-          expect(view.find("li ul li:contains('child description 1'):visible")).to_not(be_empty);
-          expect(view.find("li ul li:contains('child description 2'):visible")).to(be_empty);
+          expect(view.find("li ul li:contains('child description 1')").css('display')).to(equal, 'block');
+          expect(view.find("li ul li:contains('child description 2')").css('display')).to(equal, 'none');
         });
 
-        it("sets Prefs.data.show to 'failed'", function() {
-          Prefs.data = { show: null };
-          Prefs.save();
+        it("sets Screw.Prefs.data.show to 'failed'", function() {
+          Screw.Prefs.data = { show: null };
+          Screw.Prefs.save();
 
           view.find("button#show_failed").click();
 
-          Prefs.load();
-          expect(Prefs.data.show).to(equal, "failed");
+          Screw.Prefs.load();
+          expect(Screw.Prefs.data.show).to(equal, "failed");
         });
       });
 
@@ -113,28 +114,29 @@ Screw.Unit(function(c) { with(c) {
         it("shows any hidden descriptions and examples", function() {
           failing_example_1.run();
 
-          expect(view.find("li ul li:contains('child description 1'):visible")).to_not(be_empty);
-          expect(view.find("li ul li:contains('child description 2'):visible")).to_not(be_empty);
+          expect(view.find("li ul li:contains('child description 1')").css('display')).to(equal, 'block');
+          expect(view.find("li ul li:contains('child description 2')").css('display')).to(equal, 'block');
 
           view.find("button#show_failed").click();
 
-          expect(view.find("li ul li:contains('child description 1'):visible")).to_not(be_empty);
-          expect(view.find("li ul li:contains('child description 2'):visible")).to(be_empty);
+
+          expect(view.find("li ul li:contains('child description 1')").css('display')).to(equal, 'block');
+          expect(view.find("li ul li:contains('child description 2')").css('display')).to(equal, 'none');
 
           view.find("button#show_all").click();
 
-          expect(view.find("li:contains('child description 1'):visible")).to_not(be_empty);
-          expect(view.find("li:contains('child description 2'):visible")).to_not(be_empty);
+          expect(view.find("li ul li:contains('child description 1')").css('display')).to(equal, 'block');
+          expect(view.find("li ul li:contains('child description 2')").css('display')).to(equal, 'block');
         });
 
-        it("sets Prefs.data.show to 'all'", function() {
-          Prefs.data = { show: null };
-          Prefs.save();
+        it("sets Screw.Prefs.data.show to 'all'", function() {
+          Screw.Prefs.data = { show: null };
+          Screw.Prefs.save();
 
           view.find("button#show_all").click();
 
-          Prefs.load();
-          expect(Prefs.data.show).to(equal, "all");
+          Screw.Prefs.load();
+          expect(Screw.Prefs.data.show).to(equal, "all");
         });
       });
 
@@ -144,30 +146,30 @@ Screw.Unit(function(c) { with(c) {
           failing_example_2.run();
         });
 
-        it("saves Prefs.data.run_paths to an Array of the #paths of all failing Examples and calls Screw.Interface.refresh", function() {
-          Prefs.data.run_paths = null;
-          Prefs.save();
+        it("saves Screw.Prefs.data.run_paths to an Array of the #paths of all failing Examples and calls Screw.Interface.refresh", function() {
+          Screw.Prefs.data.run_paths = null;
+          Screw.Prefs.save();
 
           mock(Screw.Interface, 'refresh');
 
           view.find("button#rerun_failed").click();
 
-          Prefs.load();
-          expect(Prefs.data.run_paths).to(equal, [failing_example_1.path(), failing_example_2.path()]);
+          Screw.Prefs.load();
+          expect(Screw.Prefs.data.run_paths).to(equal, [failing_example_1.path(), failing_example_2.path()]);
           expect(Screw.Interface.refresh).to(have_been_called);
         });
       });
 
       describe("when the 'Rerun All' button is clicked", function() {
-        it("saves Prefs.data.run_paths to null and calls Screw.Interface.refresh", function() {
-          Prefs.data.run_paths = "foo";
-          Prefs.save();
+        it("saves Screw.Prefs.data.run_paths to null and calls Screw.Interface.refresh", function() {
+          Screw.Prefs.data.run_paths = "foo";
+          Screw.Prefs.save();
 
           mock(Screw.Interface, 'refresh');
           view.find("button#rerun_all").click();
 
-          Prefs.load();
-          expect(Prefs.data.run_paths).to(be_null);
+          Screw.Prefs.load();
+          expect(Screw.Prefs.data.run_paths).to(be_null);
           expect(Screw.Interface.refresh).to(have_been_called);
         });
       });

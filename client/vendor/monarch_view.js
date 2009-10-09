@@ -4791,7 +4791,7 @@ Monarch.ModuleSystem = {
 })(Monarch);
 (function(Monarch) {
 
-Monarch.module("Util", {
+Monarch.module("Monarch.Util", {
   each: function(array_or_hash, fn) {
     if (array_or_hash.length) {
       this.array_each(array_or_hash, fn);
@@ -4847,7 +4847,7 @@ Monarch.module("Util", {
     var keys = [];
     for (key in hash) keys.push(key);
     if (optional_each_function) {
-      Util.each(keys, optional_each_function);
+      Monarch.Util.each(keys, optional_each_function);
     }
     return keys;
   },
@@ -4856,7 +4856,7 @@ Monarch.module("Util", {
     var values = [];
     for (key in hash) values.push(hash[key]);
     if (optional_each_function) {
-      Util.each(values, optional_each_function);
+      Monarch.Util.each(values, optional_each_function);
     }
     return values;
   }
@@ -4868,19 +4868,19 @@ Monarch.module("Util", {
 Monarch.constructor("Monarch.ModuleSystem.Object", {
   constructor_properties: {
     delegate_constructor_methods: function() {
-      var args = Util.to_array(arguments);
+      var args = Monarch.Util.to_array(arguments);
       var delegate_name = args.pop();
       this.setup_delegate_methods(this, args, delegate_name);
     },
 
     delegate: function(source) {
-      var args = Util.to_array(arguments);
+      var args = Monarch.Util.to_array(arguments);
       var delegate_name = args.pop();
       this.setup_delegate_methods(this.prototype, args, delegate_name);
     },
 
     setup_delegate_methods: function(delegator, method_names, delegate_name) {
-      Util.each(method_names, function(method_name) {
+      Monarch.Util.each(method_names, function(method_name) {
         delegator[method_name] = function() {
           var delegate = this[delegate_name];
           return delegate[method_name].apply(delegate, arguments);
@@ -4910,7 +4910,7 @@ Monarch.constructor("Monarch.SubscriptionNode", {
   },
 
   unsubscribe: function(subscription) {
-    Util.remove(this.subscriptions, subscription);
+    Monarch.Util.remove(this.subscriptions, subscription);
     if (this.on_unsubscribe_node) this.on_unsubscribe_node.publish(subscription);
   },
 
@@ -4924,7 +4924,7 @@ Monarch.constructor("Monarch.SubscriptionNode", {
     if (this.paused) {
       this.delayed_events.push(publish_arguments)
     } else {
-      Util.each(this.subscriptions, function(subscription) {
+      Monarch.Util.each(this.subscriptions, function(subscription) {
         subscription.trigger(publish_arguments);
       })
     }
@@ -4942,7 +4942,7 @@ Monarch.constructor("Monarch.SubscriptionNode", {
   resume_events: function() {
     var self = this;
     this.paused = false;
-    Util.each(this.delayed_events, function(event) {
+    Monarch.Util.each(this.delayed_events, function(event) {
       self.publish.apply(self, event);
     });
     this.delayed_events = [];
@@ -4980,7 +4980,7 @@ Monarch.constructor("Monarch.SubscriptionBundle", {
   },
 
   destroy_all: function() {
-    Util.each(this.subscriptions, function(subscription) {
+    Monarch.Util.each(this.subscriptions, function(subscription) {
       subscription.destroy();
     });
     this.subscriptions = [];
@@ -5228,9 +5228,9 @@ Monarch.constructor("Monarch.Xml.Builder", {
     generate_tag_methods: function() {
       var self = this;
 
-      Util.each(this.supported_tags, function(tag_name) {
+      Monarch.Util.each(this.supported_tags, function(tag_name) {
         self.prototype[tag_name] = function() {
-          var tag_args = [tag_name].concat(Util.to_array(arguments));
+          var tag_args = [tag_name].concat(Monarch.Util.to_array(arguments));
           return this.tag.apply(this, tag_args);
         }
       });
@@ -5251,7 +5251,7 @@ Monarch.constructor("Monarch.Xml.Builder", {
   },
 
   extend_with_properties: function(jquery_fragment, properties) {
-    Util.keys(properties, function(key) {
+    Monarch.Util.keys(properties, function(key) {
       if (jquery_fragment[key]) jquery_fragment["_" + key] = jquery_fragment[key];
     });
     jQuery.extend(jquery_fragment, properties);
@@ -5260,7 +5260,7 @@ Monarch.constructor("Monarch.Xml.Builder", {
   post_process: function(jquery_fragment) {
     var self = this;
     this.jquery_fragment = jquery_fragment;
-    Util.each(this.instructions, function(instruction) {
+    Monarch.Util.each(this.instructions, function(instruction) {
       instruction.post_process(self);
     });
     if (!this.has_single_top_level_element()) {
@@ -5271,7 +5271,7 @@ Monarch.constructor("Monarch.Xml.Builder", {
 
   to_xml: function() {
     var xml = "";
-    Util.each(this.instructions, function(instruction) {
+    Monarch.Util.each(this.instructions, function(instruction) {
       xml += instruction.to_xml();
     });
     return xml;
@@ -5310,11 +5310,11 @@ Monarch.constructor("Monarch.Xml.Builder", {
   },
 
   parse_tag_arguments: function(args) {
-    var args = Util.to_array(args);
+    var args = Monarch.Util.to_array(args);
     var tag_arguments = {
       name: args.shift()
     }
-    Util.each(args, function(arg) {
+    Monarch.Util.each(args, function(arg) {
       if (typeof arg == "string") tag_arguments.text = arg;
       if (typeof arg == "object") tag_arguments.attributes = arg;
       if (typeof arg == "function") tag_arguments.body = arg;
@@ -5391,7 +5391,7 @@ Monarch.constructor("Monarch.Xml.CloseTag", {
 
     generate_event_methods: function() {
       var self = this;
-      Util.each(this.supported_events, function(event_name) {
+      Monarch.Util.each(this.supported_events, function(event_name) {
         self.generate_event_method(event_name);
       });
     },
@@ -5651,7 +5651,7 @@ Monarch.constructor("Monarch.View.Builder", Monarch.Xml.Builder, {
   },
 
   a: function() {
-    var close_tag_instruction = this.tag.apply(this, ["a"].concat(Util.to_array(arguments)));
+    var close_tag_instruction = this.tag.apply(this, ["a"].concat(Monarch.Util.to_array(arguments)));
     var open_tag_instruction = close_tag_instruction.open_tag_instruction;
     if (open_tag_instruction.attributes && open_tag_instruction.attributes.local) {
       close_tag_instruction.click(function() {
@@ -5680,7 +5680,7 @@ Monarch.constructor("Monarch.View.Builder", Monarch.Xml.Builder, {
   },
 
   parse_subview_arguments: function(args) {
-    var args = Util.to_array(args);
+    var args = Monarch.Util.to_array(args);
     var subview_arguments = {};
 
     if (!args[1]) throw new Error("Undefined second argument for subview '" + args[0] + "'.");
@@ -5717,7 +5717,7 @@ Monarch.constructor("Monarch.View.Templates.Multiview", Monarch.View.Template, {
     delete subview_templates_by_name.parent_view;
     var b = this.builder;
     b.div(function() {
-      Util.each(subview_templates_by_name, function(name, template) {
+      Monarch.Util.each(subview_templates_by_name, function(name, template) {
         b.subview('subviews', name, template);
       })
     });
@@ -5729,9 +5729,9 @@ Monarch.constructor("Monarch.View.Templates.Multiview", Monarch.View.Template, {
     },
 
     hide_all_except: function() {
-      var names = Util.to_array(arguments);
-      Util.each(this.subviews, function(subview_name, subview) {
-        if (Util.contains(names, subview_name)) {
+      var names = Monarch.Util.to_array(arguments);
+      Monarch.Util.each(this.subviews, function(subview_name, subview) {
+        if (Monarch.Util.contains(names, subview_name)) {
           subview.show();
         } else {
           subview.hide();
@@ -5740,7 +5740,7 @@ Monarch.constructor("Monarch.View.Templates.Multiview", Monarch.View.Template, {
     },
 
     hide_all: function() {
-      Util.each(this.subviews, function(subview_name, subview) {
+      Monarch.Util.each(this.subviews, function(subview_name, subview) {
         subview.hide();
       });
     }

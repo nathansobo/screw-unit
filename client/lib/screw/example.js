@@ -1,61 +1,61 @@
-module("Screw", function(c) { with (c) {
-  constructor("Example", function() {
-    include(Screw.RunnableMethods);
+(function(Screw, Monarch) {
 
-    def('initialize', function(name, fn) {
-      this.name = name;
-      this.fn = fn;
-      this.fail_subscription_node = new Screw.SubscriptionNode();
-      this.pass_subscription_node = new Screw.SubscriptionNode();
-      this.example_completed_subscription_node = new Screw.SubscriptionNode();
-      this.passed = false;
-      this.failed = false;
-      this.failure_message = null;
-    });
+Monarch.constructor("Screw.Example", Screw.RunnableMethods, {
+  initialize: function(name, fn) {
+    this.name = name;
+    this.fn = fn;
+    this.fail_subscription_node = new Monarch.SubscriptionNode();
+    this.pass_subscription_node = new Monarch.SubscriptionNode();
+    this.example_completed_subscription_node = new Monarch.SubscriptionNode();
+    this.passed = false;
+    this.failed = false;
+    this.failure_message = null;
+  },
 
-    def('clone', function() {
-      var clone = Screw.$.extend(new Screw.Example(), this);
-      clone.initialize(this.name, this.fn);
-      return clone;
-    });
+  clone: function() {
+    var clone = Screw.$.extend(new Screw.Example(), this);
+    clone.initialize(this.name, this.fn);
+    return clone;
+  },
 
-    def('enqueue', function() {
-      var self = this;
-      setTimeout(function() { self.run(); }, 0);
-    });
+  enqueue: function() {
+    var self = this;
+    setTimeout(function() { self.run(); }, 0);
+  },
 
-    def('run', function() {
+  run: function() {
+    try {
       try {
-        try {
-          var example_context = {};
-          this.parent_description.run_inits(example_context);
-          this.parent_description.run_befores(example_context);
-          this.fn.call(example_context);
-        } finally {
-          this.parent_description.run_afters(example_context);
-          Screw.reset_mocks();
-        }
-        this.passed = true;
-        this.pass_subscription_node.publish();
-        this.example_completed_subscription_node.publish(this);
-      } catch(e) {
-        this.failed = true;
-        this.failure_message = "Failure in '" + this.name + "':\n" + e.stack;
-        this.fail_subscription_node.publish(e);
-        this.example_completed_subscription_node.publish(this);
+        var example_context = {};
+        this.parent_description.run_inits(example_context);
+        this.parent_description.run_befores(example_context);
+        this.fn.call(example_context);
+      } finally {
+        this.parent_description.run_afters(example_context);
+        Screw.reset_mocks();
       }
-    });
+      this.passed = true;
+      this.pass_subscription_node.publish();
+      this.example_completed_subscription_node.publish(this);
+    } catch(e) {
+      this.failed = true;
+      this.failure_message = "Failure in '" + this.name + "':\n" + e.stack;
+      this.fail_subscription_node.publish(e);
+      this.example_completed_subscription_node.publish(this);
+    }
+  },
 
-    def('on_fail', function(callback) {
-      this.fail_subscription_node.subscribe(callback);
-    });
+  on_fail: function(callback) {
+    this.fail_subscription_node.subscribe(callback);
+  },
 
-    def('on_pass', function(callback) {
-      this.pass_subscription_node.subscribe(callback);
-    });
+  on_pass: function(callback) {
+    this.pass_subscription_node.subscribe(callback);
+  },
 
-    def('total_examples', function() {
-      return 1;
-    });
-  });
-}});
+  total_examples: function() {
+    return 1;
+  }
+});
+
+})(Screw, Monarch);
