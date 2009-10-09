@@ -5,7 +5,7 @@ module ScrewUnit
     attr_reader :manager, :dir
 
     before do
-      @dir = File.dirname(__FILE__)
+      @dir = File.expand_path(File.dirname(__FILE__))
       @manager = AssetManager.new
       manager.add_js_location("/specs/1", "#{dir}/file_system_fixtures_for_asset_manager_specs/dir_1")
       manager.add_js_location("/specs/2", "#{dir}/file_system_fixtures_for_asset_manager_specs/dir_2")

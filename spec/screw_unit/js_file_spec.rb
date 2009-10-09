@@ -5,7 +5,7 @@ module ScrewUnit
     attr_reader :js_file, :dir
 
     before do
-      @dir = File.dirname(__FILE__)
+      @dir = File.expand_path(File.dirname(__FILE__))
       asset_manager = Configuration.new.asset_manager
       asset_manager.add_js_location("/implementations", "#{dir}/file_system_fixtures_for_asset_manager_specs/dir_3")
       @js_file = JsFile.new("#{dir}/file_system_fixtures_for_asset_manager_specs/dir_1/1.js", asset_manager)

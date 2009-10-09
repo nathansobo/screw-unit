@@ -1,8 +1,9 @@
 module ScrewUnit
   class Dispatcher
-    attr_reader :root
+    attr_reader :root, :resource_locators
 
     def initialize(configuration)
+      @resource_locators = configuration.resource_locators
       @root = Resources::Root.new(configuration)
     end
 
@@ -23,6 +24,11 @@ module ScrewUnit
     end
 
     def locate_resource(path)
+      resource_locators.each do |locator|
+        resource = locator.locate_resource(path)
+        return resource if resource
+      end
+
       path_parts(path).inject(root) do |resource, child_resource_name|
         resource.locate(child_resource_name)
       end

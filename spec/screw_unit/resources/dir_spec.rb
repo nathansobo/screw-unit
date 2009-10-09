@@ -6,13 +6,13 @@ module ScrewUnit
       attr_reader :dir, :asset_manager
 
       before do
-        spec_file_dir = ::File.dirname(__FILE__)
+        spec_file_dir = ::File.expand_path(::File.dirname(__FILE__))
         @asset_manager = Configuration.new.asset_manager
       end
 
       describe "#locate" do
         before do
-          asset_manager.add_location("/x", "#{::File.dirname(__FILE__)}/file_system_fixtures")
+          asset_manager.add_location("/x", "#{::File.expand_path(::File.dirname(__FILE__))}/file_system_fixtures")
           @dir = Dir.new("/x", asset_manager)
         end
 
@@ -50,8 +50,9 @@ module ScrewUnit
       describe "#glob" do
         before do
           @dir = Dir.new("/foo", asset_manager)
-          asset_manager.add_location("/foo/bar", "#{::File.dirname(__FILE__)}/file_system_fixtures/code_under_test")
-          asset_manager.add_location("/foo/baz", "#{::File.dirname(__FILE__)}/file_system_fixtures/specs")
+          absolute_dir = ::File.expand_path(::File.dirname(__FILE__))
+          asset_manager.add_location("/foo/bar", "#{absolute_dir}/file_system_fixtures/code_under_test")
+          asset_manager.add_location("/foo/baz", "#{absolute_dir}/file_system_fixtures/specs")
         end
 
         it "returns File resources with the correct relative paths for all files matching the pattern" do
