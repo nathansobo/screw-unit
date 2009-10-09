@@ -9,6 +9,7 @@
 //= require "screw/runnable_methods"
 //= require "screw/description"
 //= require "screw/example"
+//= require "screw/require"
 //= require "screw/interface"
 
 Screw.$ = jQuery;

@@ -18,9 +18,14 @@
         div(function() {
           span("Files: ")
           span().ref('num_completed_files_span');
-          span(" / ")
+          span(" / ");
           span().ref('total_files_span');
         });
+
+        div(function() {
+          span("Current File: ");
+          span().ref('current_file_span');
+        })
 
         div(function() {
           span("Examples In Current File: ")
@@ -51,9 +56,13 @@
         if (this.spec_paths.length == 0) return;
         var self = this;
         var path = this.spec_paths.shift();
-        jQuery.getScript(path, function() {
-          self.run_examples_for_current_spec_file();
-        });
+        this.current_file_span.html(path);
+
+        setTimeout(function() {
+          jQuery.getScript(path, function() {
+            self.run_examples_for_current_spec_file();
+          });
+        }, 1);
       },
 
       run_examples_for_current_spec_file: function() {

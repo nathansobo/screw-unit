@@ -151,11 +151,20 @@ Monarch.constructor("Screw.Description", Screw.RunnableMethods, {
   },
 
   enqueue: function() {
-    var enqueue_it = function() {
-      this.enqueue()
-    };
-    Screw.each(this.examples, enqueue_it);
-    Screw.each(this.child_descriptions, enqueue_it);
+    var queue = new Monarch.Queue();
+    Monarch.Util.each(this.examples, function(example) {
+      queue.add(function() {
+        example.run();
+      })
+    });
+
+    Monarch.Util.each(this.child_descriptions, function(description) {
+       queue.add(function() {
+         description.enqueue();
+       });
+    });
+    
+    queue.start();
   },
 
   run: function() {
