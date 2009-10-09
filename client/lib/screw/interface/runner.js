@@ -1,6 +1,39 @@
-(function(Screw, Monarch, Prefs) {
+(function(Screw, Monarch, Prefs, jQuery) {
 
 Monarch.constructor("Screw.Interface.Runner", Monarch.View.Template, {
+  constructor_properties: {
+    run_specs_on_page_load: function() {
+      jQuery(function() {
+        Screw.Interface.load_preferences();
+
+        var root_description = Screw.root_description();
+        var completed_example_count = 0;
+        var total_example_count = root_description.total_examples();
+        root_description.on_example_completed(function() {
+          completed_example_count++;
+          if (completed_example_count == total_example_count) {
+            var outcome = (root_description.failed_examples().length == 0) ? "success" : root_description.failure_messages().join("\n");
+            Screw.$.ajax({ type: 'POST', url: '/complete', data: outcome });
+          }
+        });
+
+        var queue = new Monarch.Queue();
+
+        var runner;
+        queue.add(function() {
+          runner = Screw.Interface.Runner.to_view({root: root_description});
+        });
+        queue.add(function() {
+          Screw.$('body').html(runner);
+        });
+        queue.add(function() {
+          runner.enqueue();
+        })
+        queue.start();
+      });
+    }
+  },
+
   content: function(initial_attributes) { with (this.builder) {
     div({'id': "screw_unit_runner"}, function() {
       table({'id': "screw_unit_header"}, function() {
@@ -97,4 +130,4 @@ Monarch.constructor("Screw.Interface.Runner", Monarch.View.Template, {
   }
 });
 
-})(Screw, Monarch, Prefs);
+})(Screw, Monarch, Prefs, jQuery);

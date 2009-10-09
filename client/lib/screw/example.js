@@ -45,6 +45,7 @@ Monarch.constructor("Screw.Example", Screw.RunnableMethods, {
       }
 
       this.failure_message = "Failure in '" + this.name + "':\n" + e.stack;
+      this.stack = e.stack;
       this.fail_subscription_node.publish(e);
       this.example_completed_subscription_node.publish(this);
     }
@@ -60,6 +61,10 @@ Monarch.constructor("Screw.Example", Screw.RunnableMethods, {
 
   total_examples: function() {
     return 1;
+  },
+
+  full_name: function() {
+    return this.parent_description.full_name() + this.name;
   }
 });
 

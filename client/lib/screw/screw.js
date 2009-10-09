@@ -7,6 +7,11 @@ Monarch.module("Screw", {
     specification(this.shared_context);
   },
 
+  clear_descriptions: function() {
+    this._description_stack = null;
+    this._root_description = null;
+  },
+
   root_description: function() {
     return this._root_description = this._root_description || new Screw.Description("All specs");
   },

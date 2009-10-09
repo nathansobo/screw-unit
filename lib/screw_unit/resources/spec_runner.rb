@@ -1,11 +1,18 @@
 module ScrewUnit
   module Resources
-    class SpecSuite
+    class SpecRunner
       attr_reader :spec_file_resources, :asset_manager
 
       def initialize(spec_file_resources, asset_manager)
         @spec_file_resources = spec_file_resources
         @asset_manager = asset_manager
+      end
+
+      def locate(path_fragment)
+        p "LOCATING!!!!!!!!!!!!!!!!!!"
+        if path_fragment == "streaming"
+          StreamingSpecRunner.new(spec_file_resources, asset_manager)
+        end
       end
 
       def get
@@ -14,9 +21,7 @@ module ScrewUnit
 
       protected
       def content
-        content =
-
-          "<html>\n<head>\n" +
+        "<html>\n<head>\n" +
           screw_unit_css_file_link_tag +
           "\n\n" +
           "<!-- ScrewUnit core scripts -->\n" +
@@ -25,7 +30,12 @@ module ScrewUnit
           "<!-- scripts required by the specs -->\n" +
           required_script_tags +
           "\n" +
-          "</head>\n<body>\n</body>\n</html>\n"  
+          run_specs_on_page_load +
+          "\n</head>\n<body>\n</body>\n</html>\n"
+      end
+
+      def run_specs_on_page_load
+        %{<script type="text/javascript">Screw.Interface.Runner.run_specs_on_page_load();</script>}
       end
 
       def screw_unit_css_file_link_tag

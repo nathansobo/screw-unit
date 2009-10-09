@@ -194,7 +194,17 @@ Monarch.constructor("Screw.Description", Screw.RunnableMethods, {
     if (this.parent_description) {
       this.parent_description.run_afters(example_context);
     }
+  },
+
+
+  full_name: function() {
+    if (this.parent_description) {
+      return this.parent_description.full_name() + this.name + " :: ";
+    } else {
+      return "";
+    }
   }
+
 });
 
 })(Screw, Monarch);

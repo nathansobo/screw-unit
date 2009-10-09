@@ -2,7 +2,7 @@ require "#{File.dirname(__FILE__)}/../../screw_unit_spec_helper"
 
 module ScrewUnit
   module Resources
-    describe SpecSuite do
+    describe SpecRunner do
       attr_reader :dir, :spec_file_resources, :spec_suite, :asset_manager
 
       before do
@@ -10,7 +10,7 @@ module ScrewUnit
         @asset_manager = Configuration.new.asset_manager
         asset_manager.add_location("/specs", "#{dir}/file_system_fixtures/specs")
         @spec_file_resources = Dir.new("/specs", asset_manager).glob("**/*.js")
-        @spec_suite = SpecSuite.new(spec_file_resources, asset_manager)
+        @spec_suite = SpecRunner.new(spec_file_resources, asset_manager)
       end
 
       describe "#get" do

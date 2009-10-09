@@ -2,6 +2,7 @@
 //= require "interface/example"
 //= require "interface/progress_bar"
 //= require "interface/runner"
+//= require "interface/streaming_runner"
 
 (function(Screw, Monarch, jQuery, Prefs) {
 
@@ -34,36 +35,6 @@ Monarch.module("Screw.Interface", {
       return [Screw.root_description()];
     }
   }
-});
-
-jQuery(function() {
-  Screw.Interface.load_preferences();
-
-  var root_description = Screw.root_description();
-  var completed_example_count = 0;
-  var total_example_count = root_description.total_examples();
-  root_description.on_example_completed(function() {
-    completed_example_count++;
-    if (completed_example_count == total_example_count) {
-      var outcome = (root_description.failed_examples().length == 0) ? "success" : root_description.failure_messages().join("\n");
-      Screw.$.ajax({ type: 'POST', url: '/complete', data: outcome });
-    }
-  });
-
-
-  var queue = new Monarch.Queue();
-
-  var runner;
-  queue.add(function() {
-    runner = Screw.Interface.Runner.to_view({root: root_description});
-  });
-  queue.add(function() {
-    Screw.$('body').html(runner);
-  });
-  queue.add(function() {
-    runner.enqueue();
-  })
-  queue.start();
 });
 
 })(Screw, Monarch, jQuery, Prefs);
