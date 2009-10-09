@@ -90,7 +90,11 @@
           if (num_completed_examples_in_current_file == num_examples) self.examples_completed_for_current_spec_file();
         });
 
-        Screw.root_description().run()
+        if (num_examples > 0) {
+          Screw.root_description().run()
+        } else {
+          self.examples_completed_for_current_spec_file();  
+        }
       },
 
       handle_failed_example: function(example) {
