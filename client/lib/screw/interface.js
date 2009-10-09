@@ -50,11 +50,20 @@ jQuery(function() {
     }
   });
 
-  var runner = Screw.Interface.Runner.to_view({root: root_description});
-  setTimeout(function() {
+
+  var queue = new Monarch.Queue();
+
+  var runner;
+  queue.add(function() {
+    runner = Screw.Interface.Runner.to_view({root: root_description});
+  });
+  queue.add(function() {
     Screw.$('body').html(runner);
+  });
+  queue.add(function() {
     runner.enqueue();
-  }, 0);
+  })
+  queue.start();
 });
 
 })(Screw, Monarch, jQuery, Prefs);

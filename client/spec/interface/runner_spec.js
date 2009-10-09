@@ -53,6 +53,14 @@ Screw.Unit(function(c) { with(c) {
       });
 
       describe("when the 'Show Failed' button is clicked", function() {
+        before(function() {
+          Screw.$('div#test_content').html(view);
+        });
+
+        after(function() {
+          Screw.$("div#test_content").html("");
+        });
+
         it("applies the 'show_failed' class to the root element of the view", function() {
           expect(view.hasClass('show_failed')).to(be_false);
           view.find("button#show_failed").click();
@@ -98,6 +106,14 @@ Screw.Unit(function(c) { with(c) {
       });
 
       describe("when the 'Show All' button is clicked", function() {
+        before(function() {
+          Screw.$('div#test_content').html(view);
+        });
+
+        after(function() {
+          Screw.$("div#test_content").html("");
+        });
+
         it("applies the 'show_all' class to the root element of the view", function() {
           view.removeClass("show_all");
           expect(view.hasClass('show_all')).to(be_false);

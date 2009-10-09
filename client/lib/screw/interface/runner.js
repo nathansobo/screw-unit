@@ -74,10 +74,16 @@ Monarch.constructor("Screw.Interface.Runner", Monarch.View.Template, {
       this.completed_example_count = 0;
       this.total_examples = Screw.root_description().total_examples();
 
+      var queue = new Monarch.Queue();
+
       Screw.root_description().on_example_completed(function() { self.update() } );
-      Screw.each(Screw.Interface.examples_to_run(), function() {
-        this.enqueue();
+      Monarch.Util.each(Screw.Interface.examples_to_run(), function(example) {
+        queue.add(function() {
+          example.run();
+        })
       });
+
+      queue.start();
     },
 
     update: function() {

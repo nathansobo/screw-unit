@@ -15,16 +15,17 @@ module ScrewUnit
       protected
       def content
         content =
+
+          "<html>\n<head>\n" +
           screw_unit_css_file_link_tag +
           "\n\n" +
           "<!-- ScrewUnit core scripts -->\n" +
           core_file_script_tags +
-          "\n\n"
-
-        content +=
+          "\n\n" +
           "<!-- scripts required by the specs -->\n" +
           required_script_tags +
-          "\n"
+          "\n" +
+          "</head>\n<body>\n</body>\n</html>\n"  
       end
 
       def screw_unit_css_file_link_tag

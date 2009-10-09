@@ -39,6 +39,11 @@ Monarch.constructor("Screw.Example", Screw.RunnableMethods, {
       this.example_completed_subscription_node.publish(this);
     } catch(e) {
       this.failed = true;
+
+      if (!e.stack) {
+        e.stack = e.message + " (" + e.sourceURL + ":" + e.line + ")";
+      }
+
       this.failure_message = "Failure in '" + this.name + "':\n" + e.stack;
       this.fail_subscription_node.publish(e);
       this.example_completed_subscription_node.publish(this);

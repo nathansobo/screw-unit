@@ -61,6 +61,7 @@ Monarch.module("Screw.Keywords", {
       to: function(matcher, expected, not) {
         var matched = matcher.match(expected, actual);
         if (not ? matched : !matched) {
+          if (Screw.debug_on_fail) debugger;
           throw(new Error(matcher.failure_message(expected, actual, not)));
         }
       },
