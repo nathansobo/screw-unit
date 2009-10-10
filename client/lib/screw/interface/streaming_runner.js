@@ -53,6 +53,17 @@
         this.num_failed_examples = 0;
         this.num_completed_files = 0;
         this.total_files_span.html(this.spec_paths.length);
+
+        var self = this;
+        Screw.root_description().on_example_completed(function(example) {
+          self.num_completed_examples++;
+          self.num_completed_examples_span.html(self.num_completed_examples);
+          self.num_completed_examples_in_current_file++;
+          self.completed_examples_in_current_file_span.html(self.num_completed_examples_in_current_file);
+          if (!example.passed) self.handle_failed_example(example);
+          if (self.num_completed_examples_in_current_file == self.num_examples_in_current_file) self.examples_completed_for_current_spec_file();
+        });
+
         this.load_next_spec_path();
       },
 
@@ -74,26 +85,15 @@
       },
 
       run_examples_for_current_spec_file: function() {
-        var self = this;
-        var root = Screw.root_description();
-        var num_examples = root.total_examples();
-        var num_completed_examples_in_current_file = 0;
-        self.completed_examples_in_current_file_span.html("0");
-        self.total_examples_in_current_file_span.html(num_examples);
+        this.num_examples_in_current_file = Screw.root_description().total_examples();
+        this.num_completed_examples_in_current_file = 0;
+        this.completed_examples_in_current_file_span.html("0");
+        this.total_examples_in_current_file_span.html(this.num_examples_in_current_file);
 
-        Screw.root_description().on_example_completed(function(example) {
-          self.num_completed_examples++;
-          self.num_completed_examples_span.html(self.num_completed_examples);
-          num_completed_examples_in_current_file++;
-          self.completed_examples_in_current_file_span.html(num_completed_examples_in_current_file);
-          if (!example.passed) self.handle_failed_example(example);
-          if (num_completed_examples_in_current_file == num_examples) self.examples_completed_for_current_spec_file();
-        });
-
-        if (num_examples > 0) {
+        if (this.num_examples_in_current_file > 0) {
           Screw.root_description().run()
         } else {
-          self.examples_completed_for_current_spec_file();  
+          this.examples_completed_for_current_spec_file();
         }
       },
 
@@ -103,13 +103,14 @@
         this.failures_list.append_view(function(b) {
           b.li(function() {
             b.div(example.full_name());
+            b.div(example.failure_message);
             b.pre(example.stack);
           });
         });
       },
 
       examples_completed_for_current_spec_file: function() {
-        Screw.clear_descriptions();
+        Screw.clear();
         this.num_completed_files++;
         this.num_completed_files_span.html(this.num_completed_files);
         this.load_next_spec_path();

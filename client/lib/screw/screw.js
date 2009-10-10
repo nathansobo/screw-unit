@@ -7,9 +7,8 @@ Monarch.module("Screw", {
     specification(this.shared_context);
   },
 
-  clear_descriptions: function() {
-    this._description_stack = null;
-    this._root_description = null;
+  clear: function() {
+    this._root_description.clear_children();
   },
 
   root_description: function() {

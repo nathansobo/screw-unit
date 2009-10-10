@@ -9,6 +9,7 @@ Monarch.constructor("Screw.Description", Screw.RunnableMethods, {
     this.inits = [];
     this.befores = [];
     this.afters = [];
+    this.child_subscriptions = new Monarch.SubscriptionBundle();
     this.example_completed_subscription_node = new Monarch.SubscriptionNode();
     this.has_scenario = false;
   },
@@ -16,6 +17,7 @@ Monarch.constructor("Screw.Description", Screw.RunnableMethods, {
   clone: function() {
     var clone = Screw.$.extend(new Screw.Description(), this);
     clone.example_completed_subscription_node = new Monarch.SubscriptionNode();
+    clone.child_subscriptions = new Monarch.SubscriptionBundle();
     clone.children = [];
     clone.child_descriptions = [];
     clone.examples = [];
@@ -26,10 +28,17 @@ Monarch.constructor("Screw.Description", Screw.RunnableMethods, {
         clone.add_description(child_clone);
       } else {
         clone.add_example(child_clone);
-      }
+        }
     });
 
     return clone;
+  },
+
+  clear_children: function() {
+    this.child_subscriptions.destroy_all();
+    this.children = [];
+    this.child_descriptions = [];
+    this.examples = [];
   },
 
   total_examples: function() {
@@ -110,9 +119,10 @@ Monarch.constructor("Screw.Description", Screw.RunnableMethods, {
     description.index = this.children.length;
     this.children.push(description);
     this.child_descriptions.push(description);
-    description.on_example_completed(function(example) {
+
+    this.child_subscriptions.add(description.on_example_completed(function(example) {
       self.example_completed_subscription_node.publish(example);
-    });
+    }));
   },
 
   add_example: function(example) {
@@ -125,9 +135,9 @@ Monarch.constructor("Screw.Description", Screw.RunnableMethods, {
       this.children.push(example);
       this.examples.push(example);
 
-      example.on_example_completed(function(example) {
+      this.child_subscriptions.add(example.on_example_completed(function(example) {
         self.example_completed_subscription_node.publish(example);
-      });
+      }));
     }
   },
 

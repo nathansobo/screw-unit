@@ -10,7 +10,6 @@ Monarch.constructor("Screw.Interface.Runner", Monarch.View.Template, {
         root_description.on_example_completed(function() {
           completed_example_count++;
           if (completed_example_count == total_example_count) {
-            debugger;
             var outcome = (root_description.failed_examples().length == 0) ? "success" : root_description.failure_messages().join("\n");
             Screw.jQuery.ajax({ type: 'POST', url: '/complete', data: outcome });
           }

@@ -9,7 +9,7 @@ Monarch.module("Screw.RunnableMethods", {
   },
 
   on_example_completed: function(callback) {
-    this.example_completed_subscription_node.subscribe(callback);
+    return this.example_completed_subscription_node.subscribe(callback);
   }
 });
 
