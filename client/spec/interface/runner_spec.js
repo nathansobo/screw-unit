@@ -10,6 +10,7 @@ Screw.Unit(function(c) { with(c) {
       root.add_description(child_description_2);
       view = Screw.Interface.Runner.to_view({root: root, build_immediately: true, show: show});
       mock(Screw.jQuery, 'cookie');
+      mock(Screw.jQuery, 'ajax');
     });
 
     context("when passed the show: 'all' option", function() {

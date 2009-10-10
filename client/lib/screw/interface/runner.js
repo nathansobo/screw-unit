@@ -4,6 +4,18 @@ Monarch.constructor("Screw.Interface.Runner", Monarch.View.Template, {
   constructor_properties: {
     run_specs_on_page_load: function() {
       jQuery(function() {
+        var root_description = Screw.root_description();
+        var completed_example_count = 0;
+        var total_example_count = root_description.total_examples();
+        root_description.on_example_completed(function() {
+          completed_example_count++;
+          if (completed_example_count == total_example_count) {
+            debugger;
+            var outcome = (root_description.failed_examples().length == 0) ? "success" : root_description.failure_messages().join("\n");
+            Screw.jQuery.ajax({ type: 'POST', url: '/complete', data: outcome });
+          }
+        });
+
         var queue = new Monarch.Queue();
         var runner;
         queue.add(function() {
@@ -58,17 +70,6 @@ Monarch.constructor("Screw.Interface.Runner", Monarch.View.Template, {
     initialize: function() {
       if (this.show == "all") this.addClass('show_all');
       if (this.show == "failed") this.addClass("show_failed");
-
-      var root_description = Screw.root_description();
-      var completed_example_count = 0;
-      var total_example_count = root_description.total_examples();
-      root_description.on_example_completed(function() {
-        completed_example_count++;
-        if (completed_example_count == total_example_count) {
-          var outcome = (root_description.failed_examples().length == 0) ? "success" : root_description.failure_messages().join("\n");
-          Screw.$.ajax({ type: 'POST', url: '/complete', data: outcome });
-        }
-      });
     },
 
     show_failed: function() {
