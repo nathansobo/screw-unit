@@ -18,6 +18,18 @@ Screw.Unit(function(c) { with(c) {
       });
     });
 
+    describe("#focus", function() {
+      it("sets window.location to match the path of the view's Example", function() {
+        mock(Screw.Interface, 'get_location', function() {
+          return { href: "http://localhost:8080/specs?[[0]]"};
+        });
+
+        mock(Screw.Interface, 'set_location');
+        view.focus();
+        expect(Screw.Interface.set_location).to(have_been_called, with_args("http://localhost:8080/specs?" + JSON.stringify([example.path()])));
+      });
+    });
+
     describe("when span.name is clicked", function() {
       it("calls #focus on the view", function() {
         mock(view, 'focus');

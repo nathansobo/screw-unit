@@ -23,10 +23,14 @@ Screw.Unit(function(c) { with(c) {
       description_2.add_example(example_3);
       description_2.add_example(example_4);
 
-      view = Screw.Interface.ProgressBar.to_view({examples_to_run: [description_1, description_2]});
+      root = new Screw.Description('root');
+      root.add_description(description_1);
+      root.add_description(description_2);
+
+      view = Screw.Interface.ProgressBar.to_view({root: root});
     });
 
-    describe("when an example within one of the associated examples to run is completed", function() {
+    describe("when an example within the given root is completed", function() {
       it("updates the width of the progress bar to the proportion of completed examples and updates the 'n of m completed' text", function() {
         expect(view.find('div#screw_unit_progress').css('width')).to(equal, '0%');
         expect(view.html()).to(match, "0 of 4");
@@ -39,7 +43,7 @@ Screw.Unit(function(c) { with(c) {
       });
     });
 
-    describe("when an example within the associated runnable fails", function() {
+    describe("when an example within the given root fails", function() {
       before(function() {
         should_fail = true;
       });

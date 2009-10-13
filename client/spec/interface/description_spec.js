@@ -7,6 +7,19 @@ Screw.Unit(function(c) { with(c) {
       parent_description.add_description(description);
     });
 
+    describe("#focus", function() {
+      it("sets window.location to match the path of the view's Description", function() {
+        view = Screw.Interface.Description.to_view({description: description, build_immediately: true});
+        mock(Screw.Interface, 'get_location', function() {
+          return { href: "http://localhost:8080/specs?[[0]]"};
+        });
+
+        mock(Screw.Interface, 'set_location');
+        view.focus();
+        expect(Screw.Interface.set_location).to(have_been_called, with_args("http://localhost:8080/specs?" + JSON.stringify([description.path()])));
+      });
+    });
+
     describe("#content", function() {
       context("when the view is instantiated without the build_immediately option", function() {
         var example_1, example_2, set_timeout_callback;

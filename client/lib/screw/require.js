@@ -8,8 +8,6 @@ Monarch.module("Screw.Require", {
   use_cache_buster: true,
 
   require: function(javascript_path, onload) {
-    console.debug(javascript_path);
-
     if (Screw.Require.required_paths[javascript_path]) return;
     var full_path = javascript_path + ".js";
 

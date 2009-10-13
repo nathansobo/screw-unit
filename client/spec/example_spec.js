@@ -167,7 +167,6 @@ Screw.Unit(function(c) { with(c) {
 
         it("returns the a message including the example's name and the error message", function() {
           example.run();
-          console.debug(example.failure_message);
           expect(example.failure_message).to(match, "sad times");
         });
       });

@@ -60,7 +60,7 @@ Monarch.constructor("Screw.Interface.Description", Monarch.View.Template, {
     },
 
     focus: function() {
-      throw new Error("Not yet implemented");
+      Screw.Interface.set_location(Screw.Interface.base_location() + "?" + JSON.stringify([this.description.path()]));
     }
   }
 });

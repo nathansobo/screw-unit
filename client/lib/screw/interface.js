@@ -16,7 +16,11 @@ Monarch.module("Screw.Interface", {
   },
 
   get_location: function() {
-    return window.location.toString();
+    return window.location;
+  },
+
+  base_location: function() {
+    return this.get_location().href.split('?')[0];
   },
 
   examples_to_run: function() {

@@ -11,12 +11,9 @@ Monarch.constructor("Screw.Interface.ProgressBar", Monarch.View.Template, {
   view_properties: {
     initialize: function() {
       var self = this;
-      this.total_examples = 0;
-      Screw.each(this.examples_to_run, function() {
-        self.total_examples += this.total_examples();
-        this.on_example_completed(function(example) {
-          self.update_progress(example);
-        });
+      this.total_examples = this.root.total_examples();
+      this.root.on_example_completed(function(example) {
+        self.update_progress(example);
       });
 
 

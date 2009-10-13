@@ -3,6 +3,7 @@
 Monarch.constructor("Screw.Interface.Runner", Monarch.View.Template, {
   constructor_properties: {
     run_specs_on_page_load: function() {
+      var self = this;
       jQuery(function() {
         var root_description = Screw.root_description();
         var completed_example_count = 0;
@@ -18,16 +19,26 @@ Monarch.constructor("Screw.Interface.Runner", Monarch.View.Template, {
         var queue = new Monarch.Queue();
         var runner;
         queue.add(function() {
-          runner = Screw.Interface.Runner.to_view({root: Screw.root_description(), show: jQuery.cookie("__screw_unit__show") || "all"});
+          var show = jQuery.cookie("__screw_unit__show") || "all";
+          runner = Screw.Interface.Runner.to_view({root: Screw.root_description(), show: show});
         });
         queue.add(function() {
           Screw.$('body').html(runner);
         });
         queue.add(function() {
-          runner.run();
+          runner.run(self.run_paths());
         })
         queue.start();
       });
+    },
+
+    run_paths: function() {
+      var after_hash = Screw.Interface.get_location().href.split("?")[1];
+      if (after_hash) {
+        return JSON.parse(after_hash);
+      } else {
+        return null;
+      }
     }
   },
 
@@ -51,7 +62,7 @@ Monarch.constructor("Screw.Interface.Runner", Monarch.View.Template, {
               });
             });
             td(function() {
-              subview('progress_bar', Screw.Interface.ProgressBar, {examples_to_run: Screw.Interface.examples_to_run()});
+              subview('progress_bar', Screw.Interface.ProgressBar, {root: initial_attributes.root});
             });
           })
         })
@@ -72,37 +83,55 @@ Monarch.constructor("Screw.Interface.Runner", Monarch.View.Template, {
     },
 
     show_failed: function() {
-      jQuery.cookie("__screw_unit__show", "failed");
+      jQuery.cookie("__screw_unit__show", "failed", {path: "/"});
       this.addClass('show_failed');
       this.removeClass('show_all');
     },
 
     show_all: function() {
-      jQuery.cookie("__screw_unit__show", "all");
+      jQuery.cookie("__screw_unit__show", "all", {path: "/"});
       this.addClass('show_all');
       this.removeClass('show_failed');
     },
 
     rerun_failed: function() {
-      throw new Error("not implemented");
+      var failing_paths = Monarch.Util.map(this.root.failed_examples(), function(example) { return example.path() });
+
+      
+      Screw.Interface.set_location(Screw.Interface.base_location() + '?' + JSON.stringify(failing_paths));
     },
 
     rerun_all: function() {
-      throw new Error("not implemented");
+      Screw.Interface.set_location(Screw.Interface.base_location());
     },
 
-    run: function() {
+    run: function(run_paths) {
       var self = this;
+      var objects_to_run = [];
+      if (run_paths) {
+        Monarch.Util.each(run_paths, function(path) {
+          var runnable = self.root.runnable_at_path(path);
+          if (runnable) {
+            objects_to_run.push(runnable);
+          } else {
+            throw new Error("No runnable at path " + path);
+          }
+        });
+      } else {
+        objects_to_run.push(self.root);
+      }
+
       this.completed_example_count = 0;
       this.total_examples = Screw.root_description().total_examples();
 
       var queue = new Monarch.Queue();
+      this.root.on_example_completed(function() { self.update() } );
 
-      Screw.root_description().on_example_completed(function() { self.update() } );
-      Monarch.Util.each(Screw.Interface.examples_to_run(), function(example) {
+
+      Monarch.Util.each(objects_to_run, function(runnable) {
         queue.add(function() {
-          example.run();
-        })
+          runnable.run();
+        });
       });
 
       queue.start();

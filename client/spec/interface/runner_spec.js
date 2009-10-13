@@ -1,31 +1,82 @@
 Screw.Unit(function(c) { with(c) {
   describe("Screw.Interface.Runner", function() {
-    var root, child_description_1, child_description_2, view, show;
+    var root, child_description_1, child_description_1_example, child_description_2, view, show;
 
     before(function() {
+      Screw.Monarch.Queue.synchronous = true;
+
       root = new Screw.Description("all specs");
       child_description_1 = new Screw.Description("child description 1");
       child_description_2 = new Screw.Description("child description 2");
+      child_description_1_example = new Screw.Example("child description 1 example", function() {  });
+      child_description_1.add_example(child_description_1_example);
+
       root.add_description(child_description_1);
       root.add_description(child_description_2);
+
       view = Screw.Interface.Runner.to_view({root: root, build_immediately: true, show: show});
       mock(Screw.jQuery, 'cookie');
       mock(Screw.jQuery, 'ajax');
     });
 
-    context("when passed the show: 'all' option", function() {
-      it("renders itself with the 'show_all' class and not the 'show_failed' class", function() {
-        view = Screw.Interface.Runner.to_view({root: root, build_immediately: true, show: 'all'});
-        expect(view.hasClass("show_all")).to(be_true);
-        expect(view.hasClass("show_failed")).to(be_false);
+    init(function() {
+      show = 'all'
+    });
+
+
+    describe(".run_paths", function() {
+      it("returns the string following # parsed as JSON", function() {
+        mock(Screw.Interface, 'get_location', function() {
+          return {
+            href: "http://localhost:8080/specs?[[1], [2,0,0]]"
+          }
+        });
+        expect(Screw.Interface.Runner.run_paths()).to(equal, [[1], [2,0,0]]);
       });
     });
 
-    context("when passed the show: 'failed' option'", function() {
-      it("renders itself with the 'show_failed' class and not the 'show_all' class", function() {
-        view = Screw.Interface.Runner.to_view({root: root, build_immediately: true, show: 'failed'});
-        expect(view.hasClass("show_failed")).to(be_true);
-        expect(view.hasClass("show_all")).to(be_false);
+    describe(".to_view", function() {
+      context("when passed the show: 'all' option", function() {
+        it("renders itself with the 'show_all' class and not the 'show_failed' class", function() {
+          expect(view.hasClass("show_all")).to(be_true);
+          expect(view.hasClass("show_failed")).to(be_false);
+        });
+      });
+
+      context("when passed the show: 'failed' option'", function() {
+        init(function() {
+          show = 'failed';
+        });
+
+        it("renders itself with the 'show_failed' class and not the 'show_all' class", function() {
+          expect(view.hasClass("show_failed")).to(be_true);
+          expect(view.hasClass("show_all")).to(be_false);
+        });
+      });
+    });
+
+
+    describe("#run", function() {
+      context("when passed an array of paths as the run_paths: option", function() {
+        it("calls run on the examples or descriptions corresponding to the paths", function() {
+          mock(child_description_1, 'run');
+          mock(child_description_1_example, 'run');
+          mock(child_description_2, 'run');
+
+          view.run([[0, 0], [1]]);
+
+          expect(child_description_1.run).to_not(have_been_called);
+          expect(child_description_1_example.run).to(have_been_called, once);
+          expect(child_description_2.run).to(have_been_called, once);
+        });
+      });
+
+      context("when passed no run_paths", function() {
+        it("calls #run on root", function() {
+          mock(root, 'run');
+          view.run();
+          expect(root.run).to(have_been_called);
+        });
       });
     });
 
@@ -70,7 +121,7 @@ Screw.Unit(function(c) { with(c) {
 
         it("stores a cookie to retain the setting across refreshes", function() {
           view.find("button#show_failed").click();
-          expect(Screw.jQuery.cookie).to(have_been_called, with_args("__screw_unit__show", "failed"));
+          expect(Screw.jQuery.cookie).to(have_been_called, with_args("__screw_unit__show", "failed", {path: "/"}));
         });
       });
 
@@ -98,7 +149,34 @@ Screw.Unit(function(c) { with(c) {
 
         it("stores a cookie to retain the setting across refreshes", function() {
           view.find("button#show_all").click();
-          expect(Screw.jQuery.cookie).to(have_been_called, with_args("__screw_unit__show", "all"));
+          expect(Screw.jQuery.cookie).to(have_been_called, with_args("__screw_unit__show", "all", {path: "/"}));
+        });
+      });
+
+      describe("when the Rerun All button is clicked", function() {
+        it("sets window.location to the current path, without any path specifier", function() {
+          mock(Screw.Interface, 'get_location', function() {
+            return { href: "http://localhost:8080/specs?[[0]]"};
+          });
+
+          mock(Screw.Interface, 'set_location');
+          view.find("button#rerun_all").click();
+          expect(Screw.Interface.set_location).to(have_been_called, with_args("http://localhost:8080/specs"));
+        });
+      });
+
+      describe("when the Rerun Failed button is clicked", function() {
+        it("sets window.location to the paths of all currently failing examples", function() {
+          view.run();
+          mock(Screw.Interface, 'get_location', function() {
+            return { href: "http://localhost:8080/specs?[[0]]"};
+          });
+          mock(Screw.Interface, 'set_location');
+
+          view.find("button#rerun_failed").click();
+
+          expect(Screw.Interface.set_location).to(have_been_called);
+          expect(Screw.Interface.set_location).to(have_been_called, with_args("http://localhost:8080/specs?" + JSON.stringify([failing_example_1.path(), failing_example_2.path()])));
         });
       });
     });
@@ -132,11 +210,10 @@ Screw.Unit(function(c) { with(c) {
             mock(Screw.root_description(), "failed_examples", function() { return []; });
           });
 
-
           it("adds the .passed class to the root description", function() {
-              view.update();
-              expect(Screw.root_description().failed_examples).to(have_been_called, once);
-              expect(view.find("ul.descriptions").hasClass("passed")).to(be_true);
+            view.update();
+            expect(Screw.root_description().failed_examples).to(have_been_called, once);
+            expect(view.find("ul.descriptions").hasClass("passed")).to(be_true);
           });
         });
       });
