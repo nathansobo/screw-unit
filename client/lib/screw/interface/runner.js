@@ -6,21 +6,11 @@ Monarch.constructor("Screw.Interface.Runner", Monarch.View.Template, {
       var self = this;
       jQuery(function() {
         var root_description = Screw.root_description();
-        var completed_example_count = 0;
-        var total_example_count = root_description.total_examples();
-        root_description.on_example_completed(function() {
-          completed_example_count++;
-          if (completed_example_count == total_example_count) {
-            var outcome = (root_description.failed_examples().length == 0) ? "success" : root_description.failure_messages().join("\n");
-            Screw.jQuery.ajax({ type: 'POST', url: '/complete', data: outcome });
-          }
-        });
-
         var queue = new Monarch.Queue();
         var runner;
         queue.add(function() {
           var show = jQuery.cookie("__screw_unit__show") || "all";
-          runner = Screw.Interface.Runner.to_view({root: Screw.root_description(), show: show});
+          runner = Screw.Interface.Runner.to_view({root: Screw.root_description(), show: show, post_on_completion: true});
         });
         queue.add(function() {
           Screw.$('body').html(runner);
@@ -96,8 +86,6 @@ Monarch.constructor("Screw.Interface.Runner", Monarch.View.Template, {
 
     rerun_failed: function() {
       var failing_paths = Monarch.Util.map(this.root.failed_examples(), function(example) { return example.path() });
-
-      
       Screw.Interface.set_location(Screw.Interface.base_location() + '?' + JSON.stringify(failing_paths));
     },
 
@@ -107,26 +95,12 @@ Monarch.constructor("Screw.Interface.Runner", Monarch.View.Template, {
 
     run: function(run_paths) {
       var self = this;
-      var objects_to_run = [];
-      if (run_paths) {
-        Monarch.Util.each(run_paths, function(path) {
-          var runnable = self.root.runnable_at_path(path);
-          if (runnable) {
-            objects_to_run.push(runnable);
-          } else {
-            throw new Error("No runnable at path " + path);
-          }
-        });
-      } else {
-        objects_to_run.push(self.root);
-      }
-
+      var objects_to_run = this.determine_runnables_to_run(run_paths);
       this.completed_example_count = 0;
       this.total_examples = Screw.root_description().total_examples();
 
       var queue = new Monarch.Queue();
-      this.root.on_example_completed(function() { self.update() } );
-
+      this.root.on_example_completed(function() { self.example_completed() } );
 
       Monarch.Util.each(objects_to_run, function(runnable) {
         queue.add(function() {
@@ -137,12 +111,33 @@ Monarch.constructor("Screw.Interface.Runner", Monarch.View.Template, {
       queue.start();
     },
 
-    update: function() {
+    determine_runnables_to_run: function(run_paths) {
+      if (!run_paths) return [this.root];
+
+      var self = this;
+      var runnables_to_run = [];
+      Monarch.Util.each(run_paths, function(path) {
+        var runnable = self.root.runnable_at_path(path);
+        if (runnable) {
+          runnables_to_run.push(runnable);
+        } else {
+          throw new Error("No runnable at path " + path);
+        }
+      });
+      return runnables_to_run;
+    },
+
+    example_completed: function() {
       this.completed_example_count++;
-          
-      if (this.completed_example_count == this.total_examples) {
-        var is_success = (Screw.root_description().failed_examples().length == 0);
-        this.find("ul.descriptions").addClass(is_success ? "passed" : "failed");
+      if (this.completed_example_count == this.total_examples) this.all_examples_completed();
+    },
+
+    all_examples_completed: function() {
+      var is_success = (Screw.root_description().failed_examples().length == 0);
+      this.find("ul.descriptions").addClass(is_success ? "passed" : "failed");
+      if (this.post_on_completion) {
+        var outcome = (is_success) ? "success" : this.root.failure_messages().join("\n");
+        Screw.jQuery.ajax({ type: 'POST', url: '/complete', data: outcome });
       }
     }
   }

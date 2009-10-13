@@ -181,15 +181,11 @@ Screw.Unit(function(c) { with(c) {
       });
     });
 
-    describe("#update", function() {
+    describe("#example_completed", function() {
       describe("when the examples are completed", function() {
         before(function() {
           view.completed_example_count = 0;
           view.total_examples = 1;
-        });
-
-        after(function() {
-          expect(view.completed_example_count).to(equal, view.total_examples);
         });
 
         describe("when there were failures", function() {
@@ -198,7 +194,7 @@ Screw.Unit(function(c) { with(c) {
           });
 
           it("adds the .failed class to the root description", function() {
-            view.update();
+            view.example_completed();
 
             expect(Screw.root_description().failed_examples).to(have_been_called, once);
             expect(view.find("ul.descriptions").hasClass("failed")).to(be_true);
@@ -211,7 +207,7 @@ Screw.Unit(function(c) { with(c) {
           });
 
           it("adds the .passed class to the root description", function() {
-            view.update();
+            view.example_completed();
             expect(Screw.root_description().failed_examples).to(have_been_called, once);
             expect(view.find("ul.descriptions").hasClass("passed")).to(be_true);
           });
