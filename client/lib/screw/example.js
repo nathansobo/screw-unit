@@ -17,6 +17,13 @@ Monarch.constructor("Screw.Example", Screw.RunnableMethods, {
     clone.initialize(this.name, this.fn);
     return clone;
   },
+  
+  add_to_queue: function(queue) {
+    var self = this;
+    queue.add(function() {
+      self.run();
+    });
+  },
 
   run: function() {
     try {

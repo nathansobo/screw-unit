@@ -160,6 +160,16 @@ Monarch.constructor("Screw.Description", Screw.RunnableMethods, {
     this.afters.push(fn);
   },
 
+  add_to_queue: function(queue) {
+    Monarch.Util.each(this.examples, function(example) {
+      example.add_to_queue(queue);
+    });
+
+    Monarch.Util.each(this.child_descriptions, function(description) {
+      description.add_to_queue(queue);
+    });
+  },
+
   run: function() {
     var queue = new Monarch.Queue();
     Monarch.Util.each(this.examples, function(example) {

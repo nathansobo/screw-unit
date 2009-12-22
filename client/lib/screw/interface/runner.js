@@ -101,11 +101,9 @@ Monarch.constructor("Screw.Interface.Runner", Monarch.View.Template, {
 
       var queue = new Monarch.Queue();
       this.root.on_example_completed(function() { self.example_completed() } );
-
+      
       Monarch.Util.each(objects_to_run, function(runnable) {
-        queue.add(function() {
-          runnable.run();
-        });
+        runnable.add_to_queue(queue);
       });
 
       queue.start();

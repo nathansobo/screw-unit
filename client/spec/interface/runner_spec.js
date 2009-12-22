@@ -18,6 +18,10 @@ Screw.Unit(function(c) { with(c) {
       mock(Screw.jQuery, 'cookie');
       mock(Screw.jQuery, 'ajax');
     });
+    
+    after(function() {
+      Screw.Monarch.Queue.synchronous = false;
+    });
 
     init(function() {
       show = 'all'
@@ -58,24 +62,24 @@ Screw.Unit(function(c) { with(c) {
 
     describe("#run", function() {
       context("when passed an array of paths as the run_paths: option", function() {
-        it("calls run on the examples or descriptions corresponding to the paths", function() {
-          mock(child_description_1, 'run');
-          mock(child_description_1_example, 'run');
-          mock(child_description_2, 'run');
+        it("calls add_to_queue on the examples or descriptions corresponding to the paths, then starts the queue", function() {
+          mock(child_description_1, 'add_to_queue');
+          mock(child_description_1_example, 'add_to_queue');
+          mock(child_description_2, 'add_to_queue');
 
           view.run([[0, 0], [1]]);
 
-          expect(child_description_1.run).to_not(have_been_called);
-          expect(child_description_1_example.run).to(have_been_called, once);
-          expect(child_description_2.run).to(have_been_called, once);
+          expect(child_description_1.add_to_queue).to_not(have_been_called);
+          expect(child_description_1_example.add_to_queue).to(have_been_called, once);
+          expect(child_description_2.add_to_queue).to(have_been_called, once);
         });
       });
 
       context("when passed no run_paths", function() {
-        it("calls #run on root", function() {
-          mock(root, 'run');
+        it("calls #add_to_queue on root", function() {
+          mock(root, 'add_to_queue');
           view.run();
-          expect(root.run).to(have_been_called);
+          expect(root.add_to_queue).to(have_been_called);
         });
       });
     });

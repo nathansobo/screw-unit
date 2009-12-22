@@ -13,6 +13,10 @@ Screw.Unit(function(c) { with(c) {
         description.add_example(this);
       });
     });
+    
+    after(function() {
+      Screw.Monarch.Queue.synchronous = false;
+    });
 
     describe("#initialize", function() {
       it("assigns #name", function() {
