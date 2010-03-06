@@ -21,47 +21,47 @@ Monarch.module("Screw.Matchers", {
       return false;
     },
 
-    failure_message: function(expected, actual, not) {
+    failureMessage: function(expected, actual, not) {
       return 'expected ' + Screw.$.print(actual) + (not ? ' to not equal ' : ' to equal ') + Screw.$.print(expected);
     }
   },
 
-  be_gt: {
+  beGt: {
     match: function(expected, actual) {
       return actual > expected;
     },
 
-    failure_message: function(expected, actual, not) {
+    failureMessage: function(expected, actual, not) {
       return 'expected ' + Screw.$.print(actual) + (not ? ' to not ' : ' to ') + 'be greater than ' + Screw.$.print(expected);
     }
   },
 
-  be_gte: {
+  beGte: {
     match: function(expected, actual) {
       return actual >= expected;
     },
 
-    failure_message: function(expected, actual, not) {
+    failureMessage: function(expected, actual, not) {
       return 'expected ' + Screw.$.print(actual) + (not ? ' to not ' : ' to ') + 'be greater than or equal to ' + Screw.$.print(expected);
     }
   },
 
-  be_lt: {
+  beLt: {
     match: function(expected, actual) {
       return actual < expected;
     },
 
-    failure_message: function(expected, actual, not) {
+    failureMessage: function(expected, actual, not) {
       return 'expected ' + Screw.$.print(actual) + (not ? ' to not ' : ' to ') + 'be less than ' + Screw.$.print(expected);
     }
   },
 
-  be_lte: {
+  beLte: {
     match: function(expected, actual) {
       return actual <= expected;
     },
 
-    failure_message: function(expected, actual, not) {
+    failureMessage: function(expected, actual, not) {
       return 'expected ' + Screw.$.print(actual) + (not ? ' to not ' : ' to ') + 'be less than or equal to ' + Screw.$.print(expected);
     }
   },
@@ -74,119 +74,119 @@ Monarch.module("Screw.Matchers", {
         return actual.indexOf(expected) > -1;
     },
 
-    failure_message: function(expected, actual, not) {
+    failureMessage: function(expected, actual, not) {
       return 'expected ' + Screw.$.print(actual) + (not ? ' to not match ' : ' to match ') + Screw.$.print(expected);
     }
   },
 
-  be_blank: {
+  beBlank: {
     match: function(expected, actual) {
       if (actual == undefined) return true;
       if (typeof(actual) == "string") actual = actual.replace(/^\s*(.*?)\s*$/, "$1");
-      return Screw.Matchers.be_empty.match(expected, actual);
+      return Screw.Matchers.beEmpty.match(expected, actual);
     },
 
-    failure_message: function(expected, actual, not) {
+    failureMessage: function(expected, actual, not) {
       return 'expected ' + Screw.$.print(actual) + (not ? ' to not be blank' : ' to be blank');
     }
   },
 
-  be_empty: {
+  beEmpty: {
     match: function(expected, actual) {
       if (actual.length == undefined) throw(new Error(actual.toString() + " does not respond to length"));
 
       return actual.length == 0;
     },
 
-    failure_message: function(expected, actual, not) {
+    failureMessage: function(expected, actual, not) {
       return 'expected ' + Screw.$.print(actual) + (not ? ' to not be empty' : ' to be empty');
     }
   },
 
-  have_length: {
+  haveLength: {
     match: function(expected, actual) {
       if (actual.length == undefined) throw(new Error(actual.toString() + " does not respond to length"));
 
       return actual.length == expected;
     },
 
-    failure_message: function(expected, actual, not) {
+    failureMessage: function(expected, actual, not) {
       return 'expected ' + Screw.$.print(actual) + (not ? ' to not' : ' to') + ' have length ' + expected;
     }
   },
 
-  be_an_instance_of: {
+  beAnInstanceOf: {
     match: function(expected, actual) {
       return actual instanceof eval(expected);
     },
 
-    failure_message: function(expected, actual, not) {
+    failureMessage: function(expected, actual, not) {
       return 'expected ' + typeof actual + (not ? ' not' : '') + ' be an instance of ' + expected;
     }
   },
 
-  be_null: {
+  beNull: {
     match: function(expected, actual) {
       return actual == null;
     },
 
-    failure_message: function(expected, actual, not) {
+    failureMessage: function(expected, actual, not) {
       return 'expected ' + Screw.$.print(actual) + (not ? ' to not be null' : ' to be null');
     }
   },
 
-  be_undefined: {
+  beUndefined: {
     match: function(expected, actual) {
       return actual == undefined;
     },
 
-    failure_message: function(expected, actual, not) {
+    failureMessage: function(expected, actual, not) {
       return 'expected ' + Screw.$.print(actual) + (not ? ' to not be undefined' : ' to be undefined');
     }
   },
 
-  be_true: {
+  beTrue: {
     match: function(expected, actual) {
       return actual;
     },
 
-    failure_message: function(expected, actual, not) {
+    failureMessage: function(expected, actual, not) {
       return 'expected ' + Screw.$.print(actual) + (not ? ' to not be true' : ' to be true');
     }
   },
 
-  be_false: {
+  beFalse: {
     match: function(expected, actual) {
       return !actual;
     },
 
-    failure_message: function(expected, actual, not) {
+    failureMessage: function(expected, actual, not) {
       return 'expected ' + Screw.$.print(actual) + (not ? ' to not be false' : ' to be false');
     }
   },
 
-  have_been_called: {
-    match: function(expectation, mock_function) {
+  haveBeenCalled: {
+    match: function(expectation, mockFunction) {
       if (expectation) {
-        return this.match_with_expectation(expectation, mock_function);
+        return this.matchWithExpectation(expectation, mockFunction);
       } else {
-        return mock_function.call_count > 0;
+        return mockFunction.callCount > 0;
       }
     },
 
-    match_with_expectation: function(expectation, mock_function) {
-      if (expectation.__with_args__) {
-        return Screw.Matchers.equal.match(expectation.arguments, mock_function.most_recent_args);
-      } else if (expectation.__on_object__) {
-        return Screw.Matchers.equal.match(expectation.object, mock_function.most_recent_this_value);
+    matchWithExpectation: function(expectation, mockFunction) {
+      if (expectation._withArgs_) {
+        return Screw.Matchers.equal.match(expectation.arguments, mockFunction.mostRecentArgs);
+      } else if (expectation._onObject_) {
+        return Screw.Matchers.equal.match(expectation.object, mockFunction.mostRecentThisValue);
       } else if (typeof expectation == "number") {
-        return mock_function.call_count == expectation;
+        return mockFunction.callCount == expectation;
       } else {
         throw new Error("unrecognized expectation argument for mock function: " + expectation);
       }
     },
 
-    error_message_expectation_fragment: function(expectation, not) {
+    errorMessageExpectationFragment: function(expectation, not) {
       if (!expectation) {
         if (not) {
           return "";
@@ -194,9 +194,9 @@ Monarch.module("Screw.Matchers", {
           return " at least once";
         }
       } else {
-        if (expectation.__with_args__) {
+        if (expectation._withArgs_) {
           return " with arguments " + Screw.$.print(expectation.arguments);
-        } else if (expectation.__on_object__) {
+        } else if (expectation._onObject_) {
           return " on object " + Screw.$.print(expectation.object);
         } else {
           return " " + expectation + " time" + ((expectation == 1) ? "" : "s");
@@ -204,24 +204,24 @@ Monarch.module("Screw.Matchers", {
       }
     },
 
-    error_message_actual_fragment: function(expected, actual, not) {
-      if (expected && expected.__with_args__) {
-        return "with arguments " + Screw.$.print(actual.most_recent_args);
-      } else if (expected && expected.__on_object__) {
-        return "on object " + Screw.$.print(actual.most_recent_this_value);
+    errorMessageActualFragment: function(expected, actual, not) {
+      if (expected && expected._withArgs_) {
+        return "with arguments " + Screw.$.print(actual.mostRecentArgs);
+      } else if (expected && expected._onObject_) {
+        return "on object " + Screw.$.print(actual.mostRecentThisValue);
       } else {
-        return actual.call_count + " time" + ((actual.call_count == 1) ? "" : "s");
+        return actual.callCount + " time" + ((actual.callCount == 1) ? "" : "s");
       }
     },
 
-    failure_message: function(expected, actual, not) {
+    failureMessage: function(expected, actual, not) {
       var message;
       if (not) {
-        message = 'expected ' + actual.function_name + ' to have not been called' + this.error_message_expectation_fragment(expected, not);
+        message = 'expected ' + actual.functionName + ' to have not been called' + this.errorMessageExpectationFragment(expected, not);
       } else {
-        message = 'expected ' + actual.function_name + ' to have been called' + this.error_message_expectation_fragment(expected, not);
+        message = 'expected ' + actual.functionName + ' to have been called' + this.errorMessageExpectationFragment(expected, not);
       }
-      message += ' but it was called ' + this.error_message_actual_fragment(expected, actual, not);
+      message += ' but it was called ' + this.errorMessageActualFragment(expected, actual, not);
       return message;
     }
   },
@@ -230,16 +230,16 @@ Monarch.module("Screw.Matchers", {
   twice: 2,
   thrice: 3,
 
-  with_args: function() {
+  withArgs: function() {
     return {
-      __with_args__: true,
+      _withArgs_: true,
       arguments: Array.prototype.slice.call(arguments)
     };
   },
 
-  on_object: function(object) {
+  onObject: function(object) {
     return {
-      __on_object__: true,
+      _onObject_: true,
       object: object
     };
   },
@@ -252,7 +252,7 @@ Monarch.module("Screw.Matchers", {
       return false;
     },
 
-    failure_message: function(expected, actual, not) {
+    failureMessage: function(expected, actual, not) {
       if (not) {
         return "expected " + Screw.$.print(actual) + " to not contain " + Screw.$.print(expected) + ", but it did";
       } else {
@@ -261,19 +261,19 @@ Monarch.module("Screw.Matchers", {
     }
   },
 
-  throw_exception: {
+  throwException: {
     match: function(expected, actual) {
-      var threw_exception;
+      var threwException;
       try {
         actual();
-        threw_exception = false;
+        threwException = false;
       } catch(e) {
-        threw_exception = true;
+        threwException = true;
       }
-      return threw_exception;
+      return threwException;
     },
 
-    failure_message: function(expected, actual, not) {
+    failureMessage: function(expected, actual, not) {
       if (not) {
         return "expected function to not throw an exception, but it did";
       } else {

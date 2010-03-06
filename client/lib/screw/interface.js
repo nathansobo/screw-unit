@@ -8,23 +8,23 @@
 
 Monarch.module("Screw.Interface", {
   refresh: function() {
-    this.set_location(this.get_location());
+    this.setLocation(this.getLocation());
   },
 
-  set_location: function(location) {
+  setLocation: function(location) {
     window.location = location;
   },
 
-  get_location: function() {
+  getLocation: function() {
     return window.location;
   },
 
-  base_location: function() {
-    return this.get_location().href.split('?')[0];
+  baseLocation: function() {
+    return this.getLocation().href.split('?')[0];
   },
 
-  examples_to_run: function() {
-    return [Screw.root_description()];
+  examplesToRun: function() {
+    return [Screw.rootDescription()];
   }
 });
 

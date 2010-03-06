@@ -4,169 +4,169 @@ Monarch.constructor("Screw.Description", Screw.RunnableMethods, {
   initialize: function(name) {
     this.name = name;
     this.children = [];
-    this.child_descriptions = [];
+    this.childDescriptions = [];
     this.examples = [];
     this.inits = [];
     this.befores = [];
     this.afters = [];
-    this.child_subscriptions = new Monarch.SubscriptionBundle();
-    this.example_completed_subscription_node = new Monarch.SubscriptionNode();
-    this.has_scenario = false;
+    this.childSubscriptions = new Monarch.SubscriptionBundle();
+    this.exampleCompletedSubscriptionNode = new Monarch.SubscriptionNode();
+    this.hasScenario = false;
   },
 
   clone: function() {
     var clone = Screw.$.extend(new Screw.Description(), this);
-    clone.example_completed_subscription_node = new Monarch.SubscriptionNode();
-    clone.child_subscriptions = new Monarch.SubscriptionBundle();
+    clone.exampleCompletedSubscriptionNode = new Monarch.SubscriptionNode();
+    clone.childSubscriptions = new Monarch.SubscriptionBundle();
     clone.children = [];
-    clone.child_descriptions = [];
+    clone.childDescriptions = [];
     clone.examples = [];
 
     Screw.each(this.children, function() {
-      var child_clone = this.clone();
-      if (child_clone.constructor == Screw.Description) {
-        clone.add_description(child_clone);
+      var childClone = this.clone();
+      if (childClone.constructor == Screw.Description) {
+        clone.addDescription(childClone);
       } else {
-        clone.add_example(child_clone);
+        clone.addExample(childClone);
         }
     });
 
     return clone;
   },
 
-  clear_children: function() {
-    this.child_subscriptions.destroy_all();
+  clearChildren: function() {
+    this.childSubscriptions.destroyAll();
     this.children = [];
-    this.child_descriptions = [];
+    this.childDescriptions = [];
     this.examples = [];
   },
 
-  total_examples: function() {
-    var total_examples = this.examples.length;
-    Screw.each(this.child_descriptions, function() {
-      total_examples += this.total_examples();
+  totalExamples: function() {
+    var totalExamples = this.examples.length;
+    Screw.each(this.childDescriptions, function() {
+      totalExamples += this.totalExamples();
     })
-    return total_examples;
+    return totalExamples;
   },
 
-  failed_examples: function() {
-    var failed_examples = [];
+  failedExamples: function() {
+    var failedExamples = [];
     Screw.each(this.examples, function() {
       if (this.failed) {
-        failed_examples.push(this);
+        failedExamples.push(this);
       }
     });
-    Screw.each(this.child_descriptions, function() {
-      failed_examples = failed_examples.concat(this.failed_examples());
+    Screw.each(this.childDescriptions, function() {
+      failedExamples = failedExamples.concat(this.failedExamples());
     });
-    return failed_examples;
+    return failedExamples;
   },
 
-  failure_messages: function() {
+  failureMessages: function() {
     var messages = [];
-    Screw.each(this.failed_examples(), function() {
-      messages.push(this.failure_message);
+    Screw.each(this.failedExamples(), function() {
+      messages.push(this.failureMessage);
     });
     return messages;
   },
 
-  runnable_at_path: function(path) {
-    var current_runnable = this;
+  runnableAtPath: function(path) {
+    var currentRunnable = this;
     Screw.each(path, function() {
-      current_runnable = current_runnable.children[this];
+      currentRunnable = currentRunnable.children[this];
     });
-    return current_runnable;
+    return currentRunnable;
   },
 
-  add_description: function(description) {
-    if (this.has_scenarios) {
-      this.add_description_to_scenarios(description);
+  addDescription: function(description) {
+    if (this.hasScenarios) {
+      this.addDescriptionToScenarios(description);
     } else {
-      this.add_child_description_or_scenario(description)
+      this.addChildDescriptionOrScenario(description)
     }
   },
 
-  add_description_to_scenarios: function(description) {
-    this.scenario_child_descriptions.push(description);
-    Screw.each(this.child_descriptions, function() {
-      this.add_description(description.clone());
+  addDescriptionToScenarios: function(description) {
+    this.scenarioChildDescriptions.push(description);
+    Screw.each(this.childDescriptions, function() {
+      this.addDescription(description.clone());
     });
   },
 
-  add_scenario: function(scenario_description) {
-    if (!this.has_scenarios) {
-      this.scenario_examples = this.examples;
-      this.scenario_child_descriptions = this.child_descriptions;
+  addScenario: function(scenarioDescription) {
+    if (!this.hasScenarios) {
+      this.scenarioExamples = this.examples;
+      this.scenarioChildDescriptions = this.childDescriptions;
       this.children = [];
-      this.child_descriptions = [];
+      this.childDescriptions = [];
       this.examples = [];
-      this.has_scenarios = true;
+      this.hasScenarios = true;
     }
 
-    Screw.each(this.scenario_examples, function() {
-      scenario_description.add_example(this.clone());
+    Screw.each(this.scenarioExamples, function() {
+      scenarioDescription.addExample(this.clone());
     });
-    Screw.each(this.scenario_child_descriptions, function() {
-      scenario_description.add_description(this.clone());
+    Screw.each(this.scenarioChildDescriptions, function() {
+      scenarioDescription.addDescription(this.clone());
     });
 
-    this.add_child_description_or_scenario(scenario_description);
+    this.addChildDescriptionOrScenario(scenarioDescription);
   },
 
-  add_child_description_or_scenario: function(description) {
+  addChildDescriptionOrScenario: function(description) {
     var self = this;
-    description.parent_description = this;
+    description.parentDescription = this;
     description.index = this.children.length;
     this.children.push(description);
-    this.child_descriptions.push(description);
+    this.childDescriptions.push(description);
 
-    this.child_subscriptions.add(description.on_example_completed(function(example) {
-      self.example_completed_subscription_node.publish(example);
+    this.childSubscriptions.add(description.onExampleCompleted(function(example) {
+      self.exampleCompletedSubscriptionNode.publish(example);
     }));
   },
 
-  add_example: function(example) {
-    if (this.has_scenarios) {
-      this.add_example_to_scenarios(example);
+  addExample: function(example) {
+    if (this.hasScenarios) {
+      this.addExampleToScenarios(example);
     } else {
       var self = this;
-      example.parent_description = this;
+      example.parentDescription = this;
       example.index = this.children.length;
       this.children.push(example);
       this.examples.push(example);
 
-      this.child_subscriptions.add(example.on_example_completed(function(example) {
-        self.example_completed_subscription_node.publish(example);
+      this.childSubscriptions.add(example.onExampleCompleted(function(example) {
+        self.exampleCompletedSubscriptionNode.publish(example);
       }));
     }
   },
 
-  add_example_to_scenarios: function(example) {
-    this.scenario_examples.push(example);
-    Screw.each(this.child_descriptions, function() {
-      this.add_example(example.clone());
+  addExampleToScenarios: function(example) {
+    this.scenarioExamples.push(example);
+    Screw.each(this.childDescriptions, function() {
+      this.addExample(example.clone());
     });
   },
 
-  add_init: function(fn) {
+  addInit: function(fn) {
     this.inits.push(fn);
   },
 
-  add_before: function(fn) {
+  addBefore: function(fn) {
     this.befores.push(fn);
   },
 
-  add_after: function(fn) {
+  addAfter: function(fn) {
     this.afters.push(fn);
   },
 
-  add_to_queue: function(queue) {
+  addToQueue: function(queue) {
     Monarch.Util.each(this.examples, function(example) {
-      example.add_to_queue(queue);
+      example.addToQueue(queue);
     });
 
-    Monarch.Util.each(this.child_descriptions, function(description) {
-      description.add_to_queue(queue);
+    Monarch.Util.each(this.childDescriptions, function(description) {
+      description.addToQueue(queue);
     });
   },
 
@@ -178,7 +178,7 @@ Monarch.constructor("Screw.Description", Screw.RunnableMethods, {
       })
     });
 
-    Monarch.Util.each(this.child_descriptions, function(description) {
+    Monarch.Util.each(this.childDescriptions, function(description) {
        queue.add(function() {
          description.run();
        });
@@ -187,40 +187,40 @@ Monarch.constructor("Screw.Description", Screw.RunnableMethods, {
     queue.start();
   },
 
-  run_inits: function(example_context) {
-    if (this.parent_description) {
-      this.parent_description.run_inits(example_context);
+  runInits: function(exampleContext) {
+    if (this.parentDescription) {
+      this.parentDescription.runInits(exampleContext);
     }
 
     Screw.each(this.inits, function() {
-      this.call(example_context);
+      this.call(exampleContext);
     });
   },
 
-  run_befores: function(example_context) {
-    if (this.parent_description) {
-      this.parent_description.run_befores(example_context);
+  runBefores: function(exampleContext) {
+    if (this.parentDescription) {
+      this.parentDescription.runBefores(exampleContext);
     }
 
     Screw.each(this.befores, function() {
-      this.call(example_context);
+      this.call(exampleContext);
     });
   },
 
-  run_afters: function(example_context) {
+  runAfters: function(exampleContext) {
     Screw.each(this.afters, function() {
-      this.call(example_context);
+      this.call(exampleContext);
     });
 
-    if (this.parent_description) {
-      this.parent_description.run_afters(example_context);
+    if (this.parentDescription) {
+      this.parentDescription.runAfters(exampleContext);
     }
   },
 
 
-  full_name: function() {
-    if (this.parent_description) {
-      return this.parent_description.full_name() + this.name + " :: ";
+  fullName: function() {
+    if (this.parentDescription) {
+      return this.parentDescription.fullName() + this.name + " :: ";
     } else {
       return "";
     }

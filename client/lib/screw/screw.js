@@ -3,54 +3,54 @@ Screw = {};
 
 Monarch.module("Screw", {
   Unit: function(specification) {
-    if (!this.shared_context) this.shared_context = new Screw.Context();
-    specification(this.shared_context);
+    if (!this.sharedContext) this.sharedContext = new Screw.Context();
+    specification(this.sharedContext);
   },
 
   clear: function() {
-    this._root_description.clear_children();
+    this.RootDescription.clearChildren();
   },
 
-  root_description: function() {
-    return this._root_description = this._root_description || new Screw.Description("All specs");
+  rootDescription: function() {
+    return this.RootDescription = this.RootDescription || new Screw.Description("All specs");
   },
 
   mocks: [],
 
-  reset_mocks: function() {
+  resetMocks: function() {
     Screw.each(Screw.mocks, function() {
-      this.mocked_object[this.function_name] = this.original_function;
+      this.mockedObject[this.functionName] = this.originalFunction;
     })
     Screw.mocks = [];
   },
 
-  current_description: function() {
-    return this.description_stack()[this.description_stack().length - 1];
+  currentDescription: function() {
+    return this.descriptionStack()[this.descriptionStack().length - 1];
   },
 
-  push_description: function(description) {
-    this.description_stack().push(description);
+  pushDescription: function(description) {
+    this.descriptionStack().push(description);
   },
 
-  pop_description: function() {
-    var description = this.description_stack().pop();
-    this.current_description().add_description(description)
+  popDescription: function() {
+    var description = this.descriptionStack().pop();
+    this.currentDescription().addDescription(description)
   },
 
-  push_scenario: function(scenario_description) {
-    this.description_stack().push(scenario_description);
+  pushScenario: function(scenarioDescription) {
+    this.descriptionStack().push(scenarioDescription);
   },
 
-  pop_scenario: function() {
-    var scenario_description = this.description_stack().pop();
-    this.current_description().add_scenario(scenario_description);
+  popScenario: function() {
+    var scenarioDescription = this.descriptionStack().pop();
+    this.currentDescription().addScenario(scenarioDescription);
   },
 
-  description_stack: function() {
-    if (!this._description_stack) {
-      this._description_stack = [this.root_description()];
+  descriptionStack: function() {
+    if (!this.DescriptionStack) {
+      this.DescriptionStack = [this.rootDescription()];
     }
-    return this._description_stack;
+    return this.DescriptionStack;
   },
 
   map: function(array, fn) {
@@ -67,7 +67,7 @@ Monarch.module("Screw", {
     }
   },
 
-  reverse_each: function(array, fn) {
+  reverseEach: function(array, fn) {
     for (var i = array.length - 1; i >= 0; i--) {
       fn.call(array[i]);
     }

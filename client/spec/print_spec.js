@@ -32,9 +32,9 @@ Screw.Unit(function(c) { with(c) {
         expect(Screw.$.print('asdf')).to(equal, '"asdf"');
       });
       
-      describe('when the string is longer than the [max_string] option', function() {
+      describe('when the string is longer than the [maxString] option', function() {
         it("returns the string, truncated", function() {
-          expect(Screw.$.print('asdf', { max_string: 3 })).to(equal, '"asd..."');
+          expect(Screw.$.print('asdf', { maxString: 3 })).to(equal, '"asd..."');
         });        
       });
       
@@ -93,9 +93,9 @@ Screw.Unit(function(c) { with(c) {
         expect(Screw.$.print([1, 2, 3])).to(equal, '[ 1, 2, 3 ]');
       });
       
-      describe('when the array is longer than the [max_array] option', function() {
+      describe('when the array is longer than the [maxArray] option', function() {
         it("returns the printed array, truncated", function() {
-          expect(Screw.$.print([1, 2, 3, 4], { max_array: 2 })).to(equal, '[ 1, 2, 2 more... ]');
+          expect(Screw.$.print([1, 2, 3, 4], { maxArray: 2 })).to(equal, '[ 1, 2, 2 more... ]');
         });
       });
       

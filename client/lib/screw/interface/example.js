@@ -1,30 +1,30 @@
 (function(Screw, Monarch) {
 
 Monarch.constructor("Screw.Interface.Example", Monarch.View.Template, {
-  content: function(initial_attributes) { with(this.builder) {
+  content: function(initialAttributes) { with(this.builder) {
     li({'class': 'example'}, function() {
-      span(initial_attributes.example.name, {'class': 'name'}).click(function(view) {
+      span(initialAttributes.example.name, {'class': 'name'}).click(function(view) {
         view.focus();
       });
     });
   }},
 
-  view_properties: {
+  viewProperties: {
     initialize: function() {
       var self = this;
-      this.example.on_pass(function() {
+      this.example.onPass(function() {
         self.addClass("passed");
       })
-      this.example.on_fail(function(e) {
+      this.example.onFail(function(e) {
         self.addClass("failed");
 
-        var message = Screw.$("<div class='failure_message'/>");
+        var message = Screw.$("<div class='failureMessage'/>");
         message.text(e.message);
 
-        var trace = Screw.$("<pre class='failure_trace'/>");
+        var trace = Screw.$("<pre class='failureTrace'/>");
         if (e.stack) {
-          var enhanced_stack = e.stack.replace(/http:\/\/(.*_spec)\.js/g, '<a href="http://$1" target="_blank">http://$1.js</a>')
-          trace.html(enhanced_stack);
+          var enhancedStack = e.stack.replace(/http:\/\/(.*_spec)\.js/g, '<a href="http://$1" target="Blank">http://$1.js</a>')
+          trace.html(enhancedStack);
         }
 
         self.append(message);
@@ -33,7 +33,7 @@ Monarch.constructor("Screw.Interface.Example", Monarch.View.Template, {
     },
 
     focus: function() {
-      Screw.Interface.set_location(Screw.Interface.base_location() + "?" + JSON.stringify([this.example.path()]));
+      Screw.Interface.setLocation(Screw.Interface.baseLocation() + "?" + JSON.stringify([this.example.path()]));
     }
   }
 });

@@ -2,36 +2,36 @@ Screw.Unit(function(c) { with(c) {
   describe("Screw.Interface.Description", function() {
     var description, view;
     before(function() {
-      var parent_description = new Screw.Description("parent description");
+      var parentDescription = new Screw.Description("parent description");
       description = new Screw.Description("description");
-      parent_description.add_description(description);
+      parentDescription.addDescription(description);
     });
 
     describe("#focus", function() {
       it("sets window.location to match the path of the view's Description", function() {
-        view = Screw.Interface.Description.to_view({description: description, build_immediately: true});
-        mock(Screw.Interface, 'get_location', function() {
+        view = Screw.Interface.Description.toView({description: description, buildImmediately: true});
+        mock(Screw.Interface, 'getLocation', function() {
           return { href: "http://localhost:8080/specs?[[0]]"};
         });
 
-        mock(Screw.Interface, 'set_location');
+        mock(Screw.Interface, 'setLocation');
         view.focus();
-        expect(Screw.Interface.set_location).to(have_been_called, with_args("http://localhost:8080/specs?" + JSON.stringify([description.path()])));
+        expect(Screw.Interface.setLocation).to(haveBeenCalled, withArgs("http://localhost:8080/specs?" + JSON.stringify([description.path()])));
       });
     });
 
     describe("#content", function() {
-      context("when the view is instantiated without the build_immediately option", function() {
-        var example_1, example_2, set_timeout_callback;
+      context("when the view is instantiated without the buildImmediately option", function() {
+        var example1, example2, setTimeoutCallback;
         before(function() {
-          example_1 = new Screw.Example("example 1", function() { });
-          example_2 = new Screw.Example("example 2", function() { });
-          description.add_example(example_1);
-          description.add_example(example_2);
+          example1 = new Screw.Example("example 1", function() { });
+          example2 = new Screw.Example("example 2", function() { });
+          description.addExample(example1);
+          description.addExample(example2);
         });
 
         it("renders the outline of the Description's view immediately", function() {
-          view = Screw.Interface.Description.to_view({description: description});
+          view = Screw.Interface.Description.toView({description: description});
 
           var examples = view.find('ul.examples');
           expect(examples.length).to(equal, 1);
@@ -40,131 +40,131 @@ Screw.Unit(function(c) { with(c) {
 
         it("renders the Description's descendents in a setTimeout context", function() {
           mock(window, "setTimeout", function(callback, delay) { callback.call(window); });
-          view = Screw.Interface.Description.to_view({description: description});
+          view = Screw.Interface.Description.toView({description: description});
 
           var examples = view.find('ul.examples');
           expect(examples.length).to(equal, 1);
           expect(examples.find('li').length).to(equal, 2);
-          expect(examples.html()).to(match, Screw.Interface.Example.to_view({example: example_1}).html());
-          expect(examples.html()).to(match, Screw.Interface.Example.to_view({example: example_2}).html());
+          expect(examples.html()).to(match, Screw.Interface.Example.toView({example: example1}).html());
+          expect(examples.html()).to(match, Screw.Interface.Example.toView({example: example2}).html());
         });
       });
 
       context("when the view's Description has #examples", function() {
-        var example_1, example_2;
+        var example1, example2;
         before(function() {
-          example_1 = new Screw.Example("example 1", function() {
-            if (should_fail) throw(new Error(failure_message));
+          example1 = new Screw.Example("example 1", function() {
+            if (shouldFail) throw(new Error(failureMessage));
           });
-          example_2 = new Screw.Example("example 2", function() {
-            if (should_fail) throw(new Error(failure_message));
+          example2 = new Screw.Example("example 2", function() {
+            if (shouldFail) throw(new Error(failureMessage));
           });
-          description.add_example(example_1);
-          description.add_example(example_2);
-          view = Screw.Interface.Description.to_view({description: description, build_immediately: true});
+          description.addExample(example1);
+          description.addExample(example2);
+          view = Screw.Interface.Description.toView({description: description, buildImmediately: true});
         });
 
         it("renders all examples within a ul.examples", function() {
           var examples = view.find('ul.examples');
           expect(examples.length).to(equal, 1);
           expect(examples.find('li').length).to(equal, 2);
-          expect(examples.html()).to(match, Screw.Interface.Example.to_view({example: example_1}).html());
-          expect(examples.html()).to(match, Screw.Interface.Example.to_view({example: example_2}).html());
+          expect(examples.html()).to(match, Screw.Interface.Example.toView({example: example1}).html());
+          expect(examples.html()).to(match, Screw.Interface.Example.toView({example: example2}).html());
         });
       });
 
       context("when the view's Description has no #examples", function() {
         before(function() {
-          view = Screw.Interface.Description.to_view({description: description, build_immediately: true});
+          view = Screw.Interface.Description.toView({description: description, buildImmediately: true});
         });
 
         it("does not render a ul.examples", function() {
-          expect(view.find('ul.examples')).to(be_empty);
+          expect(view.find('ul.examples')).to(beEmpty);
         });
       });
 
-      context("when the view's Description has #child_descriptions", function() {
-        var child_description_1, child_description_2;
+      context("when the view's Description has #childDescriptions", function() {
+        var childDescription1, childDescription2;
         before(function() {
-          child_description_1 = new Screw.Description("child description 1");
-          child_description_2 = new Screw.Description("child description 2");
-          description.add_description(child_description_1);
-          description.add_description(child_description_2);
-          view = Screw.Interface.Description.to_view({description: description, build_immediately: true});
+          childDescription1 = new Screw.Description("child description 1");
+          childDescription2 = new Screw.Description("child description 2");
+          description.addDescription(childDescription1);
+          description.addDescription(childDescription2);
+          view = Screw.Interface.Description.toView({description: description, buildImmediately: true});
         });
 
-        it("renders all child descriptions within a ul.child_descriptions", function() {
-          var child_descriptions = view.find('ul.child_descriptions');
-          expect(child_descriptions.length).to(equal, 1);
-          expect(child_descriptions.find('li').length).to(equal, 2);
-          expect(child_descriptions.html()).to(match, Screw.Interface.Description.to_view({description: child_description_1, build_immediately: true}).html());
-          expect(child_descriptions.html()).to(match, Screw.Interface.Description.to_view({description: child_description_2, build_immediately: true}).html());
+        it("renders all child descriptions within a ul.childDescriptions", function() {
+          var childDescriptions = view.find('ul.childDescriptions');
+          expect(childDescriptions.length).to(equal, 1);
+          expect(childDescriptions.find('li').length).to(equal, 2);
+          expect(childDescriptions.html()).to(match, Screw.Interface.Description.toView({description: childDescription1, buildImmediately: true}).html());
+          expect(childDescriptions.html()).to(match, Screw.Interface.Description.toView({description: childDescription2, buildImmediately: true}).html());
         });
 
       });
 
-      context("when the view's Description has no #child_descriptions", function() {
+      context("when the view's Description has no #childDescriptions", function() {
         before(function() {
-          view = Screw.Interface.Description.to_view({description: description, build_immediately: true});
+          view = Screw.Interface.Description.toView({description: description, buildImmediately: true});
         });
 
-        it("does not render a ul.child_descriptions", function() {
-          expect(view.find('ul.child_descriptions')).to(be_empty);
+        it("does not render a ul.childDescriptions", function() {
+          expect(view.find('ul.childDescriptions')).to(beEmpty);
         });
       });
     });
 
     describe("when span.name is clicked", function() {
       before(function() {
-        view = Screw.Interface.Description.to_view({description: description, build_immediately: true});
+        view = Screw.Interface.Description.toView({description: description, buildImmediately: true});
       });
 
       it("calls #focus on the view", function() {
         mock(view, 'focus');
         view.find("span.name").click();
-        expect(view.focus).to(have_been_called);
+        expect(view.focus).to(haveBeenCalled);
       });
     });
 
     describe("when an Example nested within the associated Description is completed", function() {
-      var grandchild_example, should_fail;
+      var grandchildExample, shouldFail;
       before(function() {
-        view = Screw.Interface.Description.to_view({description: description, build_immediately: true});
-        var child_description = new Screw.Description("child description");
-        grandchild_example = new Screw.Example("grandchild example", function() {
-          if (should_fail) throw(new Error("fails intentionally"));
+        view = Screw.Interface.Description.toView({description: description, buildImmediately: true});
+        var childDescription = new Screw.Description("child description");
+        grandchildExample = new Screw.Example("grandchild example", function() {
+          if (shouldFail) throw(new Error("fails intentionally"));
         })
-        child_description.add_example(grandchild_example);
-        description.add_description(child_description);
+        childDescription.addExample(grandchildExample);
+        description.addDescription(childDescription);
       });
 
       context("when the Example passes", function() {
         before(function() {
-          should_fail = false;
+          shouldFail = false;
         });
 
         it("applies the 'passed' class to its content", function() {
-          expect(view.hasClass('failed')).to(be_false);
-          expect(view.hasClass('passed')).to(be_false);
+          expect(view.hasClass('failed')).to(beFalse);
+          expect(view.hasClass('passed')).to(beFalse);
 
-          grandchild_example.run();
+          grandchildExample.run();
 
-          expect(view.hasClass('failed')).to(be_false);
-          expect(view.hasClass('passed')).to(be_true);
+          expect(view.hasClass('failed')).to(beFalse);
+          expect(view.hasClass('passed')).to(beTrue);
         });
       });
 
       context("when the Example fails", function() {
         before(function() {
-          should_fail = true;
+          shouldFail = true;
         });
 
         it("applies the 'failed' class to its content", function() {
-          expect(view.hasClass('failed')).to(be_false);
-          expect(view.hasClass('passed')).to(be_false);
-          grandchild_example.run();
-          expect(view.hasClass('failed')).to(be_true);
-          expect(view.hasClass('passed')).to(be_false);
+          expect(view.hasClass('failed')).to(beFalse);
+          expect(view.hasClass('passed')).to(beFalse);
+          grandchildExample.run();
+          expect(view.hasClass('failed')).to(beTrue);
+          expect(view.hasClass('passed')).to(beFalse);
         });
       });
     });

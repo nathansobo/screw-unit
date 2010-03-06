@@ -4377,7 +4377,7 @@ jQuery.each([ "Height", "Width" ], function(i, name){
 /*
  * jQuery history plugin
  * 
- * sample page: http://www.mikage.to/jquery/jquery_history.html
+ * sample page: http://www.mikage.to/jquery/jqueryHistory.html
  *
  * Copyright (c) 2006-2009 Taku Sano (Mikage Sawatari)
  * Licensed under the MIT License:
@@ -4396,9 +4396,9 @@ jQuery.extend({
 	historyInit: function(callback, src){
 		jQuery.historyCallback = callback;
 		if (src) jQuery.historyIframeSrc = src;
-		var current_hash = location.hash.replace(/\?.*$/, '');
+		var currentHash = location.hash.replace(/\?.*$/, '');
 		
-		jQuery.historyCurrentHash = current_hash;
+		jQuery.historyCurrentHash = currentHash;
 		// if ((jQuery.browser.msie) && (jQuery.browser.version < 8)) {
 		if (jQuery.browser.msie) {
 			// To stop the callback firing twice during initilization if no hash present
@@ -4407,15 +4407,15 @@ jQuery.extend({
 		}
 		
 			// add hidden iframe for IE
-			jQuery("body").prepend('<iframe id="jQuery_history" style="display: none;"'+
+			jQuery("body").prepend('<iframe id="jQueryHistory" style="display: none;"'+
 				(jQuery.historyIframeSrc ? ' src="'+jQuery.historyIframeSrc+'"' : '')
 				+'></iframe>'
 			);
-			var ihistory = jQuery("#jQuery_history")[0];
+			var ihistory = jQuery("#jQueryHistory")[0];
 			var iframe = ihistory.contentWindow.document;
 			iframe.open();
 			iframe.close();
-			iframe.location.hash = current_hash;
+			iframe.location.hash = currentHash;
 		}
 		else if (jQuery.browser.safari) {
 			// etablish back/forward stacks
@@ -4426,8 +4426,8 @@ jQuery.extend({
 			
 			jQuery.isFirst = true;
 		}
-    // if(current_hash) -- commented out by N.S. -- Always interpret the location, event empty, when initializing
-		jQuery.historyCallback(current_hash.replace(/^#/, ''));
+    // if(currentHash) -- commented out by N.S. -- Always interpret the location, event empty, when initializing
+		jQuery.historyCallback(currentHash.replace(/^#/, ''));
 		setInterval(jQuery.historyCheck, 100);
 	},
 	
@@ -4443,14 +4443,14 @@ jQuery.extend({
 		// if ((jQuery.browser.msie) && (jQuery.browser.version < 8)) {
 		if (jQuery.browser.msie) {
 			// On IE, check for location.hash of iframe
-			var ihistory = jQuery("#jQuery_history")[0];
+			var ihistory = jQuery("#jQueryHistory")[0];
 			var iframe = ihistory.contentDocument || ihistory.contentWindow.document;
-			var current_hash = iframe.location.hash.replace(/\?.*$/, '');
-			if(current_hash != jQuery.historyCurrentHash) {
+			var currentHash = iframe.location.hash.replace(/\?.*$/, '');
+			if(currentHash != jQuery.historyCurrentHash) {
 			
-				location.hash = current_hash;
-				jQuery.historyCurrentHash = current_hash;
-				jQuery.historyCallback(current_hash.replace(/^#/, ''));
+				location.hash = currentHash;
+				jQuery.historyCurrentHash = currentHash;
+				jQuery.historyCallback(currentHash.replace(/^#/, ''));
 				
 			}
 		} else if (jQuery.browser.safari) {
@@ -4479,10 +4479,10 @@ jQuery.extend({
 					// back button has been pushed to beginning and URL already pointed to hash (e.g. a bookmark)
 					// document.URL doesn't change in Safari
 					if (location.hash) {
-						var current_hash = location.hash;
+						var currentHash = location.hash;
 						jQuery.historyCallback(location.hash.replace(/^#/, ''));
 					} else {
-						var current_hash = '';
+						var currentHash = '';
 						jQuery.historyCallback('');
 					}
 					jQuery.isFirst = true;
@@ -4490,10 +4490,10 @@ jQuery.extend({
 			}
 		} else {
 			// otherwise, check for location.hash
-			var current_hash = location.hash.replace(/\?.*$/, '');
-			if(current_hash != jQuery.historyCurrentHash) {
-				jQuery.historyCurrentHash = current_hash;
-				jQuery.historyCallback(current_hash.replace(/^#/, ''));
+			var currentHash = location.hash.replace(/\?.*$/, '');
+			if(currentHash != jQuery.historyCurrentHash) {
+				jQuery.historyCurrentHash = currentHash;
+				jQuery.historyCallback(currentHash.replace(/^#/, ''));
 			}
 		}
 	},
@@ -4512,7 +4512,7 @@ jQuery.extend({
 		
 		// if ((jQuery.browser.msie) && (jQuery.browser.version < 8)) {
 		if (jQuery.browser.msie) {
-			var ihistory = jQuery("#jQuery_history")[0];
+			var ihistory = jQuery("#jQueryHistory")[0];
 			var iframe = ihistory.contentWindow.document;
 			iframe.open();
 			iframe.close();
@@ -4671,19 +4671,19 @@ Monarch = {
 (function(Monarch) {
 Monarch.ModuleSystem = {
   constructor: function() {
-    var constructor_basename, containing_module;
-    var args = this.extract_constructor_arguments(arguments);
+    var constructorBasename, containingModule;
+    var args = this.extractConstructorArguments(arguments);
 
-    if (args.qualified_constructor_name) {
-      constructor_basename = args.qualified_constructor_name.split(".").pop();
-      containing_module = this.create_module_containing_constructor(args.qualified_constructor_name);
+    if (args.qualifiedConstructorName) {
+      constructorBasename = args.qualifiedConstructorName.split(".").pop();
+      containingModule = this.createModuleContainingConstructor(args.qualifiedConstructorName);
     }
 
     var constructor = function() {
-      if (this.initialize && !constructor.__initialize_disabled__) this.initialize.apply(this, arguments);
+      if (this.initialize && !constructor._InitializeDisabled__) this.initialize.apply(this, arguments);
     }
 
-    if (constructor_basename) constructor.basename = constructor_basename;
+    if (constructorBasename) constructor.basename = constructorBasename;
 
     if (args.superconstructor) {
       this.extend(args.superconstructor, constructor);
@@ -4691,20 +4691,20 @@ Monarch.ModuleSystem = {
       this.extend(Monarch.ModuleSystem.Object, constructor);
     }
 
-    for(var i = 0; i < args.mixin_modules.length; i++) {
-      this.mixin(constructor.prototype, args.mixin_modules[i]);
+    for(var i = 0; i < args.mixinModules.length; i++) {
+      this.mixin(constructor.prototype, args.mixinModules[i]);
     }
 
-    if (constructor.prototype.constructor_initialize) {
-      if (!constructor.prototype.constructor_properties) constructor.prototype.constructor_properties = {};
-      constructor.prototype.constructor_properties.initialize = constructor.prototype.constructor_initialize;
-      delete constructor.prototype.constructor_initialize;
+    if (constructor.prototype.constructorInitialize) {
+      if (!constructor.prototype.constructorProperties) constructor.prototype.constructorProperties = {};
+      constructor.prototype.constructorProperties.initialize = constructor.prototype.constructorInitialize;
+      delete constructor.prototype.constructorInitialize;
     }
-    if (constructor.prototype.constructor_properties) {
-      this.mixin(constructor, constructor.prototype.constructor_properties);
+    if (constructor.prototype.constructorProperties) {
+      this.mixin(constructor, constructor.prototype.constructorProperties);
     }
 
-    if (constructor_basename) containing_module[constructor_basename] = constructor;
+    if (constructorBasename) containingModule[constructorBasename] = constructor;
 
     if (args.superconstructor && args.superconstructor.extended) args.superconstructor.extended(constructor);
     if (constructor.initialize) constructor.initialize();
@@ -4712,26 +4712,26 @@ Monarch.ModuleSystem = {
     return constructor;
   },
 
-  module: function(qualified_module_name, properties) {
-    var module = this.create_module_path(qualified_module_name.split("."));
+  module: function(qualifiedModuleName, properties) {
+    var module = this.createModulePath(qualifiedModuleName.split("."));
     this.mixin(module, properties);
     return module;
   },
 
   extend: function(superconstructor, subconstructor) {
-    var original_subconstructor_prototype = subconstructor.prototype;
+    var originalSubconstructorPrototype = subconstructor.prototype;
     try {
-      superconstructor.__initialize_disabled__ = true;
+      superconstructor._InitializeDisabled__ = true;
       subconstructor.prototype = new superconstructor();
     } finally {
-      superconstructor.__initialize_disabled__ = false;
+      superconstructor._InitializeDisabled__ = false;
     }
 
-    if (superconstructor.prototype.constructor_properties) {
-      subconstructor.prototype.constructor_properties = this.clone(superconstructor.prototype.constructor_properties);
+    if (superconstructor.prototype.constructorProperties) {
+      subconstructor.prototype.constructorProperties = this.clone(superconstructor.prototype.constructorProperties);
     }
     subconstructor.prototype.constructor = subconstructor;
-    this.mixin(subconstructor.prototype, original_subconstructor_prototype);
+    this.mixin(subconstructor.prototype, originalSubconstructorPrototype);
     return subconstructor;
   },
 
@@ -4742,8 +4742,8 @@ Monarch.ModuleSystem = {
   mixin: function(target, module) {
     for (var prop in module) {
       if (prop == "constructor") continue;
-      if (prop == "constructor_properties" && target.constructor_properties) {
-        this.mixin(target.constructor_properties, module.constructor_properties);
+      if (prop == "constructorProperties" && target.constructorProperties) {
+        this.mixin(target.constructorProperties, module.constructorProperties);
         continue;
       }
       target[prop] = module[prop];
@@ -4751,40 +4751,40 @@ Monarch.ModuleSystem = {
     return target;
   },
 
-  create_module_containing_constructor: function(qualified_constructor_name) {
-    var qualified_constructor_path = qualified_constructor_name.split(".");
-    var containing_module_path = qualified_constructor_path.slice(0, qualified_constructor_path.length - 1);
-    return this.create_module_path(containing_module_path);
+  createModuleContainingConstructor: function(qualifiedConstructorName) {
+    var qualifiedConstructorPath = qualifiedConstructorName.split(".");
+    var containingModulePath = qualifiedConstructorPath.slice(0, qualifiedConstructorPath.length - 1);
+    return this.createModulePath(containingModulePath);
   },
 
-  create_module_path: function(path) {
-    var current_module = window;
+  createModulePath: function(path) {
+    var currentModule = window;
     for (var i = 0; i < path.length; ++i) {
-      var path_fragment = path[i];
-      if (!current_module[path_fragment]) current_module[path_fragment] = {};
-      current_module = current_module[path_fragment];
+      var pathFragment = path[i];
+      if (!currentModule[pathFragment]) currentModule[pathFragment] = {};
+      currentModule = currentModule[pathFragment];
     }
-    return current_module;
+    return currentModule;
   },
 
-  extract_constructor_arguments: function(args) {
+  extractConstructorArguments: function(args) {
     var args = Array.prototype.slice.call(args, 0);
 
-    var constructor_arguments = {
-      mixin_modules: []
+    var constructorArguments = {
+      mixinModules: []
     };
 
     for(var i = 0; i < args.length; i++) {
-      var current_arg = args[i];
-      if (typeof current_arg == "string") {
-        constructor_arguments.qualified_constructor_name = current_arg;
-      } else if (typeof current_arg == "function") {
-        constructor_arguments.superconstructor = current_arg;
+      var currentArg = args[i];
+      if (typeof currentArg == "string") {
+        constructorArguments.qualifiedConstructorName = currentArg;
+      } else if (typeof currentArg == "function") {
+        constructorArguments.superconstructor = currentArg;
       } else {
-        constructor_arguments.mixin_modules.push(current_arg);
+        constructorArguments.mixinModules.push(currentArg);
       }
     }
-    return constructor_arguments;
+    return constructorArguments;
   }
 };
 
@@ -4792,16 +4792,16 @@ Monarch.ModuleSystem = {
 (function(Monarch) {
 
 Monarch.module("Monarch.Util", {
-  each: function(array_or_hash, fn) {
-    if (array_or_hash.length) {
-      this.array_each(array_or_hash, fn);
+  each: function(arrayOrHash, fn) {
+    if (arrayOrHash.length) {
+      this.arrayEach(arrayOrHash, fn);
     } else {
-      this.hash_each(array_or_hash, fn);
+      this.hashEach(arrayOrHash, fn);
     }
   },
 
 
-  index_of: function(array, element) {
+  indexOf: function(array, element) {
     for(var i = 0; i < array.length; i++) {
       if (array[i] == element) return i;
     }
@@ -4809,54 +4809,54 @@ Monarch.module("Monarch.Util", {
   },
 
   contains: function(array, element) {
-    return this.index_of(array, element) != -1;
+    return this.indexOf(array, element) != -1;
   },
 
-  array_each: function(array, fn) {
+  arrayEach: function(array, fn) {
     for(var i = 0; i < array.length; i++) {
       fn.call(array[i], array[i], i);
     }
   },
 
-  hash_each: function(hash, fn) {
+  hashEach: function(hash, fn) {
     for (key in hash) {
       fn.call(hash[key], key, hash[key]);
     }
   },
 
   map: function(array, fn) {
-    var new_array = [];
+    var newArray = [];
     this.each(array, function(element) {
-      new_array.push(fn.call(element, element));
+      newArray.push(fn.call(element, element));
     });
-    return new_array;
+    return newArray;
   },
 
-  to_array: function(arguments_object) {
-    return Array.prototype.slice.call(arguments_object, 0);
+  toArray: function(argumentsObject) {
+    return Array.prototype.slice.call(argumentsObject, 0);
   },
 
   remove: function(array, element) {
-    var record_index = array.indexOf(element);
-    if (record_index == -1) return null;
-    array.splice(record_index, 1);
+    var recordIndex = array.indexOf(element);
+    if (recordIndex == -1) return null;
+    array.splice(recordIndex, 1);
     return element;
   },
 
-  keys: function(hash, optional_each_function) {
+  keys: function(hash, optionalEachFunction) {
     var keys = [];
     for (key in hash) keys.push(key);
-    if (optional_each_function) {
-      Monarch.Util.each(keys, optional_each_function);
+    if (optionalEachFunction) {
+      Monarch.Util.each(keys, optionalEachFunction);
     }
     return keys;
   },
 
-  values: function(hash, optional_each_function) {
+  values: function(hash, optionalEachFunction) {
     var values = [];
     for (key in hash) values.push(hash[key]);
-    if (optional_each_function) {
-      Monarch.Util.each(values, optional_each_function);
+    if (optionalEachFunction) {
+      Monarch.Util.each(values, optionalEachFunction);
     }
     return values;
   }
@@ -4866,24 +4866,24 @@ Monarch.module("Monarch.Util", {
 (function(Monarch) {
 
 Monarch.constructor("Monarch.ModuleSystem.Object", {
-  constructor_properties: {
-    delegate_constructor_methods: function() {
-      var args = Monarch.Util.to_array(arguments);
-      var delegate_name = args.pop();
-      this.setup_delegate_methods(this, args, delegate_name);
+  constructorProperties: {
+    delegateConstructorMethods: function() {
+      var args = Monarch.Util.toArray(arguments);
+      var delegateName = args.pop();
+      this.setupDelegateMethods(this, args, delegateName);
     },
 
     delegate: function(source) {
-      var args = Monarch.Util.to_array(arguments);
-      var delegate_name = args.pop();
-      this.setup_delegate_methods(this.prototype, args, delegate_name);
+      var args = Monarch.Util.toArray(arguments);
+      var delegateName = args.pop();
+      this.setupDelegateMethods(this.prototype, args, delegateName);
     },
 
-    setup_delegate_methods: function(delegator, method_names, delegate_name) {
-      Monarch.Util.each(method_names, function(method_name) {
-        delegator[method_name] = function() {
-          var delegate = this[delegate_name];
-          return delegate[method_name].apply(delegate, arguments);
+    setupDelegateMethods: function(delegator, methodNames, delegateName) {
+      Monarch.Util.each(methodNames, function(methodName) {
+        delegator[methodName] = function() {
+          var delegate = this[delegateName];
+          return delegate[methodName].apply(delegate, arguments);
         };
       });
     }
@@ -4894,8 +4894,8 @@ Monarch.constructor("Monarch.ModuleSystem.Object", {
 (function(Monarch) {
 
 Monarch.constructor("Monarch.SubscriptionNode", {
-  constructor_properties: {
-    total_subscriptions: 0
+  constructorProperties: {
+    totalSubscriptions: 0
   },
 
   initialize: function() {
@@ -4911,21 +4911,21 @@ Monarch.constructor("Monarch.SubscriptionNode", {
 
   unsubscribe: function(subscription) {
     Monarch.Util.remove(this.subscriptions, subscription);
-    if (this.on_unsubscribe_node) this.on_unsubscribe_node.publish(subscription);
+    if (this.onUnsubscribeNode) this.onUnsubscribeNode.publish(subscription);
   },
 
-  on_unsubscribe: function(callback) {
-    if (!this.on_unsubscribe_node) this.on_unsubscribe_node = new Monarch.SubscriptionNode();
-    return this.on_unsubscribe_node.subscribe(callback);
+  onUnsubscribe: function(callback) {
+    if (!this.onUnsubscribeNode) this.onUnsubscribeNode = new Monarch.SubscriptionNode();
+    return this.onUnsubscribeNode.subscribe(callback);
   },
 
   publish: function() {
-    var publish_arguments = arguments;
+    var publishArguments = arguments;
     if (this.paused) {
-      this.delayed_events.push(publish_arguments)
+      this.delayedEvents.push(publishArguments)
     } else {
       Monarch.Util.each(this.subscriptions, function(subscription) {
-        subscription.trigger(publish_arguments);
+        subscription.trigger(publishArguments);
       })
     }
   },
@@ -4934,18 +4934,18 @@ Monarch.constructor("Monarch.SubscriptionNode", {
     return this.subscriptions.length == 0;
   },
 
-  pause_events: function() {
+  pauseEvents: function() {
     this.paused = true;
-    this.delayed_events = [];
+    this.delayedEvents = [];
   },
 
-  resume_events: function() {
+  resumeEvents: function() {
     var self = this;
     this.paused = false;
-    Monarch.Util.each(this.delayed_events, function(event) {
+    Monarch.Util.each(this.delayedEvents, function(event) {
       self.publish.apply(self, event);
     });
-    this.delayed_events = [];
+    this.delayedEvents = [];
   }
 });
 
@@ -4979,7 +4979,7 @@ Monarch.constructor("Monarch.SubscriptionBundle", {
     this.subscriptions.push(subscription);
   },
 
-  destroy_all: function() {
+  destroyAll: function() {
     Monarch.Util.each(this.subscriptions, function(subscription) {
       subscription.destroy();
     });
@@ -4999,12 +4999,12 @@ Monarch.constructor("Monarch.SubscriptionBundle", {
 (function(Monarch) {
 
 Monarch.constructor("Monarch.Queue", {
-  constructor_initialize: function() {
+  constructorInitialize: function() {
     this.synchronous = false;
   },
 
-  initialize: function(segment_size, delay) {
-    this.segment_size = segment_size || 1;
+  initialize: function(segmentSize, delay) {
+    this.segmentSize = segmentSize || 1;
     this.delay = delay || 0;
     this.fns = [];
     this.started = false;
@@ -5014,48 +5014,48 @@ Monarch.constructor("Monarch.Queue", {
     this.fns.push(fn)
   },
 
-  add_time_critical: function(fn) {
-    fn.time_critical = true;
+  addTimeCritical: function(fn) {
+    fn.timeCritical = true;
     this.fns.push(fn)
   },
 
   start: function() {
     if (Monarch.Queue.synchronous) {
-      this.synchronous_start();
+      this.synchronousStart();
     } else {
-      this.asynchronous_start();
+      this.asynchronousStart();
     }
   },
 
-  synchronous_start: function() {
+  synchronousStart: function() {
     var fns = this.fns;
     while(fns.length > 0) {
       fns.shift()();
     }
   },
 
-  asynchronous_start: function() {
+  asynchronousStart: function() {
     if (this.started) return;
     var self = this;
     var delay = this.delay;
-    var segment_size = this.segment_size;
+    var segmentSize = this.segmentSize;
     var fns = this.fns;
 
-    var process_next_segment = function() {
-      for (var i = 0; i < segment_size && fns.length > 0; i++) {
+    var processNextSegment = function() {
+      for (var i = 0; i < segmentSize && fns.length > 0; i++) {
         var fn = fns.shift()
         fn();
-        if (fn.time_critical) break;
+        if (fn.timeCritical) break;
       }
       if (fns.length > 0) {
-        setTimeout(function() { process_next_segment(); }, delay);
+        setTimeout(function() { processNextSegment(); }, delay);
       } else {
         self.started = false;
       }
     };
 
     this.started = true;
-    process_next_segment();
+    processNextSegment();
   },
 
   clear: function() {
@@ -5163,9 +5163,9 @@ Monarch.module("Monarch.Inflection", {
     }
     for (var i = 0; i < Monarch.Inflection.plural.length; i++) {
       var regex          = Monarch.Inflection.plural[i][0];
-      var replace_string = Monarch.Inflection.plural[i][1];
+      var replaceString = Monarch.Inflection.plural[i][1];
       if (regex.test(word)) {
-        return word.replace(regex, replace_string);
+        return word.replace(regex, replaceString);
       }
     }
   },
@@ -5186,9 +5186,9 @@ Monarch.module("Monarch.Inflection", {
     }
     for (var i = 0; i < Monarch.Inflection.singular.length; i++) {
       var regex          = Monarch.Inflection.singular[i][0];
-      var replace_string = Monarch.Inflection.singular[i][1];
+      var replaceString = Monarch.Inflection.singular[i][1];
       if (regex.test(word)) {
-        return word.replace(regex, replace_string);
+        return word.replace(regex, replaceString);
       }
     }
   },
@@ -5216,22 +5216,22 @@ Monarch.module("Monarch.Inflection", {
 (function(Monarch, jQuery) {
 
 Monarch.constructor("Monarch.Xml.Builder", {
-  constructor_properties: {
+  constructorProperties: {
     initialize: function() {
-      this.generate_tag_methods();
+      this.generateTagMethods();
     },
 
-    supported_tags: [],
+    supportedTags: [],
 
-    self_closing_tags: {},
+    selfClosingTags: {},
 
-    generate_tag_methods: function() {
+    generateTagMethods: function() {
       var self = this;
 
-      Monarch.Util.each(this.supported_tags, function(tag_name) {
-        self.prototype[tag_name] = function() {
-          var tag_args = [tag_name].concat(Monarch.Util.to_array(arguments));
-          return this.tag.apply(this, tag_args);
+      Monarch.Util.each(this.supportedTags, function(tagName) {
+        self.prototype[tagName] = function() {
+          var tagArgs = [tagName].concat(Monarch.Util.toArray(arguments));
+          return this.tag.apply(this, tagArgs);
         }
       });
     }
@@ -5240,111 +5240,111 @@ Monarch.constructor("Monarch.Xml.Builder", {
   initialize: function(template) {
     this.template = template;
     this.instructions = [];
-    this.preceding_element_path = [0];
+    this.precedingElementPath = [0];
   },
 
-  to_jquery: function(properties) {
-    var jquery_fragment = jQuery(this.to_xml());
-    if (properties) this.extend_with_properties(jquery_fragment, properties);
-    this.post_process(jquery_fragment);
-    return jquery_fragment;
+  toJquery: function(properties) {
+    var jqueryFragment = jQuery(this.toXml());
+    if (properties) this.extendWithProperties(jqueryFragment, properties);
+    this.postProcess(jqueryFragment);
+    return jqueryFragment;
   },
 
-  extend_with_properties: function(jquery_fragment, properties) {
+  extendWithProperties: function(jqueryFragment, properties) {
     Monarch.Util.keys(properties, function(key) {
-      if (jquery_fragment[key]) jquery_fragment["_" + key] = jquery_fragment[key];
+      if (jqueryFragment[key]) jqueryFragment["_" + key] = jqueryFragment[key];
     });
-    jQuery.extend(jquery_fragment, properties);
+    jQuery.extend(jqueryFragment, properties);
   },
 
-  post_process: function(jquery_fragment) {
+  postProcess: function(jqueryFragment) {
     var self = this;
-    this.jquery_fragment = jquery_fragment;
+    this.jqueryFragment = jqueryFragment;
     Monarch.Util.each(this.instructions, function(instruction) {
-      instruction.post_process(self);
+      instruction.postProcess(self);
     });
-    if (!this.has_single_top_level_element()) {
+    if (!this.hasSingleTopLevelElement()) {
       throw new Error("Template content must have a single top-level element.");
     }
-    this.jquery_fragment = null;
+    this.jqueryFragment = null;
   },
 
-  to_xml: function() {
+  toXml: function() {
     var xml = "";
     Monarch.Util.each(this.instructions, function(instruction) {
-      xml += instruction.to_xml();
+      xml += instruction.toXml();
     });
     return xml;
   },
 
-  has_single_top_level_element: function() {
-    return this.preceding_element_path.length == 1 && this.preceding_element_path[0] == 1
+  hasSingleTopLevelElement: function() {
+    return this.precedingElementPath.length == 1 && this.precedingElementPath[0] == 1
   },
 
   tag: function() {
-    var args = this.parse_tag_arguments(arguments);
+    var args = this.parseTagArguments(arguments);
     if (args.text && args.body) throw new Error("Tags cannot have both text and body content");
-    if (this.constructor.self_closing_tags[args.name]) {
-      return this.self_closing_tag(args);
+    if (this.constructor.selfClosingTags[args.name]) {
+      return this.selfClosingTag(args);
     } else {
-      return this.standard_tag_sequence(args);
+      return this.standardTagSequence(args);
     }
   },
 
-  self_closing_tag: function(tag_args) {
-    if (tag_args.text || tag_args.body) throw new Error("Self-closing tag " + tag_args.name + " cannot contain text or have body content");
-    var tag_instruction = new Monarch.Xml.SelfClosingTag(tag_args.name, tag_args.attributes);
-    this.instructions.push(tag_instruction);
-    return tag_instruction;
+  selfClosingTag: function(tagArgs) {
+    if (tagArgs.text || tagArgs.body) throw new Error("Self-closing tag " + tagArgs.name + " cannot contain text or have body content");
+    var tagInstruction = new Monarch.Xml.SelfClosingTag(tagArgs.name, tagArgs.attributes);
+    this.instructions.push(tagInstruction);
+    return tagInstruction;
   },
 
-  standard_tag_sequence: function(tag_args) {
-    var open_tag_instruction = new Monarch.Xml.OpenTag(tag_args.name, tag_args.attributes);
-    this.instructions.push(open_tag_instruction);
-    if (tag_args.text) this.instructions.push(new Monarch.Xml.TextNode(tag_args.text));
-    if (tag_args.body) tag_args.body();
-    var close_tag_instruction = new Monarch.Xml.CloseTag(tag_args.name);
-    close_tag_instruction.open_tag_instruction = open_tag_instruction;
-    this.instructions.push(close_tag_instruction);
-    return close_tag_instruction;
+  standardTagSequence: function(tagArgs) {
+    var openTagInstruction = new Monarch.Xml.OpenTag(tagArgs.name, tagArgs.attributes);
+    this.instructions.push(openTagInstruction);
+    if (tagArgs.text) this.instructions.push(new Monarch.Xml.TextNode(tagArgs.text));
+    if (tagArgs.body) tagArgs.body();
+    var closeTagInstruction = new Monarch.Xml.CloseTag(tagArgs.name);
+    closeTagInstruction.openTagInstruction = openTagInstruction;
+    this.instructions.push(closeTagInstruction);
+    return closeTagInstruction;
   },
 
-  parse_tag_arguments: function(args) {
-    var args = Monarch.Util.to_array(args);
-    var tag_arguments = {
+  parseTagArguments: function(args) {
+    var args = Monarch.Util.toArray(args);
+    var tagArguments = {
       name: args.shift()
     }
     Monarch.Util.each(args, function(arg) {
-      if (typeof arg == "string") tag_arguments.text = arg;
-      if (typeof arg == "object") tag_arguments.attributes = arg;
-      if (typeof arg == "function") tag_arguments.body = arg;
+      if (typeof arg == "string") tagArguments.text = arg;
+      if (typeof arg == "object") tagArguments.attributes = arg;
+      if (typeof arg == "function") tagArguments.body = arg;
     })
-    return tag_arguments;
+    return tagArguments;
   },
 
-  push_child: function() {
-    this.preceding_element_path[this.preceding_element_path.length - 1]++;
-    this.preceding_element_path.push(0);
+  pushChild: function() {
+    this.precedingElementPath[this.precedingElementPath.length - 1]++;
+    this.precedingElementPath.push(0);
   },
 
-  pop_child: function() {
-    this.preceding_element_path.pop();
+  popChild: function() {
+    this.precedingElementPath.pop();
   },
 
-  find_preceding_element: function() {
-    if (this.preceding_element_path.length == 1) {
-      return this.jquery_fragment;
+  findPrecedingElement: function() {
+    if (this.precedingElementPath.length == 1) {
+      return this.jqueryFragment;
     } else {
-      return this.jquery_fragment.find(this.preceding_element_selector());
+      return this.jqueryFragment.find(this.precedingElementSelector());
     }
   },
 
-  preceding_element_selector: function() {
-    var selector_fragments = [];
-    for(i = 1; i < this.preceding_element_path.length; i++) {
-      selector_fragments.push(":eq(" + (this.preceding_element_path[i] - 1) + ")");
+  precedingElementSelector: function() {
+    var selectorFragments = [];
+    for(i = 1; i < this.precedingElementPath.length; i++) {
+      selectorFragments.push(":eq(" + (this.precedingElementPath[i] - 1) + ")");
     }
-    return "> " + selector_fragments.join(" > ");
+    return "> " + selectorFragments.join(" > ");
   }
 });
 
@@ -5357,20 +5357,20 @@ Monarch.constructor("Monarch.Xml.OpenTag", {
     this.attributes = attributes;
   },
 
-  to_xml: function() {
-    return "<" + this.name + this.attributes_html() + ">"
+  toXml: function() {
+    return "<" + this.name + this.attributesHtml() + ">"
   },
 
-  attributes_html: function() {
-    var attribute_pairs = [];
-    for (var attribute_name in this.attributes) {
-      attribute_pairs.push(attribute_name + '="' + this.attributes[attribute_name] + '"');
+  attributesHtml: function() {
+    var attributePairs = [];
+    for (var attributeName in this.attributes) {
+      attributePairs.push(attributeName + '="' + this.attributes[attributeName] + '"');
     }
-    return (attribute_pairs.length > 0) ? " " + attribute_pairs.join(" ") : "";
+    return (attributePairs.length > 0) ? " " + attributePairs.join(" ") : "";
   },
 
-  post_process: function(builder) {
-    builder.push_child();
+  postProcess: function(builder) {
+    builder.pushChild();
   }
 });
 
@@ -5378,28 +5378,28 @@ Monarch.constructor("Monarch.Xml.OpenTag", {
 (function(Monarch) {
 
 Monarch.constructor("Monarch.Xml.CloseTag", {
-  constructor_properties: {
+  constructorProperties: {
     initialize: function() {
-      this.generate_event_methods();
+      this.generateEventMethods();
     },
 
-    supported_events: [
+    supportedEvents: [
       "blur", "change", "click", "dblclick", "error", "focus", "keydown", "keypress",
       "keyup", "load", "mousedown", "mousemove", "mouseout", "mouseover", "mouseup",
       "resize", "scroll", "select", "submit", "unload"
     ],
 
-    generate_event_methods: function() {
+    generateEventMethods: function() {
       var self = this;
-      Monarch.Util.each(this.supported_events, function(event_name) {
-        self.generate_event_method(event_name);
+      Monarch.Util.each(this.supportedEvents, function(eventName) {
+        self.generateEventMethod(eventName);
       });
     },
 
-    generate_event_method: function(event_name) {
-      this.prototype[event_name] = function(callback) {
-        this.on_build(function(element, view) {
-          element[event_name].call(element, function(event) {
+    generateEventMethod: function(eventName) {
+      this.prototype[eventName] = function(callback) {
+        this.onBuild(function(element, view) {
+          element[eventName].call(element, function(event) {
             callback.call(element, view, event);
           });
         });
@@ -5412,25 +5412,25 @@ Monarch.constructor("Monarch.Xml.CloseTag", {
     this.name = name;
   },
 
-  to_xml: function() {
+  toXml: function() {
     return "</" + this.name + ">"
   },
 
   ref: function(name) {
-    this.on_build(function(element, view) {
+    this.onBuild(function(element, view) {
       view[name] = element;
     });
     return this;
   },
 
-  on_build: function(callback) {
-    if (!this.on_build_node) this.on_build_node = new Monarch.SubscriptionNode();
-    return this.on_build_node.subscribe(callback);
+  onBuild: function(callback) {
+    if (!this.onBuildNode) this.onBuildNode = new Monarch.SubscriptionNode();
+    return this.onBuildNode.subscribe(callback);
   },
 
-  post_process: function(builder) {
-    builder.pop_child();
-    if (this.on_build_node) this.on_build_node.publish(builder.find_preceding_element(), builder.jquery_fragment);
+  postProcess: function(builder) {
+    builder.popChild();
+    if (this.onBuildNode) this.onBuildNode.publish(builder.findPrecedingElement(), builder.jqueryFragment);
   }
 });
 
@@ -5438,14 +5438,14 @@ Monarch.constructor("Monarch.Xml.CloseTag", {
 (function(Monarch) {
 
 Monarch.constructor("Monarch.Xml.SelfClosingTag", Monarch.Xml.CloseTag.prototype, Monarch.Xml.OpenTag.prototype, {
-  to_xml: function() {
-    return "<" + this.name + this.attributes_html() + "/>"
+  toXml: function() {
+    return "<" + this.name + this.attributesHtml() + "/>"
   },
 
-  post_process: function(builder) {
-    builder.push_child();
-    builder.pop_child();
-    if (this.on_build_node) this.on_build_node.publish(builder.find_preceding_element(), builder.jquery_fragment);
+  postProcess: function(builder) {
+    builder.pushChild();
+    builder.popChild();
+    if (this.onBuildNode) this.onBuildNode.publish(builder.findPrecedingElement(), builder.jqueryFragment);
   }
 });
 
@@ -5457,11 +5457,11 @@ Monarch.constructor("Monarch.Xml.TextNode", {
     this.text = text;
   },
 
-  to_xml: function() {
+  toXml: function() {
     return htmlEscape(this.text);
   },
 
-  post_process: function() {
+  postProcess: function() {
   }
 });
 
@@ -5469,30 +5469,30 @@ Monarch.constructor("Monarch.Xml.TextNode", {
 (function(Monarch) {
 
 Monarch.constructor("Monarch.Xml.Template", {
-  constructor_properties: {
-    to_jquery: function(properties) {
-      return new this().to_jquery(properties);
+  constructorProperties: {
+    toJquery: function(properties) {
+      return new this().toJquery(properties);
     },
 
-    build: function(content_fn) {
+    build: function(contentFn) {
       var template = new this();
       template.content = function() {
-        content_fn.call(this, this.builder);
+        contentFn.call(this, this.builder);
       }
-      return template.to_jquery();
+      return template.toJquery();
     }
   },
 
-  builder_constructor: Monarch.Xml.Builder,
+  builderConstructor: Monarch.Xml.Builder,
 
-  to_jquery: function(properties) {
-    var builder = new this.builder_constructor(this);
+  toJquery: function(properties) {
+    var builder = new this.builderConstructor(this);
     this.builder = builder;
     this.content(properties);
     this.builder = null;
-    var jquery_fragment = builder.to_jquery();
-    jquery_fragment.template = this;
-    return jquery_fragment;
+    var jqueryFragment = builder.toJquery();
+    jqueryFragment.template = this;
+    return jqueryFragment;
   }
 });
 
@@ -5504,37 +5504,37 @@ Monarch.constructor("Monarch.Xml.Template", {
 (function(Monarch, jQuery) {
 
 Monarch.constructor("Monarch.View.Template", Monarch.Xml.Template, {
-  constructor_properties: {
-    to_view: function(properties) {
-      return new this().to_view(properties);
+  constructorProperties: {
+    toView: function(properties) {
+      return new this().toView(properties);
     },
 
     extended: function(subtemplate) {
-      var superconstructor_view_properties = this.prototype.view_properties || {};
-      var subconstructor_view_properties = subtemplate.prototype.view_properties || {};
-      subtemplate.prototype.view_properties = jQuery.extend({}, superconstructor_view_properties, subconstructor_view_properties);
+      var superconstructorViewProperties = this.prototype.viewProperties || {};
+      var subconstructorViewProperties = subtemplate.prototype.viewProperties || {};
+      subtemplate.prototype.viewProperties = jQuery.extend({}, superconstructorViewProperties, subconstructorViewProperties);
     }
   },
 
-  to_jquery: function(properties) {
+  toJquery: function(properties) {
     var builder = new Monarch.View.Builder(this);
     this.builder = builder;
     this.content(properties);
     this.builder = null;
 
-    var view_properties = { template: this };
-    Monarch.ModuleSystem.mixin(view_properties, this.default_view_properties);
-    if (this.view_properties) Monarch.ModuleSystem.mixin(view_properties, this.view_properties);
-    if (properties) Monarch.ModuleSystem.mixin(view_properties, properties);
-    return builder.to_view(view_properties);
+    var viewProperties = { template: this };
+    Monarch.ModuleSystem.mixin(viewProperties, this.defaultViewProperties);
+    if (this.viewProperties) Monarch.ModuleSystem.mixin(viewProperties, this.viewProperties);
+    if (properties) Monarch.ModuleSystem.mixin(viewProperties, properties);
+    return builder.toView(viewProperties);
   },
 
-  to_view: function(properties) {
-    return this.to_jquery(properties);
+  toView: function(properties) {
+    return this.toJquery(properties);
   },
 
-  default_view_properties: {
-    field_values: function() {
+  defaultViewProperties: {
+    fieldValues: function() {
       var values = {};
       this.find("input,select").each(function() {
         var elt = $(this);
@@ -5550,70 +5550,70 @@ Monarch.constructor("Monarch.View.Template", Monarch.Xml.Template, {
     },
 
     show: function() {
-      if (this.before_show) this.before_show();
+      if (this.beforeShow) this.beforeShow();
       this._show();
-      if (this.after_show) this.after_show();
+      if (this.afterShow) this.afterShow();
     },
 
     hide: function() {
-      if (this.before_hide) this.before_hide();
+      if (this.beforeHide) this.beforeHide();
       this._hide();
-      if (this.after_hide) this.after_hide();
+      if (this.afterHide) this.afterHide();
     },
 
     model: function(model) {
       if (!model) return this._model;
       this._model = model;
-      this.populate_form_fields();
-      if (this.model_assigned) this.model_assigned(model);
+      this.populateFormFields();
+      if (this.modelAssigned) this.modelAssigned(model);
     },
 
-    populate_form_fields: function() {
-      this.populate_text_fields();
-      this.populate_checkbox_fields();
-      this.populate_select_fields();
+    populateFormFields: function() {
+      this.populateTextFields();
+      this.populateCheckboxFields();
+      this.populateSelectFields();
     },
 
     save: function() {
-      this.model().update(this.field_values());
+      this.model().update(this.fieldValues());
     },
 
-    populate_text_fields: function() {
+    populateTextFields: function() {
       var self = this;
       var model = this.model();
       this.find("input:text").each(function() {
         var elt = $(this);
-        var field_name = elt.attr('name');
-        if (model[field_name]) {
-          elt.val(model[field_name].call(model));
+        var fieldName = elt.attr('name');
+        if (model[fieldName]) {
+          elt.val(model[fieldName].call(model));
         } else {
           elt.val("");
         }
       });
     },
 
-    populate_checkbox_fields: function() {
+    populateCheckboxFields: function() {
       var self = this;
       var model = this.model();
       this.find("input:checkbox").each(function() {
         var elt = $(this);
-        var field_name = elt.attr('name');
-        if (model[field_name]) {
-          elt.attr('checked', model[field_name].call(model));
+        var fieldName = elt.attr('name');
+        if (model[fieldName]) {
+          elt.attr('checked', model[fieldName].call(model));
         } else {
           elt.attr('checked', false)
         }
       });
     },
 
-    populate_select_fields: function() {
+    populateSelectFields: function() {
       var self = this;
       var model = this.model();
       this.find("select").each(function() {
         var elt = $(this);
-        var field_name = elt.attr('name');
-        if (model[field_name]) {
-          elt.val(model[field_name].call(model));
+        var fieldName = elt.attr('name');
+        if (model[fieldName]) {
+          elt.val(model[fieldName].call(model));
         }
       });
 
@@ -5625,8 +5625,8 @@ Monarch.constructor("Monarch.View.Template", Monarch.Xml.Template, {
 (function(Monarch, jQuery) {
 
 Monarch.constructor("Monarch.View.Builder", Monarch.Xml.Builder, {
-  constructor_properties: {
-    supported_tags: [
+  constructorProperties: {
+    supportedTags: [
       'acronym', 'address', 'area', 'b', 'base', 'bdo', 'big', 'blockquote', 'body',
       'br', 'button', 'caption', 'cite', 'code', 'dd', 'del', 'div', 'dl', 'dt', 'em',
       'fieldset', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'hr', 'html', 'i',
@@ -5636,42 +5636,42 @@ Monarch.constructor("Monarch.View.Builder", Monarch.Xml.Builder, {
       'table', 'tbody', 'td', 'textarea', 'th', 'thead', 'title', 'tr', 'tt', 'ul', 'var'
     ],
 
-    self_closing_tags: { 'br': 1, 'hr': 1, 'input': 1, 'img': 1 }
+    selfClosingTags: { 'br': 1, 'hr': 1, 'input': 1, 'img': 1 }
   },
 
-  to_view: function(extend_view_with_properties) {
+  toView: function(extendViewWithProperties) {
     var self = this;
-    var view = this.to_jquery(extend_view_with_properties);
+    var view = this.toJquery(extendViewWithProperties);
     if (view.initialize) view.initialize();
     return view;
   },
 
-  to_html: function() {
-    return this.to_xml();
+  toHtml: function() {
+    return this.toXml();
   },
 
   a: function() {
-    var close_tag_instruction = this.tag.apply(this, ["a"].concat(Monarch.Util.to_array(arguments)));
-    var open_tag_instruction = close_tag_instruction.open_tag_instruction;
-    if (open_tag_instruction.attributes && open_tag_instruction.attributes.local) {
-      close_tag_instruction.click(function() {
+    var closeTagInstruction = this.tag.apply(this, ["a"].concat(Monarch.Util.toArray(arguments)));
+    var openTagInstruction = closeTagInstruction.openTagInstruction;
+    if (openTagInstruction.attributes && openTagInstruction.attributes.local) {
+      closeTagInstruction.click(function() {
         var href = this.attr('href');
-        var following_hash = href.replace(/^.*#/, '');
-        History.load(following_hash);
+        var followingHash = href.replace(/^.*#/, '');
+        History.load(followingHash);
         return false;
       });
     }
-    return close_tag_instruction;
+    return closeTagInstruction;
   },
 
   subview: function() {
-    var args = this.parse_subview_arguments(arguments);
+    var args = this.parseSubviewArguments(arguments);
 
-    this.div().on_build(function(element, view) {
-      var subview = args.template.to_view(jQuery.extend({parent_view: view}, args.properties));
-      if (args.collection_name) {
-        if (!view[args.collection_name]) view[args.collection_name] = {};
-        view[args.collection_name][args.index] = subview;
+    this.div().onBuild(function(element, view) {
+      var subview = args.template.toView(jQuery.extend({parentView: view}, args.properties));
+      if (args.collectionName) {
+        if (!view[args.collectionName]) view[args.collectionName] = {};
+        view[args.collectionName][args.index] = subview;
       } else {
         view[args.name] = subview;
       }
@@ -5679,23 +5679,23 @@ Monarch.constructor("Monarch.View.Builder", Monarch.Xml.Builder, {
     });
   },
 
-  parse_subview_arguments: function(args) {
-    var args = Monarch.Util.to_array(args);
-    var subview_arguments = {};
+  parseSubviewArguments: function(args) {
+    var args = Monarch.Util.toArray(args);
+    var subviewArguments = {};
 
     if (!args[1]) throw new Error("Undefined second argument for subview '" + args[0] + "'.");
-    if (args[1].to_view) {
-      subview_arguments.name = args[0];
-      subview_arguments.template = args[1];
-      if (args[2]) subview_arguments.properties = args[2];
+    if (args[1].toView) {
+      subviewArguments.name = args[0];
+      subviewArguments.template = args[1];
+      if (args[2]) subviewArguments.properties = args[2];
     } else {
       if (!args[2]) throw new Error("Undefined third argument for subview '" + args[0] + "['" + args[1] + "'].");
-      subview_arguments.collection_name = args[0];
-      subview_arguments.index = args[1];
-      subview_arguments.template = args[2];
-      if (args[3]) subview_arguments.properties = args[3];
+      subviewArguments.collectionName = args[0];
+      subviewArguments.index = args[1];
+      subviewArguments.template = args[2];
+      if (args[3]) subviewArguments.properties = args[3];
     }
-    return subview_arguments;
+    return subviewArguments;
   }
 });
 
@@ -5703,8 +5703,8 @@ Monarch.constructor("Monarch.View.Builder", Monarch.Xml.Builder, {
 (function(Monarch, jQuery) {
 
 jQuery.fn.extend({
-  append_view: function(content_fn) {
-    this.append(Monarch.View.build(content_fn));
+  appendView: function(contentFn) {
+    this.append(Monarch.View.build(contentFn));
     return this;
   }
 });
@@ -5713,25 +5713,25 @@ jQuery.fn.extend({
 (function(Monarch, jQuery) {
 
 Monarch.constructor("Monarch.View.Templates.Multiview", Monarch.View.Template, {
-  content: function(subview_templates_by_name) {
-    delete subview_templates_by_name.parent_view;
+  content: function(subviewTemplatesByName) {
+    delete subviewTemplatesByName.parentView;
     var b = this.builder;
     b.div(function() {
-      Monarch.Util.each(subview_templates_by_name, function(name, template) {
+      Monarch.Util.each(subviewTemplatesByName, function(name, template) {
         b.subview('subviews', name, template);
       })
     });
   },
   
-  view_properties: {
+  viewProperties: {
     initialize: function() {
       jQuery.extend(this, this.subviews);
     },
 
-    hide_all_except: function() {
-      var names = Monarch.Util.to_array(arguments);
-      Monarch.Util.each(this.subviews, function(subview_name, subview) {
-        if (Monarch.Util.contains(names, subview_name)) {
+    hideAllExcept: function() {
+      var names = Monarch.Util.toArray(arguments);
+      Monarch.Util.each(this.subviews, function(subviewName, subview) {
+        if (Monarch.Util.contains(names, subviewName)) {
           subview.show();
         } else {
           subview.hide();
@@ -5739,8 +5739,8 @@ Monarch.constructor("Monarch.View.Templates.Multiview", Monarch.View.Template, {
       });
     },
 
-    hide_all: function() {
-      Monarch.Util.each(this.subviews, function(subview_name, subview) {
+    hideAll: function() {
+      Monarch.Util.each(this.subviews, function(subviewName, subview) {
         subview.hide();
       });
     }
@@ -5755,7 +5755,7 @@ Monarch.constructor("Monarch.View.Templates.Multiview", Monarch.View.Template, {
 (function(Monarch, jQuery) {
 
 Monarch.constructor("Monarch.View.History", {
-  on_change: function(callback) {
+  onChange: function(callback) {
     jQuery.historyInit(callback);
   },
 
@@ -5769,8 +5769,8 @@ Monarch.constructor("Monarch.View.History", {
 
 
 Monarch.module("Monarch.View", {
-  build: function(content_fn) {
-    return Monarch.View.Template.build(content_fn);
+  build: function(contentFn) {
+    return Monarch.View.Template.build(contentFn);
   }
 });
 

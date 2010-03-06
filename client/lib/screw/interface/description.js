@@ -1,8 +1,8 @@
 (function(Screw, Monarch) {
 
 Monarch.constructor("Screw.Interface.Description", Monarch.View.Template, {
-  content: function(initial_attributes) { with (this.builder) {
-    var description = initial_attributes.description;
+  content: function(initialAttributes) { with (this.builder) {
+    var description = initialAttributes.description;
     li({'class': 'description'}, function() {
       span({'class': 'name'}, description.name).click(function(view) {
         view.focus();
@@ -12,19 +12,19 @@ Monarch.constructor("Screw.Interface.Description", Monarch.View.Template, {
         ul({'class': 'examples'});
       }
 
-      if (description.child_descriptions.length > 0) {
-        ul({'class': 'child_descriptions'});
+      if (description.childDescriptions.length > 0) {
+        ul({'class': 'childDescriptions'});
       }
     });
   }},
 
-  view_properties: {
+  viewProperties: {
     initialize: function() {
-      this.build_examples();
-      this.build_child_descriptions();
+      this.buildExamples();
+      this.buildChildDescriptions();
       
       var self = this;
-      this.description.on_example_completed(function(example) {
+      this.description.onExampleCompleted(function(example) {
         if (example.failed) {
           self.addClass('failed')
         } else {
@@ -33,26 +33,26 @@ Monarch.constructor("Screw.Interface.Description", Monarch.View.Template, {
       })
     },
 
-    build_examples: function() {
+    buildExamples: function() {
       var self = this;
-      var examples_container = this.find("ul.examples").eq(0);
+      var examplesContainer = this.find("ul.examples").eq(0);
       Screw.each(this.description.examples, function() {
-        var subview = Screw.Interface.Example.to_view({example: this});
-        self.build_subview(examples_container, subview);
+        var subview = Screw.Interface.Example.toView({example: this});
+        self.buildSubview(examplesContainer, subview);
       });
     },
 
-    build_child_descriptions: function() {
+    buildChildDescriptions: function() {
       var self = this;
-      var child_descriptions_container = this.find("ul.child_descriptions").eq(0);
-      Screw.each(this.description.child_descriptions, function() {
-        var subview = Screw.Interface.Description.to_view({description: this, build_immediately: self.build_immediately});
-        self.build_subview(child_descriptions_container, subview);
+      var childDescriptionsContainer = this.find("ul.childDescriptions").eq(0);
+      Screw.each(this.description.childDescriptions, function() {
+        var subview = Screw.Interface.Description.toView({description: this, buildImmediately: self.buildImmediately});
+        self.buildSubview(childDescriptionsContainer, subview);
       });
     },
 
-    build_subview: function(container, subview) {
-      if (this.build_immediately) {
+    buildSubview: function(container, subview) {
+      if (this.buildImmediately) {
         container.append(subview);
       } else {
         setTimeout(function() { container.append(subview); }, 0);
@@ -60,7 +60,7 @@ Monarch.constructor("Screw.Interface.Description", Monarch.View.Template, {
     },
 
     focus: function() {
-      Screw.Interface.set_location(Screw.Interface.base_location() + "?" + JSON.stringify([this.description.path()]));
+      Screw.Interface.setLocation(Screw.Interface.baseLocation() + "?" + JSON.stringify([this.description.path()]));
     }
   }
 });

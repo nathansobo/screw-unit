@@ -5,160 +5,160 @@ Screw.Unit(function(c) { with(c) {
       before(function() {
         object = {
           foo: function() {
-            return "original_foo_value";
+            return "originalFooValue";
           }
         };
         mock(object, 'foo');
       });
 
-      it("records the #call_count on that function", function() {
-        expect(object.foo.call_count).to(equal, 0);
+      it("records the #callCount on that function", function() {
+        expect(object.foo.callCount).to(equal, 0);
         object.foo();
-        expect(object.foo.call_count).to(equal, 1);
+        expect(object.foo.callCount).to(equal, 1);
         object.foo();
-        expect(object.foo.call_count).to(equal, 2);
+        expect(object.foo.callCount).to(equal, 2);
       });
 
-      it("pushes the arguments of the call to a #call_args array on that function", function() {
-        expect(object.foo.call_args).to(equal, []);
+      it("pushes the arguments of the call to a #callArgs array on that function", function() {
+        expect(object.foo.callArgs).to(equal, []);
         object.foo("bar", "baz");
-        expect(object.foo.call_args).to(equal, [["bar", "baz"]]);
+        expect(object.foo.callArgs).to(equal, [["bar", "baz"]]);
         object.foo("quux");
-        expect(object.foo.call_args).to(equal, [["bar", "baz"], ["quux"]]);
+        expect(object.foo.callArgs).to(equal, [["bar", "baz"], ["quux"]]);
       });
 
-      it("sets #most_recent args on the function", function() {
-        expect(object.foo.most_recent_args).to(equal, null);
+      it("sets #mostRecent args on the function", function() {
+        expect(object.foo.mostRecentArgs).to(equal, null);
         object.foo("bar", "baz");
-        expect(object.foo.most_recent_args).to(equal, ["bar", "baz"]);
+        expect(object.foo.mostRecentArgs).to(equal, ["bar", "baz"]);
         object.foo("quux");
-        expect(object.foo.most_recent_args).to(equal, ["quux"]);
+        expect(object.foo.mostRecentArgs).to(equal, ["quux"]);
       });
       
       context("when passed a function as its third argument", function() {
-        var call_args;
+        var callArgs;
         before(function() {
-          call_args = [];
+          callArgs = [];
           mock(object, "foo", function() {
-            call_args.push(Array.prototype.slice.call(arguments));
+            callArgs.push(Array.prototype.slice.call(arguments));
           });
         });
 
         it("calls the function", function() {
           object.foo("bar", "baz");
-          expect(call_args).to(equal, [["bar", "baz"]]);
+          expect(callArgs).to(equal, [["bar", "baz"]]);
           object.foo("quux");
-          expect(call_args).to(equal, [["bar", "baz"], ["quux"]]);
+          expect(callArgs).to(equal, [["bar", "baz"], ["quux"]]);
         });
       });
     });
   })
 
-  describe("#mock_function", function() {
-    var mock_fn;
+  describe("#mockFunction", function() {
+    var mockFn;
     before(function() {
-      mock_fn = mock_function();
+      mockFn = mockFunction();
     });
 
-    it("records the #call_count on that function", function() {
-      expect(mock_fn.call_count).to(equal, 0);
-      mock_fn();
-      expect(mock_fn.call_count).to(equal, 1);
-      mock_fn();
-      expect(mock_fn.call_count).to(equal, 2);
+    it("records the #callCount on that function", function() {
+      expect(mockFn.callCount).to(equal, 0);
+      mockFn();
+      expect(mockFn.callCount).to(equal, 1);
+      mockFn();
+      expect(mockFn.callCount).to(equal, 2);
     });
 
-    it("pushes the arguments of the call to a #call_args array on that function", function() {
-      expect(mock_fn.call_args).to(equal, []);
-      mock_fn("bar", "baz");
-      expect(mock_fn.call_args).to(equal, [["bar", "baz"]]);
-      mock_fn("quux");
-      expect(mock_fn.call_args).to(equal, [["bar", "baz"], ["quux"]]);
+    it("pushes the arguments of the call to a #callArgs array on that function", function() {
+      expect(mockFn.callArgs).to(equal, []);
+      mockFn("bar", "baz");
+      expect(mockFn.callArgs).to(equal, [["bar", "baz"]]);
+      mockFn("quux");
+      expect(mockFn.callArgs).to(equal, [["bar", "baz"], ["quux"]]);
     });
 
-    it("sets #most_recent args on the function", function() {
-      expect(mock_fn.most_recent_args).to(equal, null);
-      mock_fn("bar", "baz");
-      expect(mock_fn.most_recent_args).to(equal, ["bar", "baz"]);
-      mock_fn("quux");
-      expect(mock_fn.most_recent_args).to(equal, ["quux"]);
+    it("sets #mostRecent args on the function", function() {
+      expect(mockFn.mostRecentArgs).to(equal, null);
+      mockFn("bar", "baz");
+      expect(mockFn.mostRecentArgs).to(equal, ["bar", "baz"]);
+      mockFn("quux");
+      expect(mockFn.mostRecentArgs).to(equal, ["quux"]);
     });
 
-    it("pushes the 'this' value of the call to a #this_values array and sets #most_recent_this_vaule", function() {
-      var a = { mock_fn: mock_fn };
-      var b = { mock_fn: mock_fn };
+    it("pushes the 'this' value of the call to a #thisValues array and sets #mostRecentThisVaule", function() {
+      var a = { mockFn: mockFn };
+      var b = { mockFn: mockFn };
 
-      expect(mock_fn.this_values).to(equal, []);
-      expect(mock_fn.most_recent_this_value).to(be_null);
-      a.mock_fn();
-      expect(mock_fn.this_values).to(equal, [a]);
-      expect(mock_fn.most_recent_this_value).to(equal, a);
+      expect(mockFn.thisValues).to(equal, []);
+      expect(mockFn.mostRecentThisValue).to(beNull);
+      a.mockFn();
+      expect(mockFn.thisValues).to(equal, [a]);
+      expect(mockFn.mostRecentThisValue).to(equal, a);
 
-      b.mock_fn();
-      expect(mock_fn.this_values).to(equal, [a, b]);
-      expect(mock_fn.most_recent_this_value).to(equal, b);
+      b.mockFn();
+      expect(mockFn.thisValues).to(equal, [a, b]);
+      expect(mockFn.mostRecentThisValue).to(equal, b);
     });
 
-    context("when passed a function_name as its only argument", function() {
-      it("assigns function_name to the given name", function() {
-        var mock_fn = mock_function("function name");
-        expect(mock_fn.function_name).to(equal, "function name");
+    context("when passed a functionName as its only argument", function() {
+      it("assigns functionName to the given name", function() {
+        var mockFn = mockFunction("function name");
+        expect(mockFn.functionName).to(equal, "function name");
       });
     });
 
     context("when passed a function as its only argument", function() {
-      var this_value, call_args;
+      var thisValue, callArgs;
       before(function() {
-        call_args = [];
-        mock_fn = mock_function(function() {
-          this_value = this;
-          call_args.push(Array.prototype.slice.call(arguments));
+        callArgs = [];
+        mockFn = mockFunction(function() {
+          thisValue = this;
+          callArgs.push(Array.prototype.slice.call(arguments));
         });
       });
 
       it("calls the function with the same 'this'", function() {
-        var a = { mock_fn: mock_fn };
-        var b = { mock_fn: mock_fn };
-        a.mock_fn("bar", "baz");
-        expect(this_value).to(equal, a);
-        expect(call_args).to(equal, [["bar", "baz"]]);
+        var a = { mockFn: mockFn };
+        var b = { mockFn: mockFn };
+        a.mockFn("bar", "baz");
+        expect(thisValue).to(equal, a);
+        expect(callArgs).to(equal, [["bar", "baz"]]);
 
-        b.mock_fn("quux");
-        expect(this_value).to(equal, b);
-        expect(call_args).to(equal, [["bar", "baz"], ["quux"]]);
+        b.mockFn("quux");
+        expect(thisValue).to(equal, b);
+        expect(callArgs).to(equal, [["bar", "baz"], ["quux"]]);
       });
     });
 
-    context("when passed a function_name and a function as its arguments", function() {
-      it("assigns function_name to the given name and calls the function when it is called", function() {
-        var function_to_call = mock_function("function to call");
-        var mock_fn = mock_function("function name", function_to_call);
-        expect(mock_fn.function_name).to(equal, "function name");
+    context("when passed a functionName and a function as its arguments", function() {
+      it("assigns functionName to the given name and calls the function when it is called", function() {
+        var functionToCall = mockFunction("function to call");
+        var mockFn = mockFunction("function name", functionToCall);
+        expect(mockFn.functionName).to(equal, "function name");
         
-        mock_fn();
+        mockFn();
 
-        expect(function_to_call).to(have_been_called);
+        expect(functionToCall).to(haveBeenCalled);
       });
     });
 
-    describe("#clear on the results of #mock_function", function() {
+    describe("#clear on the results of #mockFunction", function() {
       it("resets all recorded call data", function() {
-        var a = { mock_fn: mock_fn };
-        a.mock_fn("foo");
+        var a = { mockFn: mockFn };
+        a.mockFn("foo");
 
-        expect(mock_fn.this_values).to(equal, [a]);
-        expect(mock_fn.most_recent_this_value).to(equal, a);
-        expect(mock_fn.call_count).to(equal, 1);
-        expect(mock_fn.call_args).to(equal, [["foo"]]);
-        expect(mock_fn.most_recent_args).to(equal, ["foo"]);
+        expect(mockFn.thisValues).to(equal, [a]);
+        expect(mockFn.mostRecentThisValue).to(equal, a);
+        expect(mockFn.callCount).to(equal, 1);
+        expect(mockFn.callArgs).to(equal, [["foo"]]);
+        expect(mockFn.mostRecentArgs).to(equal, ["foo"]);
 
-        mock_fn.clear();
+        mockFn.clear();
 
-        expect(mock_fn.this_values).to(equal, []);
-        expect(mock_fn.most_recent_this_value).to(equal, null);
-        expect(mock_fn.call_count).to(equal, 0);
-        expect(mock_fn.call_args).to(equal, []);
-        expect(mock_fn.most_recent_args).to(equal, null);
+        expect(mockFn.thisValues).to(equal, []);
+        expect(mockFn.mostRecentThisValue).to(equal, null);
+        expect(mockFn.callCount).to(equal, 0);
+        expect(mockFn.callArgs).to(equal, []);
+        expect(mockFn.mostRecentArgs).to(equal, null);
       });
     });
 

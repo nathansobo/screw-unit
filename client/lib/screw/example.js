@@ -4,12 +4,12 @@ Monarch.constructor("Screw.Example", Screw.RunnableMethods, {
   initialize: function(name, fn) {
     this.name = name;
     this.fn = fn;
-    this.fail_subscription_node = new Monarch.SubscriptionNode();
-    this.pass_subscription_node = new Monarch.SubscriptionNode();
-    this.example_completed_subscription_node = new Monarch.SubscriptionNode();
+    this.failSubscriptionNode = new Monarch.SubscriptionNode();
+    this.passSubscriptionNode = new Monarch.SubscriptionNode();
+    this.exampleCompletedSubscriptionNode = new Monarch.SubscriptionNode();
     this.passed = false;
     this.failed = false;
-    this.failure_message = null;
+    this.failureMessage = null;
   },
 
   clone: function() {
@@ -18,7 +18,7 @@ Monarch.constructor("Screw.Example", Screw.RunnableMethods, {
     return clone;
   },
   
-  add_to_queue: function(queue) {
+  addToQueue: function(queue) {
     var self = this;
     queue.add(function() {
       self.run();
@@ -28,17 +28,17 @@ Monarch.constructor("Screw.Example", Screw.RunnableMethods, {
   run: function() {
     try {
       try {
-        var example_context = {};
-        this.parent_description.run_inits(example_context);
-        this.parent_description.run_befores(example_context);
-        this.fn.call(example_context);
+        var exampleContext = {};
+        this.parentDescription.runInits(exampleContext);
+        this.parentDescription.runBefores(exampleContext);
+        this.fn.call(exampleContext);
       } finally {
-        this.parent_description.run_afters(example_context);
-        Screw.reset_mocks();
+        this.parentDescription.runAfters(exampleContext);
+        Screw.resetMocks();
       }
       this.passed = true;
-      this.pass_subscription_node.publish();
-      this.example_completed_subscription_node.publish(this);
+      this.passSubscriptionNode.publish();
+      this.exampleCompletedSubscriptionNode.publish(this);
     } catch(e) {
       this.failed = true;
 
@@ -46,27 +46,27 @@ Monarch.constructor("Screw.Example", Screw.RunnableMethods, {
         e.stack = e.message + " (" + e.sourceURL + ":" + e.line + ")";
       }
 
-      this.failure_message = e.message;
+      this.failureMessage = e.message;
       this.stack = e.stack;
-      this.fail_subscription_node.publish(e);
-      this.example_completed_subscription_node.publish(this);
+      this.failSubscriptionNode.publish(e);
+      this.exampleCompletedSubscriptionNode.publish(this);
     }
   },
 
-  on_fail: function(callback) {
-    this.fail_subscription_node.subscribe(callback);
+  onFail: function(callback) {
+    this.failSubscriptionNode.subscribe(callback);
   },
 
-  on_pass: function(callback) {
-    this.pass_subscription_node.subscribe(callback);
+  onPass: function(callback) {
+    this.passSubscriptionNode.subscribe(callback);
   },
 
-  total_examples: function() {
+  totalExamples: function() {
     return 1;
   },
 
-  full_name: function() {
-    return this.parent_description.full_name() + this.name;
+  fullName: function() {
+    return this.parentDescription.fullName() + this.name;
   }
 });
 

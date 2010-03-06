@@ -2,14 +2,14 @@
 
 Monarch.module("Screw.RunnableMethods", {
   path: function() {
-    if (!this.parent_description) {
+    if (!this.parentDescription) {
       return [];
     }
-    return this.parent_description.path().concat([this.index]);
+    return this.parentDescription.path().concat([this.index]);
   },
 
-  on_example_completed: function(callback) {
-    return this.example_completed_subscription_node.subscribe(callback);
+  onExampleCompleted: function(callback) {
+    return this.exampleCompletedSubscriptionNode.subscribe(callback);
   }
 });
 

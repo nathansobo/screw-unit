@@ -1,15 +1,15 @@
 Screw.Unit(function(c) { with(c) {
   describe("Screw.Interface.Example", function() {
-    var example, description, view, failure_message, should_fail;
+    var example, description, view, failureMessage, shouldFail;
     before(function() {
-      failure_message = "sharon ly says die!";
+      failureMessage = "sharon ly says die!";
       example = new Screw.Example("passes or fails", function() {
-        if (should_fail) throw(new Error(failure_message));
+        if (shouldFail) throw(new Error(failureMessage));
       });
 
       description = new Screw.Description("parent description");
-      description.add_example(example);
-      view = Screw.Interface.Example.to_view({example: example, build_immediately: true});
+      description.addExample(example);
+      view = Screw.Interface.Example.toView({example: example, buildImmediately: true});
     });
 
     describe("#content", function() {
@@ -20,13 +20,13 @@ Screw.Unit(function(c) { with(c) {
 
     describe("#focus", function() {
       it("sets window.location to match the path of the view's Example", function() {
-        mock(Screw.Interface, 'get_location', function() {
+        mock(Screw.Interface, 'getLocation', function() {
           return { href: "http://localhost:8080/specs?[[0]]"};
         });
 
-        mock(Screw.Interface, 'set_location');
+        mock(Screw.Interface, 'setLocation');
         view.focus();
-        expect(Screw.Interface.set_location).to(have_been_called, with_args("http://localhost:8080/specs?" + JSON.stringify([example.path()])));
+        expect(Screw.Interface.setLocation).to(haveBeenCalled, withArgs("http://localhost:8080/specs?" + JSON.stringify([example.path()])));
       });
     });
 
@@ -34,70 +34,73 @@ Screw.Unit(function(c) { with(c) {
       it("calls #focus on the view", function() {
         mock(view, 'focus');
         view.find('span.name').click();
-        expect(view.focus).to(have_been_called);
+        expect(view.focus).to(haveBeenCalled);
       });
     });
 
     describe("when its associated Example fails", function() {
       before(function() {
-        should_fail = true;
+        shouldFail = true;
       });
 
       it("applies the 'failed' class to its content", function() {
-        expect(view.hasClass('failed')).to(be_false);
+        expect(view.hasClass('failed')).to(beFalse);
         example.run();
-        expect(view.hasClass('failed')).to(be_true);
+        expect(view.hasClass('failed')).to(beTrue);
       });
 
       it("appends the failure message", function() {
         example.run();
-        expect(view.html()).to(match, failure_message);
+        expect(view.html()).to(match, failureMessage);
       });
 
       it("appends the stacktrace", function() {
         var stack;
-        example.on_fail(function(e) {
+        example.onFail(function(e) {
           stack = e.stack;
         })
         example.run();
-        var stack_without_links = view.html().replace(/<a[^>]+>/g, "").replace(/<\/a>/g, "");
-        expect(stack_without_links).to(match, stack);
+        var stackWithoutLinks = view.html().replace(/<a[^>]+>/g, "").replace(/<\/a>/g, "");
+        expect(stackWithoutLinks).to(match, stack);
       });
 
       it("includes links to spec files within the stack trace", function() {
         var stack;
-        example.on_fail(function(e) {
+        example.onFail(function(e) {
           stack = e.stack;
         });
         example.run();
 
         var matches = stack.match(/(http:\/\/.*_spec).js/);
-        expect(matches.length).to(be_gt, 1);
-        expect(view.find("a[href="+matches[1]+"]")).to_not(be_empty);
+				console.debug(matches);
+				console.debug(view.html());
+				
+        expect(matches.length).to(beGt, 1);
+        expect(view.find("a[href="+matches[1]+"]")).toNot(beEmpty);
       });
     });
 
     describe("when its associated Example passes", function() {
       before(function() {
-        should_fail = false;
+        shouldFail = false;
       });
 
       it("applies the 'passed' class to its content", function() {
-        expect(view.hasClass('passed')).to(be_false);
+        expect(view.hasClass('passed')).to(beFalse);
         example.run();
-        expect(view.hasClass('passed')).to(be_true);
+        expect(view.hasClass('passed')).to(beTrue);
       });
     });
 
     describe("#focus", function() {
-      var original_screw_options;
+      var originalScrewOptions;
       before(function() {
-        original_screw_options = Screw.Interface.options;
+        originalScrewOptions = Screw.Interface.options;
         Screw.Interface.options = {};
       });
 
       after(function() {
-        Screw.Interface.options = original_screw_options;
+        Screw.Interface.options = originalScrewOptions;
       });
     });
   });

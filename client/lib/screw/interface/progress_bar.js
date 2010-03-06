@@ -1,50 +1,50 @@
 (function(Screw, Monarch) {
 
 Monarch.constructor("Screw.Interface.ProgressBar", Monarch.View.Template, {
-  content: function(initial_attributes) { with(this.builder) {
-    div({'id': 'screw_unit_progress_bar'}, function() {
-      div({'id': 'screw_unit_progress'});
-      div({'id': 'screw_unit_progress_text'});
+  content: function(initialAttributes) { with(this.builder) {
+    div({'id': 'screwUnitProgressBar'}, function() {
+      div({'id': 'screwUnitProgress'});
+      div({'id': 'screwUnitProgressText'});
     });
   }},
 
-  view_properties: {
+  viewProperties: {
     initialize: function() {
       var self = this;
-      this.total_examples = this.root.total_examples();
-      this.root.on_example_completed(function(example) {
-        self.update_progress(example);
+      this.totalExamples = this.root.totalExamples();
+      this.root.onExampleCompleted(function(example) {
+        self.updateProgress(example);
       });
 
 
-      this.completed_examples = 0;
-      this.failed_examples = 0;
+      this.completedExamples = 0;
+      this.failedExamples = 0;
 
-      this.progress_div = this.find('div#screw_unit_progress');
-      this.progress_text_div = this.find('div#screw_unit_progress_text');
+      this.progressDiv = this.find('div#screwUnitProgress');
+      this.progressTextDiv = this.find('div#screwUnitProgressText');
 
-      this.resize_progress_div();
-      this.refresh_progress_text();
+      this.resizeProgressDiv();
+      this.refreshProgressText();
     },
 
-    update_progress: function(example) {
-      this.completed_examples++;
+    updateProgress: function(example) {
+      this.completedExamples++;
       if (example.failed) {
-        this.failed_examples++;
+        this.failedExamples++;
         this.addClass('failed');
       }
 
-      this.resize_progress_div();
-      this.refresh_progress_text();
+      this.resizeProgressDiv();
+      this.refreshProgressText();
     },
 
-    resize_progress_div: function() {
-      var percent_complete = (this.total_examples == 0) ? 0 : (this.completed_examples / this.total_examples * 100);
-      this.progress_div.css("width", percent_complete + "%");
+    resizeProgressDiv: function() {
+      var percentComplete = (this.totalExamples == 0) ? 0 : (this.completedExamples / this.totalExamples * 100);
+      this.progressDiv.css("width", percentComplete + "%");
     },
 
-    refresh_progress_text: function() {
-      this.progress_text_div.html(this.completed_examples + " of " + this.total_examples + " completed. " + this.failed_examples + " failed.");
+    refreshProgressText: function() {
+      this.progressTextDiv.html(this.completedExamples + " of " + this.totalExamples + " completed. " + this.failedExamples + " failed.");
     }
   }
 });

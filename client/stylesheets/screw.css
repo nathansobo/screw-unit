@@ -7,44 +7,44 @@ html {
   display: none;
 }
 
-div#screw_unit_runner.show_all .description, div#screw_unit_runner.show_all .example {
+div#screwUnitRunner.showAll .description, div#screwUnitRunner.showAll .example {
   display: block;
 }
 
-div#screw_unit_runner.show_failed .failed {
+div#screwUnitRunner.showFailed .failed {
   display: block;
 }
 
 
-table#screw_unit_header {
+table#screwUnitHeader {
   width: 100%;
 }
 
-td#screw_unit_controls {
+td#screwUnitControls {
   padding: 10px;
   width: 20%;
   text-align: center;
 }
 
-div#screw_unit_progress_bar {
+div#screwUnitProgressBar {
   border: 1px solid #cccccc;
   width: 100%;
   height: 25px;
   background: #252525;
 }
 
-div#screw_unit_progress_text {
+div#screwUnitProgressText {
   position: relative;
   top: -20px;
   padding-left: 5px;
   color: white;
 }
 
-div#screw_unit_progress_bar.failed div#screw_unit_progress {
+div#screwUnitProgressBar.failed div#screwUnitProgress {
   background: red;
 }
 
-div#screw_unit_progress_bar div#screw_unit_progress {
+div#screwUnitProgressBar div#screwUnitProgress {
   background: green;
   height: 25px;
 }
@@ -77,7 +77,7 @@ li.description span.name {
   cursor: pointer;
 }
 
-ul.child_descriptions {
+ul.childDescriptions {
   margin-left: .6em;
   background: #e2e1e1;
 }

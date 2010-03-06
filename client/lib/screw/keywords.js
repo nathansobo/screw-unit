@@ -2,9 +2,9 @@
 
 Monarch.module("Screw.Keywords", {
   describe: function(name, fn) {
-    Screw.push_description(new Screw.Description(name));
+    Screw.pushDescription(new Screw.Description(name));
     fn();
-    Screw.pop_description();
+    Screw.popDescription();
   },
 
   context: function(name, fn) {
@@ -12,13 +12,13 @@ Monarch.module("Screw.Keywords", {
   },
 
   scenario: function(name, fn) {
-    Screw.push_scenario(new Screw.Description(name));
+    Screw.pushScenario(new Screw.Description(name));
     fn();
-    Screw.pop_scenario();
+    Screw.popScenario();
   },
 
   it: function(name, fn) {
-    Screw.current_description().add_example(new Screw.Example(name, fn));
+    Screw.currentDescription().addExample(new Screw.Example(name, fn));
   },
 
   specify: function(name, fn) {
@@ -30,15 +30,15 @@ Monarch.module("Screw.Keywords", {
   },
 
   before: function(fn) {
-    Screw.current_description().add_before(fn);
+    Screw.currentDescription().addBefore(fn);
   },
 
   init: function(fn) {
-    Screw.current_description().add_init(fn);
+    Screw.currentDescription().addInit(fn);
   },
 
   after: function(fn) {
-    Screw.current_description().add_after(fn);
+    Screw.currentDescription().addAfter(fn);
   },
 
   expect: function(actual) {
@@ -61,70 +61,70 @@ Monarch.module("Screw.Keywords", {
       to: function(matcher, expected, not) {
         var matched = matcher.match(expected, actual);
         if (not ? matched : !matched) {
-          if (Screw.debug_on_fail) debugger;
-          throw(new Error(matcher.failure_message(expected, actual, not)));
+          if (Screw.debugOnFail) debugger;
+          throw(new Error(matcher.failureMessage(expected, actual, not)));
         }
       },
 
-      to_not: function(matcher, expected) {
+      toNot: function(matcher, expected) {
         this.to(matcher, expected, true);
       }
     }
   },
 
-  mock: function(object, method_name, method_mock) {
-    if (!object[method_name]) {
-      throw new Error("in mock_function: " + method_name + " is not a function that can be mocked");
+  mock: function(object, methodName, methodMock) {
+    if (!object[methodName]) {
+      throw new Error("in mockFunction: " + methodName + " is not a function that can be mocked");
     }
-    var mock_function = this.mock_function(method_mock);
-    mock_function.mocked_object = object;
-    mock_function.function_name = method_name;
-    mock_function.original_function = object[method_name];
-    Screw.mocks.push(mock_function);
-    object[method_name] = mock_function;
+    var mockFunction = this.mockFunction(methodMock);
+    mockFunction.mockedObject = object;
+    mockFunction.functionName = methodName;
+    mockFunction.originalFunction = object[methodName];
+    Screw.mocks.push(mockFunction);
+    object[methodName] = mockFunction;
 
     return object;
   },
 
-  mock_function: function() {
-    var fn_to_call, function_name;
+  mockFunction: function() {
+    var fnToCall, functionName;
 
     if (arguments.length == 2) {
-      function_name = arguments[0];
-      fn_to_call = arguments[1];
+      functionName = arguments[0];
+      fnToCall = arguments[1];
     } else if (arguments.length == 1) {
       if (typeof arguments[0] == "function") {
-        fn_to_call = arguments[0];
+        fnToCall = arguments[0];
       } else {
-        function_name = arguments[0];
+        functionName = arguments[0];
       }
     }
 
-    function_name = function_name || "mock function";
+    functionName = functionName || "mock function";
 
-    var mock_function = function() {
-      var args_array = Array.prototype.slice.call(arguments)
-      mock_function.call_count += 1;
-      mock_function.this_values.push(this);
-      mock_function.most_recent_this_value =  this;
-      mock_function.call_args.push(args_array);
-      mock_function.most_recent_args = args_array;
+    var mockFunction = function() {
+      var argsArray = Array.prototype.slice.call(arguments)
+      mockFunction.callCount += 1;
+      mockFunction.thisValues.push(this);
+      mockFunction.mostRecentThisValue =  this;
+      mockFunction.callArgs.push(argsArray);
+      mockFunction.mostRecentArgs = argsArray;
 
-      if (fn_to_call) {
-        return fn_to_call.apply(this, args_array);
+      if (fnToCall) {
+        return fnToCall.apply(this, argsArray);
       }
     };
 
-    mock_function.function_name = function_name;
-    mock_function.clear = function() {
-      this.call_count = 0;
-      this.call_args = [];
-      this.this_values = [];
-      this.most_recent_args = null;
-      this.most_recent_this_value = null;
+    mockFunction.functionName = functionName;
+    mockFunction.clear = function() {
+      this.callCount = 0;
+      this.callArgs = [];
+      this.thisValues = [];
+      this.mostRecentArgs = null;
+      this.mostRecentThisValue = null;
     }
-    mock_function.clear();
-    return mock_function;
+    mockFunction.clear();
+    return mockFunction;
   }
 });
 

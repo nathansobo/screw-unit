@@ -9,7 +9,6 @@ module ScrewUnit
       end
 
       def locate(path_fragment)
-        p "LOCATING!!!!!!!!!!!!!!!!!!"
         if path_fragment == "streaming"
           StreamingSpecRunner.new(spec_file_resources, asset_manager)
         end
@@ -35,7 +34,7 @@ module ScrewUnit
       end
 
       def run_specs_on_page_load
-        %{<script type="text/javascript">Screw.Interface.Runner.run_specs_on_page_load();</script>}
+        %{<script type="text/javascript">Screw.Interface.Runner.runSpecsOnPageLoad()</script>}
       end
 
       def screw_unit_css_file_link_tag

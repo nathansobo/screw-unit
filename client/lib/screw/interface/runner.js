@@ -1,140 +1,140 @@
 (function(Screw, Monarch, jQuery) {
 
 Monarch.constructor("Screw.Interface.Runner", Monarch.View.Template, {
-  constructor_properties: {
-    run_specs_on_page_load: function() {
+  constructorProperties: {
+    runSpecsOnPageLoad: function() {
       var self = this;
       jQuery(function() {
-        var root_description = Screw.root_description();
+        var rootDescription = Screw.rootDescription();
         var queue = new Monarch.Queue();
         var runner;
         queue.add(function() {
-          var show = jQuery.cookie("__screw_unit__show") || "all";
-          runner = Screw.Interface.Runner.to_view({root: Screw.root_description(), show: show, post_on_completion: true});
+          var show = jQuery.cookie("_screwUnit_show") || "all";
+          runner = Screw.Interface.Runner.toView({root: Screw.rootDescription(), show: show, postOnCompletion: true});
         });
         queue.add(function() {
           Screw.$('body').html(runner);
         });
         queue.add(function() {
-          runner.run(self.run_paths());
+          runner.run(self.runPaths());
         })
         queue.start();
       });
     },
 
-    run_paths: function() {
-      var after_hash = Screw.Interface.get_location().href.split("?")[1];
-      if (after_hash) {
-        return JSON.parse(after_hash);
+    runPaths: function() {
+      var afterHash = Screw.Interface.getLocation().href.split("?")[1];
+      if (afterHash) {
+        return JSON.parse(afterHash);
       } else {
         return null;
       }
     }
   },
 
-  content: function(initial_attributes) { with (this.builder) {
-    div({'id': "screw_unit_runner"}, function() {
-      table({'id': "screw_unit_header"}, function() {
+  content: function(initialAttributes) { with (this.builder) {
+    div({'id': "screwUnitRunner"}, function() {
+      table({'id': "screwUnitHeader"}, function() {
         tbody(function() {
           tr(function() {
-            td({'id': "screw_unit_controls"}, function() {
-              button({'id': "show_all"}, "Show All").click(function(view) {
-                view.show_all();
+            td({'id': "screwUnitControls"}, function() {
+              button({'id': "showAll"}, "Show All").click(function(view) {
+                view.showAll();
               });
-              button({'id': "show_failed"}, "Show Failed").click(function(view) {
-                view.show_failed();
+              button({'id': "showFailed"}, "Show Failed").click(function(view) {
+                view.showFailed();
               });
-              button({'id': "rerun_all"}, "Rerun All").click(function(view) {
-                view.rerun_all();
+              button({'id': "rerunAll"}, "Rerun All").click(function(view) {
+                view.rerunAll();
               });
-              button({'id': "rerun_failed"}, "Rerun Failed").click(function(view) {
-                view.rerun_failed();
+              button({'id': "rerunFailed"}, "Rerun Failed").click(function(view) {
+                view.rerunFailed();
               });
             });
             td(function() {
-              subview('progress_bar', Screw.Interface.ProgressBar, {root: initial_attributes.root});
+              subview('progressBar', Screw.Interface.ProgressBar, {root: initialAttributes.root});
             });
           })
         })
       });
 
-      div({'id': 'test_content'});
+      div({'id': 'testContent'});
 
       ul({'class': 'descriptions'}, function() {
-        subview('root_description', Screw.Interface.Description, {description: initial_attributes.root, build_immediately: initial_attributes.build_immediately});
+        subview('rootDescription', Screw.Interface.Description, {description: initialAttributes.root, buildImmediately: initialAttributes.buildImmediately});
       });
     });
   }},
 
-  view_properties: {
+  viewProperties: {
     initialize: function() {
-      if (this.show == "all") this.addClass('show_all');
-      if (this.show == "failed") this.addClass("show_failed");
+      if (this.show == "all") this.addClass('showAll');
+      if (this.show == "failed") this.addClass("showFailed");
     },
 
-    show_failed: function() {
-      jQuery.cookie("__screw_unit__show", "failed", {path: "/"});
-      this.addClass('show_failed');
-      this.removeClass('show_all');
+    showFailed: function() {
+      jQuery.cookie("_screwUnit_show", "failed", {path: "/"});
+      this.addClass('showFailed');
+      this.removeClass('showAll');
     },
 
-    show_all: function() {
-      jQuery.cookie("__screw_unit__show", "all", {path: "/"});
-      this.addClass('show_all');
-      this.removeClass('show_failed');
+    showAll: function() {
+      jQuery.cookie("_screwUnit_show", "all", {path: "/"});
+      this.addClass('showAll');
+      this.removeClass('showFailed');
     },
 
-    rerun_failed: function() {
-      var failing_paths = Monarch.Util.map(this.root.failed_examples(), function(example) { return example.path() });
-      Screw.Interface.set_location(Screw.Interface.base_location() + '?' + JSON.stringify(failing_paths));
+    rerunFailed: function() {
+      var failingPaths = Monarch.Util.map(this.root.failedExamples(), function(example) { return example.path() });
+      Screw.Interface.setLocation(Screw.Interface.baseLocation() + '?' + JSON.stringify(failingPaths));
     },
 
-    rerun_all: function() {
-      Screw.Interface.set_location(Screw.Interface.base_location());
+    rerunAll: function() {
+      Screw.Interface.setLocation(Screw.Interface.baseLocation());
     },
 
-    run: function(run_paths) {
+    run: function(runPaths) {
       var self = this;
-      var objects_to_run = this.determine_runnables_to_run(run_paths);
-      this.completed_example_count = 0;
-      this.total_examples = Screw.root_description().total_examples();
+      var objectsToRun = this.determineRunnablesToRun(runPaths);
+      this.completedExampleCount = 0;
+      this.totalExamples = Screw.rootDescription().totalExamples();
 
       var queue = new Monarch.Queue();
-      this.root.on_example_completed(function() { self.example_completed() } );
+      this.root.onExampleCompleted(function() { self.exampleCompleted() } );
       
-      Monarch.Util.each(objects_to_run, function(runnable) {
-        runnable.add_to_queue(queue);
+      Monarch.Util.each(objectsToRun, function(runnable) {
+        runnable.addToQueue(queue);
       });
 
       queue.start();
     },
 
-    determine_runnables_to_run: function(run_paths) {
-      if (!run_paths) return [this.root];
+    determineRunnablesToRun: function(runPaths) {
+      if (!runPaths) return [this.root];
 
       var self = this;
-      var runnables_to_run = [];
-      Monarch.Util.each(run_paths, function(path) {
-        var runnable = self.root.runnable_at_path(path);
+      var runnablesToRun = [];
+      Monarch.Util.each(runPaths, function(path) {
+        var runnable = self.root.runnableAtPath(path);
         if (runnable) {
-          runnables_to_run.push(runnable);
+          runnablesToRun.push(runnable);
         } else {
           throw new Error("No runnable at path " + path);
         }
       });
-      return runnables_to_run;
+      return runnablesToRun;
     },
 
-    example_completed: function() {
-      this.completed_example_count++;
-      if (this.completed_example_count == this.total_examples) this.all_examples_completed();
+    exampleCompleted: function() {
+      this.completedExampleCount++;
+      if (this.completedExampleCount == this.totalExamples) this.allExamplesCompleted();
     },
 
-    all_examples_completed: function() {
-      var is_success = (Screw.root_description().failed_examples().length == 0);
-      this.find("ul.descriptions").addClass(is_success ? "passed" : "failed");
-      if (this.post_on_completion) {
-        var outcome = (is_success) ? "success" : this.root.failure_messages().join("\n");
+    allExamplesCompleted: function() {
+      var isSuccess = (Screw.rootDescription().failedExamples().length == 0);
+      this.find("ul.descriptions").addClass(isSuccess ? "passed" : "failed");
+      if (this.postOnCompletion) {
+        var outcome = (isSuccess) ? "success" : this.root.failureMessages().join("\n");
         Screw.jQuery.ajax({ type: 'POST', url: '/complete', data: outcome });
       }
     }
