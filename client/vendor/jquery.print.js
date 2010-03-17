@@ -78,6 +78,8 @@
   $.print = function(obj, options) {
     var opts = $.extend({}, { maxArray: 10, maxString: 100 }, options);
 
+    if (obj && obj.inspect && typeof obj.inspect == "function") obj = obj.inspect();
+
     if (typeof obj == 'undefined')
       return "undefined";
     else if (typeof obj == 'boolean')

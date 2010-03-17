@@ -6,6 +6,10 @@ Screw.Unit(function(c) { with(c) {
         object = {
           foo: function() {
             return "originalFooValue";
+          },
+          bar: function() {
+            this.barArguments = arguments;
+            return "originalBarValue";
           }
         };
         mock(object, 'foo');
@@ -27,7 +31,7 @@ Screw.Unit(function(c) { with(c) {
         expect(object.foo.callArgs).to(equal, [["bar", "baz"], ["quux"]]);
       });
 
-      it("sets #mostRecent args on the function", function() {
+      it("sets #mostRecentArgs on the function", function() {
         expect(object.foo.mostRecentArgs).to(equal, null);
         object.foo("bar", "baz");
         expect(object.foo.mostRecentArgs).to(equal, ["bar", "baz"]);
@@ -39,16 +43,29 @@ Screw.Unit(function(c) { with(c) {
         var callArgs;
         before(function() {
           callArgs = [];
-          mock(object, "foo", function() {
+          mock(object, "bar", function() {
             callArgs.push(Array.prototype.slice.call(arguments));
           });
         });
 
         it("calls the function", function() {
-          object.foo("bar", "baz");
+          object.bar("bar", "baz");
           expect(callArgs).to(equal, [["bar", "baz"]]);
-          object.foo("quux");
+          object.bar("quux");
           expect(callArgs).to(equal, [["bar", "baz"], ["quux"]]);
+        });
+      });
+
+      context("when passed 'proxy' as its third argument", function() {
+        before(function() {
+          mock(object, "bar", "proxy");
+        });
+
+        it("still invokes the original function from the wrapper, but records the call for verification", function() {
+          expect(object.bar("bar", "baz")).to(equal, "originalBarValue");
+          expect(object.bar.mostRecentArgs).to(equal, ["bar", "baz"]);
+          expect(object.barArguments[0]).to(equal, "bar");
+          expect(object.barArguments[1]).to(equal, "baz");
         });
       });
     });

@@ -72,18 +72,37 @@ Monarch.module("Screw.Keywords", {
     }
   },
 
-  mock: function(object, methodName, methodMock) {
+  mock: function(object, methodName, standInFunctionOrProxyFlag) {
     if (!object[methodName]) {
       throw new Error("in mockFunction: " + methodName + " is not a function that can be mocked");
     }
-    var mockFunction = this.mockFunction(methodMock);
+
+    var standInFunction = null;
+    if (standInFunctionOrProxyFlag === 'proxy') {
+      standInFunction = function() {
+        return Screw.Keywords.original(arguments);
+      }
+    } else {
+      standInFunction = standInFunctionOrProxyFlag;
+    }
+
+
+    var mockFunction = this.mockFunction(standInFunction);
     mockFunction.mockedObject = object;
     mockFunction.functionName = methodName;
     mockFunction.originalFunction = object[methodName];
+    mockFunction.boundOriginalFunction = function() {
+      return mockFunction.originalFunction.apply(object, arguments);
+    };
+
     Screw.mocks.push(mockFunction);
     object[methodName] = mockFunction;
 
     return object;
+  },
+
+  mockProxy: function(object, methodName) {
+    return Screw.Keywords.mock(object, methodName, 'proxy');
   },
 
   mockFunction: function() {
@@ -125,6 +144,11 @@ Monarch.module("Screw.Keywords", {
     }
     mockFunction.clear();
     return mockFunction;
+  },
+
+  original: function() {
+    var mockFunction = arguments.callee.caller.caller; 
+    return mockFunction.boundOriginalFunction.apply(null, mockFunction.arguments);
   }
 });
 
