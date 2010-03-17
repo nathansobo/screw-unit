@@ -1,5 +1,15 @@
 Screw.Unit(function(c) { with(c) {
   describe("Matchers", function() {
+    describe("#eq", function() {
+      it("compares the expected to the actual with the === operator (exact object equality)", function() {
+        var a = {};
+        var b = {};
+
+        expect(a).to(eq, a);
+        expect(a).toNot(eq, b);
+      });
+    });
+
     describe('#equal', function() {
       it("invokes the provided matcher on a call to expect", function() {
         expect(true).to(equal, true);

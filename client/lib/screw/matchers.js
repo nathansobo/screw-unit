@@ -1,6 +1,16 @@
 (function(Screw, Monarch) {
 
 Monarch.module("Screw.Matchers", {
+  eq: {
+    match: function(expected, actual) {
+      return expected === actual;
+    },
+
+    failureMessage: function(expected, actual, not) {
+      return 'expected ' + Screw.$.print(actual) + (not ? ' to not === ' : ' to === ') + Screw.$.print(expected);
+    }
+  },
+
   equal: {
     match: function(expected, actual) {
       if(expected == actual) return true;
