@@ -11,9 +11,9 @@ module ScrewUnit
       request = Rack::Request.new(env)
       resource = locate_resource(request.path_info)
       case(request.request_method)
-      when "GET":
+      when "GET"
         resource.get
-      when "POST":
+      when "POST"
         resource.post(request)
       else
         raise "unrecognized HTTP method #{request.request_method}"
