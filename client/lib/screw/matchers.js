@@ -13,6 +13,8 @@ Monarch.module("Screw.Matchers", {
 
   equal: {
     match: function(expected, actual) {
+      if (_ && _.isEqual) return _.isEqual(expected, actual);
+
       if(expected == actual) return true;
       if(actual == undefined) return false;
 
