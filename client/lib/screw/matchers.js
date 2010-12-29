@@ -188,6 +188,7 @@ Monarch.module("Screw.Matchers", {
 
     matchWithExpectation: function(expectation, mockFunction) {
       if (expectation._withArgs_) {
+        if (mockFunction.callCount == 0 ) return false;
         return Screw.Matchers.equal.match(expectation.arguments, mockFunction.mostRecentArgs);
       } else if (expectation._onObject_) {
         return Screw.Matchers.equal.match(expectation.object, mockFunction.mostRecentThisValue);
@@ -218,7 +219,11 @@ Monarch.module("Screw.Matchers", {
 
     errorMessageActualFragment: function(expected, actual, not) {
       if (expected && expected._withArgs_) {
-        return "with arguments " + Screw.$.print(actual.mostRecentArgs);
+        if (actual.callCount === 0) {
+          return "0 times";
+        } else {
+          return "with arguments " + Screw.$.print(actual.mostRecentArgs);
+        }
       } else if (expected && expected._onObject_) {
         return "on object " + Screw.$.print(actual.mostRecentThisValue);
       } else {
